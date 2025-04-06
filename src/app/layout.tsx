@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Header from '@/components/main/Header';
-import { poppins } from '@/lib/fonts';
+import Header from '@/core/components/main/header';
+import { poppins } from '@/core/lib/fonts';
 
 export const metadata: Metadata = {
   title: 'Langdle',

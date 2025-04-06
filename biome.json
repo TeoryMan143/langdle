@@ -39,7 +39,8 @@
         "noSvgWithoutTitle": "off"
       },
       "style": {
-        "useNodejsImportProtocol": "off"
+        "useNodejsImportProtocol": "off",
+        "useImportType": "off"
       }
     }
   },
