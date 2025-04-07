@@ -13,6 +13,7 @@
   --ring: oklch(0% 0 0);
   --overlay: oklch(0% 0 0 / 0.8);
   --shadow: 4px 4px 0px 0px var(--border);
+  --soft-det: oklch(43% 0.0528 158.13);
 }
 
 .dark {
@@ -35,6 +36,7 @@
   --color-border: var(--border);
   --color-overlay: var(--overlay);
   --color-ring: var(--ring);
+  --color-soft-det: var(--soft-det);
 
   --spacing-boxShadowX: 4px;
   --spacing-boxShadowY: 4px;

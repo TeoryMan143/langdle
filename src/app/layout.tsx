@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Header from '@/core/components/main/header';
-import { poppins } from '@/core/lib/fonts';
+import { noto } from '@/core/lib/fonts';
 
 export const metadata: Metadata = {
   title: 'Langdle',
@@ -15,9 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={`${poppins.className} antialiased`}>
+      <body className={`${noto.className} antialiased flex flex-col min-h-dvh`}>
         <Header />
-        {children}
+        <div className='flex-1 flex flex-col items-center'>{children}</div>
       </body>
     </html>
   );

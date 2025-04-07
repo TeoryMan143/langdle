@@ -1,13 +1,11 @@
-import { Poppins, Dongle } from 'next/font/google';
+import { Noto_Sans, Dongle } from 'next/font/google';
 
-export const poppins = Poppins({
-  variable: '--font-poppins',
-  subsets: ['latin'],
+export const noto = Noto_Sans({
+  variable: '--font-noto',
   weight: ['200', '300', '400', '500', '600', '700'],
 });
 
 export const dongle = Dongle({
   variable: '--font-dongle',
-  subsets: ['latin'],
   weight: ['300', '700'],
 });
