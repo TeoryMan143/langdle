@@ -3,7 +3,7 @@ import Game from '@/modules/daily-guess/components/game';
 
 export default function Home() {
   return (
-    <main className='pt-8 max-w-4xl mx-auto'>
+    <main className='pt-8'>
       <h2 className={`${dongle.className} text-7xl text-center`}>
         Guess the language of the day
       </h2>

@@ -1,0 +1,40 @@
+import { LanguageCode } from '@/core/lib/types';
+import { getAllLanguages } from '../actions';
+import { langFlags } from '@/core/lib/utils';
+import Link from 'next/link';
+
+async function LangsList() {
+  const langsRes = await getAllLanguages();
+
+  if (!langsRes.success) {
+    console.error(langsRes.error);
+    return <p className='text-xl text-center'>No languages</p>;
+  }
+
+  const langs = langsRes.result;
+
+  return (
+    <div className='bg-background rounded-2xl border border-black overflow-clip'>
+      {langs.map(({ id, name, exonym }) => (
+        <LangSelector key={id} code={id} name={name} exonym={exonym} />
+      ))}
+    </div>
+  );
+}
+
+function LangSelector({
+  code,
+  name,
+  exonym,
+}: { code: LanguageCode; name: string; exonym?: string }) {
+  return (
+    <Link
+      href={`/data/${code}`}
+      className='py-3 border-b border-black block transition-colors hover:bg-main'
+    >
+      <p className='text-center text-xl'>{`${langFlags[code]} ${name}${exonym ? ` (${exonym})` : ''}`}</p>
+    </Link>
+  );
+}
+
+export default LangsList;
