@@ -1,3 +1,11 @@
 {
   "editor.defaultFormatter": "biomejs.biome",
+  "[typescript]": {
+    "togglequotes.chars": [
+      "\"",
+      "'",
+      "`"
+    ],
+    "editor.defaultFormatter": "biomejs.biome",
+  }
 }
