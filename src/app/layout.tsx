@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang='en'>
       <body className={`${noto.className} antialiased flex flex-col min-h-dvh`}>
         <Header />
-        <div className='flex-1 flex flex-col items-center'>{children}</div>
+        <div className='flex-1'>{children}</div>
       </body>
     </html>
   );
