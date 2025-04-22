@@ -23,10 +23,10 @@ async function EditDataPage({ params }: Props) {
     notFound();
   }
 
-  const { name, exonym } = lang;
+  const { name, exonym, features } = lang;
 
   return (
-    <main>
+    <main className='space-y-4'>
       <h2>
         {langFlags[code]} {`${name}${exonym ? ` (${exonym})` : ''}`}
       </h2>

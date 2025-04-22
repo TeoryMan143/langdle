@@ -1,7 +1,18 @@
-// import { Label } from '@/core/components/ui/label';
+import { Checkbox } from '@/core/components/ui/checkbox';
+import { Label } from '@/core/components/ui/label';
+import { LanguageCode } from '@/core/lib/types';
 
-// function FeatureChecker() {
-//   return <Label htmlFor=''></Label>;
-// }
+type Props = {
+  code: LanguageCode;
+  active: boolean;
+};
 
-// export default FeatureChecker;
+function FeatureChecker({ code, active }: Props) {
+  return (
+    <Label htmlFor={code}>
+      <Checkbox checked={active} id={code} />
+    </Label>
+  );
+}
+
+export default FeatureChecker;
