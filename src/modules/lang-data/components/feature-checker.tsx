@@ -1,3 +1,5 @@
+'use client';
+
 import { Checkbox } from '@/core/components/ui/checkbox';
 import { Label } from '@/core/components/ui/label';
 import { LangFeatures } from '@/core/lib/types';
