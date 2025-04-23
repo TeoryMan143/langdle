@@ -1,6 +1,7 @@
 import { langCodeSchema } from '@/core/lib/schemas/langs';
 import { langFlags } from '@/core/lib/utils';
 import { getLanguage } from '@/modules/lang-data/actions';
+import LangFeaturesForm from '@/modules/lang-data/components/lang-features';
 import { notFound } from 'next/navigation';
 
 type Props = {
@@ -27,9 +28,10 @@ async function EditDataPage({ params }: Props) {
 
   return (
     <main className='space-y-4'>
-      <h2>
+      <h2 className='text-center text-2xl'>
         {langFlags[code]} {`${name}${exonym ? ` (${exonym})` : ''}`}
       </h2>
+      <LangFeaturesForm currentFeatures={features} />
     </main>
   );
 }
