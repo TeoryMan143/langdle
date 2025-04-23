@@ -36,7 +36,8 @@
       },
       "a11y": {
         "useButtonType": "off",
-        "noSvgWithoutTitle": "off"
+        "noSvgWithoutTitle": "off",
+        "useKeyWithClickEvents": "off"
       },
       "style": {
         "useNodejsImportProtocol": "off",
