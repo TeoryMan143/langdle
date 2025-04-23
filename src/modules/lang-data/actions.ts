@@ -6,9 +6,15 @@ import { LANG_API_URL } from '@/core/lib/utils';
 
 export async function getAllLanguages(): Promise<ActionResult<Language[]>> {
   try {
-    const langs = (await fetch(`${LANG_API_URL}/api/lang`).then(r =>
-      r.json(),
-    )) as Language[];
+    const res = await fetch(`${LANG_API_URL}/api/lang`);
+
+    if (res.status !== 200) {
+      const error = await res.json();
+      return actionError(error.message);
+    }
+
+    const langs = (await res.json()) as Language[];
+
     return actionSuccess(langs);
   } catch (e) {
     let message = 'unknown error';
@@ -23,10 +29,16 @@ export async function getLanguage(
   code: LanguageCode,
 ): Promise<ActionResult<Language>> {
   try {
-    const langs = (await fetch(`${LANG_API_URL}/api/lang/${code}`).then(r =>
-      r.json(),
-    )) as Language;
-    return actionSuccess(langs);
+    const res = await fetch(`${LANG_API_URL}/api/lang/${code}`);
+
+    if (res.status !== 200) {
+      const error = await res.json();
+      return actionError(error.message);
+    }
+
+    const lang = (await res.json()) as Language;
+
+    return actionSuccess(lang);
   } catch (e) {
     let message = 'unknown error';
     if (e instanceof Error) {
