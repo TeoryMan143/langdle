@@ -1,6 +1,6 @@
 import { langCodeSchema } from '@/core/lib/schemas/langs';
 import { langFlags } from '@/core/lib/utils';
-import { getLanguage } from '@/modules/lang-data/actions';
+import { getLanguage } from '@/core/actions/langs';
 import LangFeaturesForm from '@/modules/lang-data/components/lang-features';
 import { notFound } from 'next/navigation';
 
@@ -24,14 +24,14 @@ async function EditDataPage({ params }: Props) {
     notFound();
   }
 
-  const { name, exonym, features } = lang;
+  const { name, exonym } = lang;
 
   return (
     <main className='space-y-4'>
       <h2 className='text-center text-2xl'>
         {langFlags[code]} {`${name}${exonym ? ` (${exonym})` : ''}`}
       </h2>
-      <LangFeaturesForm currentFeatures={features} />
+      <LangFeaturesForm code={code} currentData={lang} />
     </main>
   );
 }
