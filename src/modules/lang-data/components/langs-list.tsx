@@ -30,7 +30,7 @@ function LangSelector({
   return (
     <Link
       href={`/data/${code}`}
-      className='py-3 border-b border-black block transition-colors hover:bg-main'
+      className='py-3 border-b border-black block transition-colors px-4 hover:bg-main'
     >
       <p className='text-center text-xl'>{`${langFlags[code]} ${name}${exonym ? ` (${exonym})` : ''}`}</p>
     </Link>

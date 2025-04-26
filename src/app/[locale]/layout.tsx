@@ -29,7 +29,7 @@ export default async function RootLayout({
       <body className={`${noto.className} antialiased flex flex-col min-h-dvh`}>
         <Toaster />
         <Header />
-        <div className='flex-1 max-w-4xl mx-auto py-3'>
+        <div className='flex-1 py-3'>
           <NextIntlClientProvider>{children}</NextIntlClientProvider>
         </div>
       </body>
