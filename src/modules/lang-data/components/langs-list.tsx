@@ -1,5 +1,5 @@
 import { LanguageCode } from '@/core/lib/types';
-import { getAllLanguages } from '../../../core/actions/langs';
+import { getAllLanguages } from '@/core/actions/langs';
 import { langFlags } from '@/core/lib/utils';
 import { Link } from '@/i18n/navigation';
 
