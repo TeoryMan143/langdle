@@ -104,6 +104,7 @@ export const langFeatures = [
   'headlessRelativeClauses',
   'topicMarkers',
   'focusMarkers',
+  'pharyngealization',
 ] as const;
 
 export const LANG_API_URL = process.env.LANG_API_URL as string;

@@ -1,7 +1,7 @@
 import { LanguageCode } from '@/core/lib/types';
 import { getAllLanguages } from '../../../core/actions/langs';
 import { langFlags } from '@/core/lib/utils';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 
 async function LangsList() {
   const langsRes = await getAllLanguages();
