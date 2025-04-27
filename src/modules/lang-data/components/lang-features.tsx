@@ -51,12 +51,13 @@ function LangFeaturesForm({ currentData, code }: Props) {
       <div className='flex flex-col min-w-2xl rounded-2xl overflow-clip'>
         {langFeatures.map(feat => {
           return (
-            <FeatureChecker
-              onCheckedChange={createFeatureActivation(feat)}
-              key={feat}
-              feat={feat}
-              initialActive={newFeats.includes(feat)}
-            />
+            <div className='p-2' key={feat}>
+              <FeatureChecker
+                onCheckedChange={createFeatureActivation(feat)}
+                feat={feat}
+                initialActive={newFeats.includes(feat)}
+              />
+            </div>
           );
         })}
       </div>
