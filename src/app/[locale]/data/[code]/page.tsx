@@ -31,7 +31,9 @@ async function EditDataPage({ params }: Props) {
       <h2 className='text-center text-2xl'>
         {langFlags[code]} {`${name}${exonym ? ` (${exonym})` : ''}`}
       </h2>
-      <LangFeaturesForm code={code} currentData={lang} />
+      <div className='flex justify-center'>
+        <LangFeaturesForm code={code} currentData={lang} />
+      </div>
     </main>
   );
 }
