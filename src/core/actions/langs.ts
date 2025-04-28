@@ -11,6 +11,7 @@ export async function getAllLanguages(): Promise<ActionResult<Language[]>> {
 
     if (res.status !== 200) {
       const error = await res.json();
+      console.error(error);
       return actionError(error.message);
     }
 
@@ -20,6 +21,7 @@ export async function getAllLanguages(): Promise<ActionResult<Language[]>> {
   } catch (e) {
     let message = 'unknown error';
     if (e instanceof Error) {
+      console.error(e);
       message = e.message;
     }
     return actionError(message);
@@ -34,6 +36,7 @@ export async function getLanguage(
 
     if (res.status !== 200) {
       const error = await res.json();
+      console.error(error);
       return actionError(error.message);
     }
 
@@ -43,6 +46,7 @@ export async function getLanguage(
   } catch (e) {
     let message = 'unknown error';
     if (e instanceof Error) {
+      console.error(e);
       message = e.message;
     }
     return actionError(message);
@@ -57,10 +61,12 @@ export async function setLanguageData(
     const res = await fetch(`${LANG_API_URL}/api/lang/${code}`, {
       method: 'put',
       body: JSON.stringify(data),
+      cache: 'no-cache',
     });
 
     if (res.status !== 200) {
       const error = await res.json();
+      console.error(error);
       return actionError(error.message);
     }
 
@@ -72,6 +78,7 @@ export async function setLanguageData(
   } catch (e) {
     let message = 'unknown error';
     if (e instanceof Error) {
+      console.error(e);
       message = e.message;
     }
     return actionError(message);
