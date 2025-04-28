@@ -47,7 +47,15 @@
       "noCopula": "The verb \"to be\" (or its equivalent) is often omitted in sentences linking the subject to a predicate, with the relationship implied by context",
       "proDrop": "The subject of a sentence can be omited with the pronoun implied by conjugation or context",
       "focusMarker": "Grammatical element that highlights or emphasizes a specific part of a sentence, typically indicating what the speaker considers most important or the focus of the conversation",
-      "caseMarking": "Grammatical system where the function of every noun in a sentence has to be explicit"
+      "caseMarking": "Grammatical system where the function of every noun in a sentence has to be explicit",
+      "diminutives": "Forms of words that convey smallness, affection, or triviality, often created by adding specific affixes or making slight modifications",
+      "augmentatives": "Forms of words that convey strongness or importance often created by adding specific affixes or making slight modifications",
+      "ideophones": "Vivid, often sound-symbolic words that evoke sensory experiences like sounds, movements, colors, or textures",
+      "classifierSystem": "Grammatical system where specific unit particles are used when counting nouns",
+      "tense": "Grammatical category that locates an action or state in time, typically distinguishing past, present, and future",
+      "aspect": "Grammatical category that describes the flow or structure of an action in time, such as whether it is ongoing, completed, habitual, or repetitive",
+      "mood": "Grammatical category that expresses the speaker’s attitude toward the action or state, such as whether it is a command, a wish, a possibility, or a statement of fact",
+      "personAgreement": "Grammatical system where the conjugated verb has to be inflected depending on the grammatical person"
     },
     "name": {}
   }
