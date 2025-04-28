@@ -4,7 +4,8 @@ import FeatureToolTip from '@/core/components/main/feature-tooltip';
 import { Checkbox } from '@/core/components/ui/checkbox';
 import { Label } from '@/core/components/ui/label';
 import { LangFeatures } from '@/core/lib/types';
-import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import React, { useCallback, useMemo, useState } from 'react';
 
 type Props = {
   feat: LangFeatures;
@@ -12,8 +13,19 @@ type Props = {
   onCheckedChange: (active: boolean) => void;
 };
 
-function FeatureChecker({ feat, initialActive, onCheckedChange }: Props) {
+function FeatureChecker({
+  feat,
+  initialActive,
+  onCheckedChange: _onCheckedChange,
+}: Props) {
   const [active, setActive] = useState(initialActive);
+  const t = useTranslations('Features.name');
+
+  const name = useMemo(() => t(feat), [feat, t]);
+  const onCheckedChange = useCallback(
+    (c: boolean) => _onCheckedChange(c),
+    [_onCheckedChange],
+  );
 
   return (
     <FeatureToolTip feature={feat}>
@@ -31,10 +43,10 @@ function FeatureChecker({ feat, initialActive, onCheckedChange }: Props) {
           checked={active}
           id={feat}
         />{' '}
-        {feat}
+        {name}
       </Label>
     </FeatureToolTip>
   );
 }
 
-export default FeatureChecker;
+export default React.memo(FeatureChecker);

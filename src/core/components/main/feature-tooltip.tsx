@@ -6,6 +6,7 @@ import {
   TooltipTrigger,
 } from '../ui/tooltip';
 import { useTranslations } from 'next-intl';
+import React, { useMemo } from 'react';
 
 type Props = {
   feature: LangFeatures;
@@ -14,14 +15,16 @@ type Props = {
 function FeatureToolTip({ feature, children }: Props) {
   const t = useTranslations('Features.description');
 
+  const description = useMemo(() => t(feature), [feature, t]);
+
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent className='bg-white'>{t(feature)}</TooltipContent>
+        <TooltipContent className='bg-white'>{description}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
 }
 
-export default FeatureToolTip;
+export default React.memo(FeatureToolTip);

@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "scan": "next dev --turbopack & pnpm dlx react-scan@latest localhost:3000"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.2.2",

@@ -5,7 +5,7 @@ import type {
   LanguageCode,
   LanguageData,
 } from '@/core/lib/types';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import FeatureChecker from './feature-checker';
 import { Button } from '@/core/components/ui/button';
 import objEquals from 'just-compare';
@@ -23,13 +23,16 @@ function LangFeaturesForm({ currentData, code }: Props) {
 
   const [newFeats, setNewFeats] = useState([...currentFeatures]);
 
-  const createFeatureActivation = (feat: LangFeatures) => (active: boolean) => {
-    if (active) {
-      setNewFeats([...newFeats, feat]);
-    } else {
-      setNewFeats(newFeats.filter(f => f !== feat));
-    }
-  };
+  const createFeatureActivation = useCallback(
+    (feat: LangFeatures) => (active: boolean) => {
+      if (active) {
+        setNewFeats([...newFeats, feat]);
+      } else {
+        setNewFeats(newFeats.filter(f => f !== feat));
+      }
+    },
+    [newFeats],
+  );
 
   const handleSubmitData = async () => {
     const toastId = toast.loading('Updating features');
