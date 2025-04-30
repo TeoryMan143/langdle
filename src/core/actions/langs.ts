@@ -4,7 +4,7 @@ import { actionError, ActionResult, actionSuccess } from '@/core/actions/utils';
 import type { Language, LanguageCode, LanguageData } from '@/core/lib/types';
 import { revalidatePath } from 'next/cache';
 
-const baseUrl = process.env.LOCAL_URL;
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function getAllLanguages(): Promise<ActionResult<Language[]>> {
   try {
