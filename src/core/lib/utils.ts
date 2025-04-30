@@ -80,8 +80,6 @@ export const langFeatures = [
   'pharyngealization',
 ] as const;
 
-export const LANG_API_URL = process.env.LANG_API_URL as string;
-
 export const langFlags: Record<LanguageCode, string> = {
   en: '🇺🇸',
   es: '🇪🇸',

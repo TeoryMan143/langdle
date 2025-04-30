@@ -2,12 +2,13 @@
 
 import { actionError, ActionResult, actionSuccess } from '@/core/actions/utils';
 import type { Language, LanguageCode, LanguageData } from '@/core/lib/types';
-import { LANG_API_URL } from '@/core/lib/utils';
 import { revalidatePath } from 'next/cache';
+
+const baseUrl = process.env.LOCAL_URL;
 
 export async function getAllLanguages(): Promise<ActionResult<Language[]>> {
   try {
-    const res = await fetch(`${LANG_API_URL}/api/lang`);
+    const res = await fetch(`${baseUrl}/api/lang`);
 
     if (res.status !== 200) {
       const error = await res.json();
@@ -32,7 +33,7 @@ export async function getLanguage(
   code: LanguageCode,
 ): Promise<ActionResult<Language>> {
   try {
-    const res = await fetch(`${LANG_API_URL}/api/lang/${code}`);
+    const res = await fetch(`${baseUrl}/api/lang/${code}`);
 
     if (res.status !== 200) {
       const error = await res.json();
@@ -58,7 +59,7 @@ export async function setLanguageData(
   data: LanguageData,
 ): Promise<ActionResult<string>> {
   try {
-    const res = await fetch(`${LANG_API_URL}/api/lang/${code}`, {
+    const res = await fetch(`${baseUrl}/api/lang/${code}`, {
       method: 'put',
       body: JSON.stringify(data),
       cache: 'no-cache',

@@ -8,4 +8,5 @@ export const noto = Noto_Sans({
 export const dongle = Dongle({
   variable: '--font-dongle',
   weight: ['300', '700'],
+  subsets: ['latin-ext'],
 });
