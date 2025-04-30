@@ -1,4 +1,4 @@
-import { client } from './config.ts';
+import { client } from './config';
 
 export async function getObjectByKey(group: string, id: string) {
   try {
