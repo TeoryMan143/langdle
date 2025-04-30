@@ -1,9 +1,4 @@
-import {
-  type User,
-  type Session,
-  sessionTable,
-  userTable,
-} from '@/core/database/relational/tables';
+import { sessionTable, userTable } from '@/core/database/relational/tables';
 import {
   encodeBase32LowerCaseNoPadding,
   encodeHexLowerCase,
@@ -13,6 +8,7 @@ import { db } from '@/core/database/relational/config';
 import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
+import type { Session, SessionValidationResult } from './types';
 
 export function generateSessionToken(): string {
   const bytes = new Uint8Array(20);
@@ -97,27 +93,18 @@ export async function deleteSessionTokenCookie(): Promise<void> {
   });
 }
 
-export const auth = cache(
-  async (): Promise<{
-    user: User | null;
-    session: Session | null;
-  }> => {
-    const cookieStore = await cookies();
+export const auth = cache(async (): Promise<SessionValidationResult> => {
+  const cookieStore = await cookies();
 
-    const sessionId = cookieStore.get('session')?.value;
+  const sessionId = cookieStore.get('session')?.value;
 
-    if (!sessionId) {
-      return {
-        user: null,
-        session: null,
-      };
-    }
+  if (!sessionId) {
+    return {
+      user: null,
+      session: null,
+    };
+  }
 
-    const result = await validateSessionToken(sessionId);
-    return result;
-  },
-);
-
-export type SessionValidationResult =
-  | { session: Session; user: User }
-  | { session: null; user: null };
+  const result = await validateSessionToken(sessionId);
+  return result;
+});

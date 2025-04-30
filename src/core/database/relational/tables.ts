@@ -1,4 +1,3 @@
-import type { InferSelectModel } from 'drizzle-orm';
 import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 export const userTable = pgTable('user', {
@@ -17,6 +16,3 @@ export const sessionTable = pgTable('session', {
     mode: 'date',
   }).notNull(),
 });
-
-export type User = InferSelectModel<typeof userTable>;
-export type Session = InferSelectModel<typeof sessionTable>;

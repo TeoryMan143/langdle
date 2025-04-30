@@ -3,9 +3,11 @@ import './globals.css';
 import Header from '@/core/components/main/header';
 import { noto } from '@/core/lib/fonts';
 import { Toaster } from 'sonner';
-import { hasLocale, NextIntlClientProvider } from 'next-intl';
+import { hasLocale } from 'next-intl';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
+import Providers from '@/core/components/main/providers';
+import { auth } from '@/modules/auth/manager';
 
 export const metadata: Metadata = {
   title: 'Langdle',
@@ -24,6 +26,8 @@ export default async function RootLayout({
     notFound();
   }
 
+  const sessionData = await auth();
+
   return (
     <html lang={locale}>
       {/* <head>
@@ -36,7 +40,7 @@ export default async function RootLayout({
         <Toaster />
         <Header />
         <div className='flex-1 py-3'>
-          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+          <Providers sessionData={sessionData}>{children}</Providers>
         </div>
       </body>
     </html>
