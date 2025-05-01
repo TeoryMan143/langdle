@@ -1,8 +1,15 @@
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { CsrfError, createCsrfProtect } from '@edge-csrf/nextjs';
 
-export default function middleware(request: NextRequest) {
+const csrfProtect = createCsrfProtect({
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+  },
+});
+
+export default async function middleware(request: NextRequest) {
   const [, base] = request.nextUrl.pathname.split('/');
 
   if (request.method === 'GET' && base !== 'api') {
@@ -10,29 +17,18 @@ export default function middleware(request: NextRequest) {
     const respose = handleI18Routing(request);
     return respose;
   }
-  const originHeader = request.headers.get('Origin');
-  // NOTE: You may need to use `X-Forwarded-Host` instead
-  const hostHeader = request.headers.get('Host');
-  if (originHeader === null || hostHeader === null) {
-    return new NextResponse(null, {
-      status: 403,
-    });
-  }
-  let origin: URL;
+  const response = NextResponse.next();
+
+  // csrf protection
   try {
-    origin = new URL(originHeader);
-  } catch {
-    return new NextResponse(null, {
-      status: 403,
-    });
-  }
-  if (origin.host !== hostHeader) {
-    return new NextResponse(null, {
-      status: 403,
-    });
+    await csrfProtect(request, response);
+  } catch (err) {
+    if (err instanceof CsrfError)
+      return new NextResponse('invalid csrf token', { status: 403 });
+    throw err;
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

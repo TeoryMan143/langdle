@@ -3,7 +3,7 @@ import './globals.css';
 import Header from '@/core/components/main/header';
 import { noto } from '@/core/lib/fonts';
 import { Toaster } from 'sonner';
-import { hasLocale } from 'next-intl';
+import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import Providers from '@/core/components/main/providers';
@@ -40,7 +40,9 @@ export default async function RootLayout({
         <Toaster />
         <Header />
         <div className='flex-1 py-3'>
-          <Providers sessionData={sessionData}>{children}</Providers>
+          <Providers sessionData={sessionData}>
+            <NextIntlClientProvider>{children}</NextIntlClientProvider>
+          </Providers>
         </div>
       </body>
     </html>
