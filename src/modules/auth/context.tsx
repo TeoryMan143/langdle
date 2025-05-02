@@ -1,5 +1,5 @@
 'use client';
-import { Session, User } from '@/core/database/relational/tables';
+import { Session, User } from './types';
 import { createContext, useContext } from 'react';
 
 interface AuthProviderProps {
