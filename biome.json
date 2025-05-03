@@ -8,7 +8,7 @@
   "files": {
     "ignoreUnknown": false,
     "ignore": [],
-    "include": ["src", "messages"]
+    "include": ["src", "messages", "next.config.ts", "biome.config.js"]
   },
   "formatter": {
     "enabled": true,
@@ -42,6 +42,9 @@
       "style": {
         "useNodejsImportProtocol": "off",
         "useImportType": "off"
+      },
+      "complexity": {
+        "noForEach": "off"
       }
     }
   },
