@@ -1,13 +1,6 @@
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
 import { type NextRequest, NextResponse } from 'next/server';
-import { CsrfError, createCsrfProtect } from '@edge-csrf/nextjs';
-
-const csrfProtect = createCsrfProtect({
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-  },
-});
 
 export default async function middleware(request: NextRequest) {
   const [, base] = request.nextUrl.pathname.split('/');
@@ -17,16 +10,8 @@ export default async function middleware(request: NextRequest) {
     const respose = handleI18Routing(request);
     return respose;
   }
-  const response = NextResponse.next();
 
-  // csrf protection
-  try {
-    await csrfProtect(request, response);
-  } catch (err) {
-    if (err instanceof CsrfError)
-      return new NextResponse('invalid csrf token', { status: 403 });
-    throw err;
-  }
+  const response = NextResponse.next();
 
   return response;
 }
