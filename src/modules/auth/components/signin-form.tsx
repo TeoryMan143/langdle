@@ -45,7 +45,7 @@ function SignInForm() {
     }
 
     toast.success('Signed in successfuly ', { id: toastId });
-    router.push('/signin');
+    router.push('/');
   };
 
   return (
@@ -76,12 +76,12 @@ function SignInForm() {
       </div>
       <div>
         <p className='text-center'>
-          Already signed up?{' '}
+          Don't have an account?{' '}
           <Link
             href='/signin'
             className='text-green-700 hover:underline hover:text-soft-det'
           >
-            Sign in here
+            Sign up here
           </Link>
         </p>
       </div>
