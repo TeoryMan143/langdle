@@ -84,7 +84,7 @@ function SignInForm() {
         <p className='text-center'>
           Don't have an account?{' '}
           <Link
-            href='/signin'
+            href='/signup'
             className='text-green-700 hover:underline hover:text-soft-det'
           >
             Sign up here
