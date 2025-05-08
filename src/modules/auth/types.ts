@@ -18,3 +18,7 @@ const signUpErrorsList = [
 ] as const;
 export const signUpErrors = new Set(signUpErrorsList);
 export type SignUpError = (typeof signUpErrorsList)[number];
+
+export const signOutErrorsList = ['unknown', 'noSession'] as const;
+export const signOutErrors = new Set(signOutErrorsList);
+export type SignOutError = (typeof signOutErrorsList)[number];

@@ -1,11 +1,11 @@
-import { Button } from '@/core/components/ui/button';
-import { auth } from '@/modules/auth/manager';
+import SignOutButton from '@/modules/auth/components/signout-button';
+import { auth } from '@/modules/auth/actions';
 import { redirect, RedirectType } from 'next/navigation';
 
 async function AccountPage() {
   const { user, session } = await auth();
 
-  if (session == null) {
+  if (!session) {
     redirect('/', RedirectType.replace);
   }
 
@@ -13,9 +13,7 @@ async function AccountPage() {
     <div>
       <h1 className='text-4xl text-center'>Account</h1>
       <p className='text-center'>{user.nickname}</p>
-      <div className='flex justify-center'>
-        <Button>Sign out</Button>
-      </div>
+      <SignOutButton />
     </div>
   );
 }

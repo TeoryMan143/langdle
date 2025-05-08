@@ -7,7 +7,7 @@ import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import Providers from '@/core/components/main/providers';
-import { auth } from '@/modules/auth/manager';
+import { auth } from '@/modules/auth/actions';
 
 export const metadata: Metadata = {
   title: 'Langdle',
@@ -37,13 +37,13 @@ export default async function RootLayout({
         />
       </head> */}
       <body className={`${noto.className} antialiased flex flex-col min-h-dvh`}>
-        <Toaster />
-        <Header />
-        <div className='flex-1 py-3'>
-          <Providers sessionData={sessionData}>
-            <NextIntlClientProvider>{children}</NextIntlClientProvider>
-          </Providers>
-        </div>
+        <Providers sessionData={sessionData}>
+          <NextIntlClientProvider>
+            <Toaster />
+            <Header />
+            <div className='flex-1 py-3'>{children}</div>
+          </NextIntlClientProvider>
+        </Providers>
       </body>
     </html>
   );

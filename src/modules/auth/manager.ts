@@ -5,9 +5,8 @@ import {
 } from '@oslojs/encoding';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { db } from '@/core/database/relational/config';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { cookies } from 'next/headers';
-import { cache } from 'react';
 import type { Session, SessionValidationResult } from './types';
 
 export function generateSessionToken(): string {
@@ -40,6 +39,7 @@ export async function validateSessionToken(
     .from(sessionTable)
     .innerJoin(userTable, eq(sessionTable.userId, userTable.id))
     .where(eq(sessionTable.id, sessionId));
+
   if (result.length < 1) {
     return { session: null, user: null };
   }
@@ -61,7 +61,7 @@ export async function validateSessionToken(
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {
-  await db.delete(userTable).where(eq(sessionTable.id, sessionId));
+  await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
 }
 
 export async function invalidateAllSessions(userId: string): Promise<void> {
@@ -73,7 +73,7 @@ export async function setSessionTokenCookie(
   expiresAt: Date,
 ): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.set('session', token, {
+  cookieStore.set('sessionToken', token, {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
@@ -84,7 +84,7 @@ export async function setSessionTokenCookie(
 
 export async function deleteSessionTokenCookie(): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.set('session', '', {
+  cookieStore.set('sessionToken', '', {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production',
@@ -92,19 +92,3 @@ export async function deleteSessionTokenCookie(): Promise<void> {
     path: '/',
   });
 }
-
-export const auth = cache(async (): Promise<SessionValidationResult> => {
-  const cookieStore = await cookies();
-
-  const sessionId = cookieStore.get('session')?.value;
-
-  if (!sessionId) {
-    return {
-      user: null,
-      session: null,
-    };
-  }
-
-  const result = await validateSessionToken(sessionId);
-  return result;
-});

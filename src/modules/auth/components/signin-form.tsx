@@ -24,7 +24,6 @@ function SignInForm() {
   });
 
   const router = useRouter();
-
   const t = useTranslations('Errors');
 
   const onSubmit = async (data: SignInSchema) => {
@@ -78,7 +77,7 @@ function SignInForm() {
       </div>
       <div className='flex justify-center'>
         <Button disabled={!isValid || isLoading} type='submit'>
-          {isLoading ? 'Creating...' : 'Create Account'}{' '}
+          {isLoading ? 'Creating...' : 'Sign In'}{' '}
         </Button>
       </div>
       <div>

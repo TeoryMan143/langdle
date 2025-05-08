@@ -26,7 +26,7 @@ function Header() {
           size='icon'
           onClick={() => {
             if (session) {
-              router.push('/');
+              router.push('/account');
             } else {
               router.push('/signup');
             }

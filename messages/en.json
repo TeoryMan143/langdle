@@ -153,6 +153,7 @@
     "unknown": "Unknown error",
     "invalidUserPassword": "Invalid username or password",
     "nicknameAlreadyExists": "Nickname already exists",
-    "failedCreateUser": "Failed to create user"
+    "failedCreateUser": "Failed to create user",
+    "noSession": "No session"
   }
 }
