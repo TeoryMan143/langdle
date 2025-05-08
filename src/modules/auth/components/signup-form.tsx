@@ -10,6 +10,8 @@ import { cn } from '@/core/lib/utils';
 import { toast } from 'sonner';
 import { signUpUser } from '../actions';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { type SignUpError, signUpErrors } from '../types';
 
 function SignUpForm() {
   const {
@@ -23,6 +25,8 @@ function SignUpForm() {
 
   const router = useRouter();
 
+  const t = useTranslations('Errors');
+
   const onSubmit = async (data: SignUpSchema) => {
     const toastId = toast.loading('Creating your account...');
 
@@ -30,7 +34,10 @@ function SignUpForm() {
       const res = await signUpUser(data);
 
       if (res.error && typeof res.error === 'string') {
-        toast.error(res.error, { id: toastId });
+        toast.error(
+          signUpErrors.has(res.error as SignUpError) ? t(res.error) : res.error,
+          { id: toastId },
+        );
         return;
       }
 

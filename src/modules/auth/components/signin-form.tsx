@@ -10,6 +10,8 @@ import { cn } from '@/core/lib/utils';
 import { toast } from 'sonner';
 import { signInUser } from '../actions';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { SignInError, signInErrors } from '../types';
 
 function SignInForm() {
   const {
@@ -23,13 +25,18 @@ function SignInForm() {
 
   const router = useRouter();
 
+  const t = useTranslations('Errors');
+
   const onSubmit = async (data: SignInSchema) => {
     const toastId = toast.loading('Signing in...');
 
     const res = await signInUser(data);
 
     if (res.error && typeof res.error === 'string') {
-      toast.error(res.error, { id: toastId });
+      toast.error(
+        signInErrors.has(res.error as SignInError) ? t(res.error) : res.error,
+        { id: toastId },
+      );
       return;
     }
 
@@ -45,7 +52,7 @@ function SignInForm() {
     }
 
     toast.success('Signed in successfuly ', { id: toastId });
-    router.push('/');
+    router.push('/account');
   };
 
   return (

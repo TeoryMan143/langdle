@@ -6,3 +6,15 @@ export type Session = InferSelectModel<typeof sessionTable>;
 export type SessionValidationResult =
   | { session: Session; user: User }
   | { session: null; user: null };
+
+const signInErrorsList = ['invalidUserPassword', 'unknown'] as const;
+export const signInErrors = new Set(signInErrorsList);
+export type SignInError = (typeof signInErrorsList)[number];
+
+const signUpErrorsList = [
+  'nicknameAlreadyExists',
+  'failedCreateUser',
+  'unknown',
+] as const;
+export const signUpErrors = new Set(signUpErrorsList);
+export type SignUpError = (typeof signUpErrorsList)[number];

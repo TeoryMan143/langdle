@@ -3,7 +3,7 @@
 import { actionError, ActionResult, actionSuccess } from '@/core/actions/utils';
 import { SignUpSchema, signUpSchema } from './schemas/signup';
 import { type typeToFlattenedError } from 'zod';
-import type { Session, User } from './types';
+import type { Session, SignInError, SignUpError, User } from './types';
 import { db } from '@/core/database/relational/config';
 import { userTable } from '@/core/database/relational/tables';
 import argon2 from 'argon2';
@@ -18,7 +18,9 @@ import { signInSchema } from './schemas/signin';
 
 export async function signUpUser(
   data: object,
-): Promise<ActionResult<User, typeToFlattenedError<SignUpSchema> | string>> {
+): Promise<
+  ActionResult<User, typeToFlattenedError<SignUpSchema> | SignUpError | string>
+> {
   const validation = signUpSchema.safeParse(data);
 
   if (!validation.success) {
@@ -33,7 +35,7 @@ export async function signUpUser(
     const [newUser] = await db.insert(userTable).values(userData).returning();
 
     if (!newUser) {
-      return actionError('Failed to create user');
+      return actionError('failedCreateUser');
     }
 
     return actionSuccess(newUser);
@@ -42,7 +44,7 @@ export async function signUpUser(
     let message = 'unknown';
     if (e instanceof NeonDbError) {
       if (e.constraint === 'user_nickname_unique') {
-        message = 'Nickname already exists';
+        message = 'nicknameAlreadyExists';
       }
     } else if (e instanceof Error) {
       message = e.message;
@@ -56,7 +58,7 @@ export async function signInUser(
 ): Promise<
   ActionResult<
     { user: User; session: Session },
-    typeToFlattenedError<SignUpSchema> | string
+    typeToFlattenedError<SignUpSchema> | SignInError | string
   >
 > {
   const validation = signInSchema.safeParse(data);
@@ -75,7 +77,7 @@ export async function signInUser(
       .limit(1);
 
     if (!user) {
-      return actionError('User not found');
+      return actionError('invalidUserPassword');
     }
 
     const isValidPassword = await argon2.verify(
@@ -84,7 +86,7 @@ export async function signInUser(
     );
 
     if (!isValidPassword) {
-      return actionError('Invalid password');
+      return actionError('invalidUserPassword');
     }
 
     const token = generateSessionToken();
