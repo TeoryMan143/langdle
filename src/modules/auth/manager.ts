@@ -5,7 +5,7 @@ import {
 } from '@oslojs/encoding';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { db } from '@/core/database/relational/config';
-import { eq, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 import type { Session, SessionValidationResult } from './types';
 
@@ -40,7 +40,9 @@ export async function validateSessionToken(
         id: userTable.id,
         nickname: userTable.nickname,
         admin: userTable.admin,
-    }, session: sessionTable })
+      },
+      session: sessionTable,
+    })
     .from(sessionTable)
     .innerJoin(userTable, eq(sessionTable.userId, userTable.id))
     .where(eq(sessionTable.id, sessionId));
