@@ -9,6 +9,7 @@ import type {
   SignInError,
   SignUpError,
   User,
+  UserDTO,
 } from './types';
 import { db } from '@/core/database/relational/config';
 import { userTable } from '@/core/database/relational/tables';
@@ -68,7 +69,7 @@ export async function signInUser(
   data: object,
 ): Promise<
   ActionResult<
-    { user: User; session: Session },
+    { user: UserDTO; session: Session },
     typeToFlattenedError<SignUpSchema> | SignInError | string
   >
 > {
@@ -108,7 +109,7 @@ export async function signInUser(
       new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
     );
 
-    return actionSuccess({ user, session });
+    return actionSuccess({ user: {nickname: user.nickname, id: user.id, admin: user.admin}, session });
   } catch (e) {
     console.error(e);
     let message = 'unknown';
