@@ -4,7 +4,7 @@ export const userTable = pgTable('user', {
   id: uuid('id').primaryKey().defaultRandom(),
   nickname: text().unique().notNull(),
   password: text().notNull(),
-  admin: boolean('admin').default(false),
+  admin: boolean('admin').notNull().default(false),
 });
 
 export const sessionTable = pgTable('session', {

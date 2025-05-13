@@ -6,7 +6,7 @@ export type UserDTO = Omit<User, 'password'>;
 
 export type Session = InferSelectModel<typeof sessionTable>;
 export type SessionValidationResult =
-  | { session: Session; user: User }
+  | { session: Session; user: UserDTO }
   | { session: null; user: null };
 
 const signInErrorsList = ['invalidUserPassword', 'unknown'] as const;

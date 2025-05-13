@@ -35,7 +35,12 @@ export async function validateSessionToken(
 ): Promise<SessionValidationResult> {
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
   const result = await db
-    .select({ user: userTable, session: sessionTable })
+    .select({
+      user: {
+        id: userTable.id,
+        nickname: userTable.nickname,
+        admin: userTable.admin,
+    }, session: sessionTable })
     .from(sessionTable)
     .innerJoin(userTable, eq(sessionTable.userId, userTable.id))
     .where(eq(sessionTable.id, sessionId));
