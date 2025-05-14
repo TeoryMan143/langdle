@@ -2,11 +2,11 @@
 
 import { dongle } from '@/core/lib/fonts';
 import { Button } from '../ui/button';
-import SolidBars from '../icons/solid-bars';
 import User from '../icons/user';
 import Link from 'next/link';
 import { useAuth } from '@/modules/auth/context';
 import { useRouter } from 'next/navigation';
+import OptionsSideBar from './options-side-bar';
 
 function Header() {
   const { session } = useAuth();
@@ -35,13 +35,7 @@ function Header() {
           <User />
         </Button>
 
-        <Button
-          className='bg-white hover:bg-background'
-          variant='noShadow'
-          size='icon'
-        >
-          <SolidBars className='text-xl' />
-        </Button>
+        <OptionsSideBar />
       </div>
     </header>
   );
