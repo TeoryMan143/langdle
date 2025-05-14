@@ -1,4 +1,11 @@
-import { boolean, pgTable, primaryKey, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 export const userTable = pgTable('user', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -18,10 +25,13 @@ export const sessionTable = pgTable('session', {
   }).notNull(),
 });
 
-export const langPersissionTable = pgTable('lang_persission', {
-  userId: uuid('user_id')
-    .notNull().references(() => userTable.id),
-  lang: text('lang').notNull(),
-}, (t) => ([
-  primaryKey({columns: [t.userId, t.lang]})
-]))
+export const langPermissionTable = pgTable(
+  'lang_permission',
+  {
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => userTable.id),
+    lang: text('lang').notNull(),
+  },
+  t => [primaryKey({ columns: [t.userId, t.lang] })],
+);
