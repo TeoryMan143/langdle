@@ -10,13 +10,36 @@ import {
 } from '../ui/drawer';
 import { useMemo } from 'react';
 import Link from 'next/link';
+import { getLangPermissions } from '@/modules/lang-data/actions';
+import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 function OptionsSideBar() {
-  const { session, user } = useAuth();
+  const { user } = useAuth();
 
-  // const {}
+  const { data: permissions, error } = useQuery({
+    queryKey: [user?.id, 'langPermissions'],
+    queryFn: async () => {
+      if (!user?.id) {
+        return [];
+      }
 
-  // const showLangData = useMemo(() => first, []);
+      const permissions = await getLangPermissions(user.id);
+
+      if (!permissions.success) {
+        console.error(permissions.error);
+        return [];
+      }
+
+      return permissions.result;
+    },
+  });
+
+  if (error) {
+    toast.error(error.message);
+  }
+
+  // const showLangData = useMemo(() =>  user?.admin || permissions?.length < 0, [user?.admin, permissions]);
 
   return (
     <Drawer>
