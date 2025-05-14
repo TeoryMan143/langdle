@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { langCodeSchema, langDataSchema } from '@/core/lib/schemas/langs';
 import { getAllLanguages, getLanguageById, setLanguageData } from './action';
+import langPermissions from './permissions/controller';
 
 const langFeatures = new Hono();
 
@@ -85,5 +86,7 @@ langFeatures.put('/:id', async c => {
     message: 'Language set',
   });
 });
+
+langFeatures.route('/permissions', langPermissions);
 
 export default langFeatures;
