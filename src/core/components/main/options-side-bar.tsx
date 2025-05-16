@@ -5,6 +5,7 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerTitle,
   DrawerTrigger,
 } from '../ui/drawer';
@@ -17,7 +18,12 @@ import { toast } from 'sonner';
 function OptionsSideBar() {
   const { user } = useAuth();
 
-  const { data: permissions, error } = useQuery({
+  const {
+    data: permissions,
+    error,
+    isLoading,
+    isSuccess,
+  } = useQuery({
     queryKey: [user?.id, 'langPermissions'],
     queryFn: async () => {
       if (!user?.id) {
@@ -39,12 +45,15 @@ function OptionsSideBar() {
     toast.error(error.message);
   }
 
-  // const showLangData = useMemo(() =>  user?.admin || permissions?.length < 0, [user?.admin, permissions]);
+  const showLangData = useMemo(
+    () => user?.admin || (permissions && permissions?.length > 0),
+    [user?.admin, permissions],
+  );
 
   return (
-    <Drawer>
+    <Drawer direction='right'>
       <DrawerClose />
-      <DrawerTrigger>
+      <DrawerTrigger asChild>
         <Button
           className='bg-white hover:bg-background'
           variant='noShadow'
@@ -53,11 +62,24 @@ function OptionsSideBar() {
           <SolidBars className='text-xl' />
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
-        <DrawerTitle className='text-2xl font-bold'>Options</DrawerTitle>
-        <div className='flex flex-col gap-2 p-4'>
-          <Link href='/'>si</Link>
-        </div>
+      <DrawerContent className='p-3'>
+        <DrawerTitle className='text-2xl font-bold mb-2'>Options</DrawerTitle>
+        <DrawerDescription className='hidden'>
+          A sidebar that shows the avialable options for the user
+        </DrawerDescription>
+        {isLoading && <p>Loading...</p>}
+        {isSuccess && (
+          <div className='flex flex-col gap-2'>
+            {showLangData && (
+              <Link
+                className='hover:underline hover:font-bold transition-all'
+                href='/data'
+              >
+                Language Data
+              </Link>
+            )}
+          </div>
+        )}
       </DrawerContent>
     </Drawer>
   );
