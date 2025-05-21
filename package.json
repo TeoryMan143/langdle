@@ -6,8 +6,7 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "scan": "next dev --turbopack & pnpm dlx react-scan@latest localhost:3000"
+    "lint": "next lint"
   },
   "dependencies": {
     "@edge-csrf/nextjs": "2.5.3-cloudflare-rc1",
