@@ -1,8 +1,10 @@
-import { getAllLanguages } from '@/core/actions/langs';
+import { getAllLanguages, getLanguagesByIds } from '@/core/actions/langs';
 import { Link } from '@/i18n/navigation';
 
-async function LangsList() {
-  const langsRes = await getAllLanguages();
+async function LangsList({ allowedLangs }: { allowedLangs?: string[] }) {
+  const langsRes = !allowedLangs
+    ? await getAllLanguages()
+    : await getLanguagesByIds(allowedLangs);
 
   if (!langsRes.success) {
     console.error(langsRes.error);

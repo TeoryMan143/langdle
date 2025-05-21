@@ -1,6 +1,11 @@
 import { Hono } from 'hono';
 import { langDataSchema } from '@/core/lib/schemas/langs';
-import { getAllLanguages, getLanguageById, setLanguageData } from './action';
+import {
+  getAllLanguages,
+  getLanguageById,
+  getLanguagesByIds,
+  setLanguageData,
+} from './action';
 import langPermissions from './permissions/controller';
 
 const langFeatures = new Hono();
@@ -23,7 +28,12 @@ langFeatures.get('/:id', async c => {
 });
 
 langFeatures.get('/', async c => {
-  const langs = await getAllLanguages();
+  const langIds = new URL(c.req.url).searchParams.getAll('id');
+
+  const langs =
+    langIds.length === 0
+      ? await getAllLanguages()
+      : await getLanguagesByIds(langIds);
 
   if (!langs || langs.length === 0) {
     return c.json({

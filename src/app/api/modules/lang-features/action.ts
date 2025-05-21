@@ -27,3 +27,7 @@ export function setLanguageData({
 }) {
   return langRepository.set(id, data);
 }
+
+export function getLanguagesByIds(ids: string[]) {
+  return langRepository.getByIds(ids);
+}

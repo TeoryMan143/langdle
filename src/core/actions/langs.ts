@@ -29,6 +29,33 @@ export async function getAllLanguages(): Promise<ActionResult<Language[]>> {
   }
 }
 
+export async function getLanguagesByIds(
+  ids: string[],
+): Promise<ActionResult<Language[]>> {
+  try {
+    const searchIds = ids.map(id => `id=${id}`).join('&');
+
+    const res = await fetch(`${baseUrl}/api/lang/?${searchIds}`);
+
+    if (res.status !== 200) {
+      const error = await res.json();
+      console.error(error);
+      return actionError(error.message);
+    }
+
+    const langs = (await res.json()) as Language[];
+
+    return actionSuccess(langs);
+  } catch (e) {
+    let message = 'unknown error';
+    if (e instanceof Error) {
+      console.error(e);
+      message = e.message;
+    }
+    return actionError(message);
+  }
+}
+
 export async function getLanguage(
   code: string,
 ): Promise<ActionResult<Language>> {

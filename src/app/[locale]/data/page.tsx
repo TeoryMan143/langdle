@@ -31,7 +31,7 @@ async function DataPage() {
       </h2>
 
       <div className='flex justify-center'>
-        <LangsList />
+        <LangsList allowedLangs={user.admin ? undefined : permissions} />
       </div>
     </main>
   );

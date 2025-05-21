@@ -29,4 +29,14 @@ async function set(id: string, data: LanguageData) {
   return res === 'OK';
 }
 
-export default { getAll, getById, set };
+async function getByIds(ids: string[]): Promise<Language[]> {
+  const langsData = (await Promise.all(
+    ids.map(id => client.json.get(`lang:${id}`)),
+  )) as LanguageData[];
+
+  const langs = langsData.map((data, i) => ({ id: ids[i], ...data }));
+
+  return langs;
+}
+
+export default { getAll, getById, set, getByIds };
