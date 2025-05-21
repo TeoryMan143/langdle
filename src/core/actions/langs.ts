@@ -1,7 +1,7 @@
 'use server';
 
 import { actionError, ActionResult, actionSuccess } from '@/core/actions/utils';
-import type { Language, LanguageCode, LanguageData } from '@/core/lib/types';
+import type { Language, LanguageData } from '@/core/lib/types';
 import { revalidatePath } from 'next/cache';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -30,7 +30,7 @@ export async function getAllLanguages(): Promise<ActionResult<Language[]>> {
 }
 
 export async function getLanguage(
-  code: LanguageCode,
+  code: string,
 ): Promise<ActionResult<Language>> {
   try {
     const res = await fetch(`${baseUrl}/api/lang/${code}`);
@@ -55,7 +55,7 @@ export async function getLanguage(
 }
 
 export async function setLanguageData(
-  code: LanguageCode,
+  code: string,
   data: LanguageData,
 ): Promise<ActionResult<string>> {
   try {

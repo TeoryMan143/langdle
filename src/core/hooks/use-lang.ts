@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import type { LanguageCode, Language, LanguageData } from '../lib/types';
+import type { Language, LanguageData } from '../lib/types';
 import {
   getAllLanguages,
   getLanguage,
@@ -14,13 +14,13 @@ type GetAllLanguages = {
 
 type GetLanguageByCode = {
   action: 'get';
-  lang: LanguageCode;
+  lang: string;
   data?: never;
 };
 
 type ModifyLanguage = {
   action: 'modify';
-  lang: LanguageCode;
+  lang: string;
   data: LanguageData;
 };
 

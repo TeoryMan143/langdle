@@ -1,10 +1,6 @@
 'use client';
 
-import type {
-  LangFeatures,
-  LanguageCode,
-  LanguageData,
-} from '@/core/lib/types';
+import type { LangFeatures, LanguageData } from '@/core/lib/types';
 import { useCallback, useState } from 'react';
 import FeatureChecker from './feature-checker';
 import { Button } from '@/core/components/ui/button';
@@ -15,7 +11,7 @@ import { toast } from 'sonner';
 
 type Props = {
   currentData: LanguageData;
-  code: LanguageCode;
+  code: string;
 };
 
 function LangFeaturesForm({ currentData, code }: Props) {

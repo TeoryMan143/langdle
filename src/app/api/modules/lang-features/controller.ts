@@ -1,21 +1,12 @@
 import { Hono } from 'hono';
-import { langCodeSchema, langDataSchema } from '@/core/lib/schemas/langs';
+import { langDataSchema } from '@/core/lib/schemas/langs';
 import { getAllLanguages, getLanguageById, setLanguageData } from './action';
 import langPermissions from './permissions/controller';
 
 const langFeatures = new Hono();
 
 langFeatures.get('/:id', async c => {
-  const { error, data: langId } = langCodeSchema.safeParse(c.req.param('id'));
-
-  if (error) {
-    return c.json(
-      {
-        message: 'Error invalid language code',
-      },
-      400,
-    );
-  }
+  const langId = c.req.param('id');
 
   const lang = await getLanguageById(langId);
 
@@ -44,11 +35,11 @@ langFeatures.get('/', async c => {
 });
 
 langFeatures.put('/:id', async c => {
-  const { error: idError, data: langId } = langCodeSchema.safeParse(
-    c.req.param('id'),
-  );
+  const langId = c.req.param('id');
 
-  if (idError) {
+  const lang = await getLanguageById(langId);
+
+  if (!lang) {
     return c.json(
       {
         message: 'Error invalid language code',

@@ -1,12 +1,10 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { LanguageCode } from './types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const languageCodes = ['en', 'es', 'ar', 'tr'] as const;
 export const langFeatures = [
   'nasalization',
   'clickConsonants',
@@ -79,10 +77,3 @@ export const langFeatures = [
   'interrogativeParticles',
   'pharyngealization',
 ] as const;
-
-export const langFlags: Record<LanguageCode, string> = {
-  en: '🇺🇸',
-  es: '🇪🇸',
-  ar: '🇸🇦',
-  tr: '🇹🇷',
-};

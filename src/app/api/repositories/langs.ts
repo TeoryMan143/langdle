@@ -2,10 +2,10 @@ import {
   getObjectByKey,
   setObjectToKey,
 } from '@/core/database/redis/key-getters';
-import type { Language, LanguageCode, LanguageData } from '@/core/lib/types';
+import type { Language, LanguageData } from '@/core/lib/types';
 import { client } from '@/core/database/redis/config';
 
-async function getById(id: LanguageCode) {
+async function getById(id: string) {
   return (await getObjectByKey('lang', id)) as LanguageData | undefined;
 }
 
@@ -24,7 +24,7 @@ async function getAll() {
   return langs;
 }
 
-async function set(id: LanguageCode, data: LanguageData) {
+async function set(id: string, data: LanguageData) {
   const res = await setObjectToKey('lang', id, data);
   return res === 'OK';
 }

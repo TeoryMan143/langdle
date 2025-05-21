@@ -1,8 +1,8 @@
-import type { LanguageData, LanguageCode, Language } from '@/core/lib/types';
+import type { LanguageData, Language } from '@/core/lib/types';
 import langRepository from '@/app/api/repositories/langs';
 
 export async function getLanguageById(
-  id: LanguageCode,
+  id: string,
 ): Promise<Language | undefined> {
   const data = await langRepository.getById(id);
 
@@ -22,7 +22,7 @@ export function setLanguageData({
   id,
   data,
 }: {
-  id: LanguageCode;
+  id: string;
   data: LanguageData;
 }) {
   return langRepository.set(id, data);

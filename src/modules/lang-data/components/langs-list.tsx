@@ -1,6 +1,4 @@
-import { LanguageCode } from '@/core/lib/types';
 import { getAllLanguages } from '@/core/actions/langs';
-import { langFlags } from '@/core/lib/utils';
 import { Link } from '@/i18n/navigation';
 
 async function LangsList() {
@@ -26,13 +24,13 @@ function LangSelector({
   code,
   name,
   exonym,
-}: { code: LanguageCode; name: string; exonym?: string }) {
+}: { code: string; name: string; exonym?: string }) {
   return (
     <Link
       href={`/data/${code}`}
       className='py-3 border-b border-black block transition-colors px-4 hover:bg-main'
     >
-      <p className='text-center text-xl'>{`${langFlags[code]} ${name}${exonym ? ` (${exonym})` : ''}`}</p>
+      <p className='text-center text-xl'>{`${'🇺🇸'} ${name}${exonym ? ` (${exonym})` : ''}`}</p>
     </Link>
   );
 }

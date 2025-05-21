@@ -1,7 +1,5 @@
 import { z } from 'zod';
-import { langFeatures, languageCodes } from '../utils';
-
-export const langCodeSchema = z.enum(languageCodes);
+import { langFeatures } from '../utils';
 
 export const langDataSchema = z.object({
   name: z.string().min(1).trim(),
