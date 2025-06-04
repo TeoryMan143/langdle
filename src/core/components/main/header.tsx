@@ -15,7 +15,7 @@ function Header() {
   return (
     <header className='bg-main relative'>
       <h1
-        className={`${dongle.className} text-8xl text-white text-center relative top-2`}
+        className={`${dongle.className} text-8xl text-white text-center relative top-2 overflow-clip`}
       >
         <Link href='/'>LANGDLE</Link>
       </h1>
