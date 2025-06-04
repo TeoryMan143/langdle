@@ -7,6 +7,8 @@ import {
   setLanguageData,
 } from './action';
 import langPermissions from './permissions/controller';
+import { auth } from '@/modules/auth/actions';
+import { getUserLangPermissions } from './permissions/action';
 
 const langFeatures = new Hono();
 
@@ -55,6 +57,28 @@ langFeatures.put('/:id', async c => {
         message: 'Error invalid language code',
       },
       400,
+    );
+  }
+
+  const { user, session } = await auth();
+
+  if (!session) {
+    return c.json(
+      {
+        message: 'Must be signed in',
+      },
+      401,
+    );
+  }
+
+  const permissions = await getUserLangPermissions(user.id);
+
+  if (permissions.includes(langId)) {
+    return c.json(
+      {
+        message: 'Language not allowed',
+      },
+      401,
     );
   }
 
