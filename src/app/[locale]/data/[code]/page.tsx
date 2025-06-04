@@ -1,6 +1,8 @@
 import { getLanguage } from '@/core/actions/langs';
+import { auth } from '@/modules/auth/actions';
+import { getLangPermissions } from '@/modules/lang-data/actions';
 import LangFeaturesForm from '@/modules/lang-data/components/lang-features';
-import { notFound } from 'next/navigation';
+import { notFound, redirect, RedirectType } from 'next/navigation';
 
 type Props = {
   params: Promise<{ code: string }>;
@@ -8,6 +10,25 @@ type Props = {
 
 async function EditDataPage({ params }: Props) {
   const { code } = await params;
+
+  const { user, session } = await auth();
+
+  if (!session) {
+    redirect('/', RedirectType.replace);
+  }
+
+  const langPermissionsRes = await getLangPermissions(user.id);
+
+  if (!langPermissionsRes.success) {
+    console.error('Could not get permissions: ', langPermissionsRes.error);
+    redirect('/', RedirectType.replace);
+  }
+
+  const langPermissions = langPermissionsRes.result;
+
+  if (!langPermissions.includes(code)) {
+    redirect('/', RedirectType.replace);
+  }
 
   const { success, result: lang, error } = await getLanguage(code);
 
