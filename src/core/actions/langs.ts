@@ -3,6 +3,7 @@
 import { actionError, ActionResult, actionSuccess } from '@/core/actions/utils';
 import type { Language, LanguageData } from '@/core/lib/types';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -86,10 +87,21 @@ export async function setLanguageData(
   data: LanguageData,
 ): Promise<ActionResult<string>> {
   try {
+    const cookieStore = await cookies();
+
+    const sessionId = cookieStore.get('sessionToken')?.value;
+
+    if (!sessionId) {
+      return actionError('Must be signed in');
+    }
+
     const res = await fetch(`${baseUrl}/api/lang/${code}`, {
       method: 'put',
       body: JSON.stringify(data),
       cache: 'no-cache',
+      headers: {
+        Cookie: `sessionToken=${sessionId}`,
+      },
     });
 
     if (res.status !== 200) {
