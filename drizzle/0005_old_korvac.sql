@@ -1,0 +1,1 @@
+ALTER TABLE "lang_token" RENAME COLUMN "sent_at" TO "expires_at";

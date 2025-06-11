@@ -35,3 +35,15 @@ export const langPermissionTable = pgTable(
   },
   t => [primaryKey({ columns: [t.userId, t.lang] })],
 );
+
+export const langTokenTable = pgTable('lang_token', {
+  id: uuid().defaultRandom().primaryKey(),
+  code: text().notNull(),
+  lang: text().notNull(),
+  expiresAt: timestamp('expires_at', {
+    withTimezone: true,
+    mode: 'date',
+  })
+    .notNull()
+    .default(new Date(Date.now() + 1000 * 60 * 10)),
+});

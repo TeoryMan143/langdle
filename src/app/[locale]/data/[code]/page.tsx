@@ -3,6 +3,7 @@ import { auth } from '@/modules/auth/actions';
 import { getLangPermissions } from '@/modules/lang-data/actions';
 import LangFeaturesForm from '@/modules/lang-data/components/lang-features';
 import LangImage from '@/modules/lang-data/components/lang-image';
+import SharePermissionButton from '@/modules/lang-data/components/share-permission-button';
 import { notFound, redirect, RedirectType } from 'next/navigation';
 
 type Props = {
@@ -42,8 +43,9 @@ async function EditDataPage({ params }: Props) {
 
   return (
     <main className='space-y-4'>
-      <h2 className='text-center text-2xl'>
+      <h2 className='text-center text-2xl relative'>
         <LangImage code={code} /> {`${name}${exonym ? ` (${exonym})` : ''}`}
+        {user.admin && <SharePermissionButton lang={lang.id} />}
       </h2>
       <div className='flex justify-center'>
         <LangFeaturesForm code={code} currentData={lang} />

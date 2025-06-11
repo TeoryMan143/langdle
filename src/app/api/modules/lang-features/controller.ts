@@ -11,9 +11,9 @@ import { getUserLangPermissions } from './permissions/action';
 import { getCookie } from 'hono/cookie';
 import { validateSessionToken } from '@/modules/auth/manager';
 
-const langFeatures = new Hono();
+const langFeaturesRouter = new Hono();
 
-langFeatures.get('/:id', async c => {
+langFeaturesRouter.get('/:id', async c => {
   const langId = c.req.param('id');
 
   const lang = await getLanguageById(langId);
@@ -30,7 +30,7 @@ langFeatures.get('/:id', async c => {
   return c.json(lang);
 });
 
-langFeatures.get('/', async c => {
+langFeaturesRouter.get('/', async c => {
   const langIds = new URL(c.req.url).searchParams.getAll('id');
 
   const langs =
@@ -47,7 +47,7 @@ langFeatures.get('/', async c => {
   return c.json(langs);
 });
 
-langFeatures.put('/:id', async c => {
+langFeaturesRouter.put('/:id', async c => {
   const langId = c.req.param('id');
 
   const lang = await getLanguageById(langId);
@@ -124,6 +124,6 @@ langFeatures.put('/:id', async c => {
   });
 });
 
-langFeatures.route('/permissions', langPermissions);
+langFeaturesRouter.route('/permissions', langPermissions);
 
-export default langFeatures;
+export default langFeaturesRouter;

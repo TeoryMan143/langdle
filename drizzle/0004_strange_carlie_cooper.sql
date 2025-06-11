@@ -1,0 +1,1 @@
+ALTER TABLE "lang_token" ALTER COLUMN "sent_at" SET DEFAULT now();
