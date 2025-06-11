@@ -2,6 +2,7 @@ import { getLanguage } from '@/core/actions/langs';
 import { auth } from '@/modules/auth/actions';
 import { getLangPermissions } from '@/modules/lang-data/actions';
 import LangFeaturesForm from '@/modules/lang-data/components/lang-features';
+import LangImage from '@/modules/lang-data/components/lang-image';
 import { notFound, redirect, RedirectType } from 'next/navigation';
 
 type Props = {
@@ -19,14 +20,14 @@ async function EditDataPage({ params }: Props) {
 
   const langPermissionsRes = await getLangPermissions(user.id);
 
-  if (!langPermissionsRes.success) {
+  if (!langPermissionsRes.success && !user.admin) {
     console.error('Could not get permissions: ', langPermissionsRes.error);
     redirect('/', RedirectType.replace);
   }
 
   const langPermissions = langPermissionsRes.result;
 
-  if (!langPermissions.includes(code)) {
+  if (!langPermissions?.includes(code) && !user.admin) {
     redirect('/', RedirectType.replace);
   }
 
@@ -42,7 +43,7 @@ async function EditDataPage({ params }: Props) {
   return (
     <main className='space-y-4'>
       <h2 className='text-center text-2xl'>
-        {'🇺🇸'} {`${name}${exonym ? ` (${exonym})` : ''}`}
+        <LangImage code={code} /> {`${name}${exonym ? ` (${exonym})` : ''}`}
       </h2>
       <div className='flex justify-center'>
         <LangFeaturesForm code={code} currentData={lang} />

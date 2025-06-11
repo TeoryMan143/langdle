@@ -6,10 +6,17 @@ export async function getLangPermissions(
   userId: string,
 ): Promise<ActionResult<string[]>> {
   try {
-    const permissions = (await fetch(
+    const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/lang/permissions/${userId}`,
-    ).then(res => res.json())) as string[];
-    return actionSuccess(permissions);
+    );
+
+    const body = await res.json();
+
+    if (!res.ok) {
+      return actionError(body.message);
+    }
+
+    return actionSuccess(body);
   } catch (e) {
     console.error(e);
     let message = 'unknown';

@@ -13,14 +13,14 @@ async function DataPage() {
 
   const permissionsRes = await getLangPermissions(user.id);
 
-  if (!permissionsRes.success) {
+  if (!permissionsRes.success && !user.admin) {
     console.error(permissionsRes.error);
     redirect('/', RedirectType.replace);
   }
 
   const permissions = permissionsRes.result;
 
-  if (permissions.length === 0 && !user.admin) {
+  if (permissions?.length === 0) {
     redirect('/', RedirectType.replace);
   }
 
