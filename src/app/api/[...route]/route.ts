@@ -17,6 +17,7 @@ export const PUT = handle(api);
 cron.schedule('*/10 * * * *', async () => {
   try {
     db.delete(langTokenTable).where(lt(langTokenTable.expiresAt, new Date()));
+    console.log('Expired language tokens deleted successfully');
   } catch (e) {
     console.error(e);
   }
