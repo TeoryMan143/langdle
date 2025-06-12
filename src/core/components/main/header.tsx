@@ -6,7 +6,7 @@ import User from '../icons/user';
 import Link from 'next/link';
 import { useAuth } from '@/modules/auth/context';
 import { useRouter } from 'next/navigation';
-import OptionsSideBar from './options-side-bar';
+import LangDataButton from './lang-data-button';
 
 function Header() {
   const { session } = useAuth();
@@ -35,7 +35,7 @@ function Header() {
           <User />
         </Button>
 
-        <OptionsSideBar />
+        <LangDataButton />
       </div>
     </header>
   );
