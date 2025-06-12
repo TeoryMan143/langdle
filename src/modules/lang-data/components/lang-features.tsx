@@ -8,6 +8,7 @@ import objEquals from 'just-compare';
 import { langFeatures } from '@/core/lib/utils';
 import { setLanguageData } from '@/core/actions/langs';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 type Props = {
   currentData: LanguageData;
@@ -18,6 +19,7 @@ function LangFeaturesForm({ currentData, code }: Props) {
   const currentFeatures = currentData.features;
 
   const [newFeats, setNewFeats] = useState([...currentFeatures]);
+  const t = useTranslations('Errors.langData');
 
   const createFeatureActivation = useCallback(
     (feat: LangFeatures) => (active: boolean) => {
@@ -31,18 +33,18 @@ function LangFeaturesForm({ currentData, code }: Props) {
   );
 
   const handleSubmitData = async () => {
-    const toastId = toast.loading('Updating features');
+    const toastId = toast.loading(`${t('loading')}...`);
 
-    const { success, error, result } = await setLanguageData(code, {
+    const { success, error } = await setLanguageData(code, {
       ...currentData,
       features: newFeats,
     });
 
     if (!success) {
-      return toast.error(error, { id: toastId });
+      return toast.error(t(error), { id: toastId });
     }
 
-    toast.success(result, { id: toastId });
+    toast.success(t('success'), { id: toastId });
   };
 
   return (

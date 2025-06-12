@@ -21,9 +21,10 @@ langFeaturesRouter.get('/:id', async c => {
   if (!lang) {
     return c.json(
       {
+        key: 'notFound',
         message: 'Language not found',
       },
-      500,
+      404,
     );
   }
 
@@ -40,6 +41,7 @@ langFeaturesRouter.get('/', async c => {
 
   if (!langs || langs.length === 0) {
     return c.json({
+      key: 'notFounds',
       message: 'No languages found',
     });
   }
@@ -55,6 +57,7 @@ langFeaturesRouter.put('/:id', async c => {
   if (!lang) {
     return c.json(
       {
+        key: 'notFound',
         message: 'Error invalid language code',
       },
       400,
@@ -66,6 +69,7 @@ langFeaturesRouter.put('/:id', async c => {
   if (!sessionToken) {
     return c.json(
       {
+        key: 'notSignedIn',
         message: 'Must be signed in',
       },
       401,
@@ -77,6 +81,7 @@ langFeaturesRouter.put('/:id', async c => {
   if (!session) {
     return c.json(
       {
+        key: 'notSignedIn',
         message: 'Must be signed in',
       },
       401,
@@ -88,6 +93,7 @@ langFeaturesRouter.put('/:id', async c => {
   if (!permissions.includes(langId)) {
     return c.json(
       {
+        key: 'notAllowed',
         message: 'Language not allowed',
       },
       401,
@@ -101,6 +107,7 @@ langFeaturesRouter.put('/:id', async c => {
   if (dataError) {
     return c.json(
       {
+        key: 'invalidData',
         message: 'An error occurred parsing the body data',
         errors: dataError.flatten(),
       },
@@ -113,6 +120,7 @@ langFeaturesRouter.put('/:id', async c => {
   if (!success) {
     return c.json(
       {
+        key: 'unknown',
         message: 'Unknown error, the language data could not be set',
       },
       500,
@@ -120,6 +128,7 @@ langFeaturesRouter.put('/:id', async c => {
   }
 
   return c.json({
+    key: 'success',
     message: 'Language set',
   });
 });

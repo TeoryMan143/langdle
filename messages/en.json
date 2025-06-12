@@ -150,10 +150,32 @@
     }
   },
   "Errors": {
-    "unknown": "Unknown error",
-    "invalidUserPassword": "Invalid username or password",
-    "nicknameAlreadyExists": "Nickname already exists",
-    "failedCreateUser": "Failed to create user",
-    "noSession": "No session"
+    "auth": {
+      "unknown": "Unknown error",
+      "invalidUserPassword": "Invalid username or password",
+      "nicknameAlreadyExists": "Nickname already exists",
+      "failedCreateUser": "Failed to create user",
+      "noSession": "No session"
+    },
+
+    "langData": {
+      "loading": "Updating features",
+      "notFound": "Language not found",
+      "notFounds": "Languages not found",
+      "notSignedIn": "Must be signed in",
+      "notAllowed": "You do not have permission to access this language",
+      "invalidData": "Invalid language data",
+      "unknown": "Unknown error, the language data could not be set",
+      "success": "Language data updated successfully"
+    },
+
+    "langPermissions": {
+      "loading": "Generating edit URL",
+      "notSignedIn": "Must be signed in",
+      "permissionNotFound": "No permissions for that user",
+      "notAllowed": "Not allowed to create edit URLs",
+      "languageNotFound": "Language not found",
+      "tokenGenerationFailed": "Failed to generate token"
+    }
   }
 }

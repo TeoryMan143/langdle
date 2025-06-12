@@ -25,7 +25,7 @@ function SignUpForm() {
 
   const router = useRouter();
 
-  const t = useTranslations('Errors');
+  const t = useTranslations('Errors.auth');
 
   const onSubmit = async (data: SignUpSchema) => {
     const toastId = toast.loading('Creating your account...');

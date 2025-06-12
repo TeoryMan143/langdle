@@ -70,7 +70,7 @@ export async function setUserPermission(jwt: string, userId: string) {
     });
 
     if (!langToken) {
-      return 'token-not-found';
+      return 'tokenNotFound';
     }
 
     const lang = langToken.lang;
@@ -81,7 +81,7 @@ export async function setUserPermission(jwt: string, userId: string) {
 
     if (permission) {
       await db.delete(langTokenTable).where(eq(langTokenTable.code, encoded));
-      return 'user-has-permission';
+      return 'userHasPermission';
     }
 
     await db.insert(langPermissionTable).values({ userId, lang });
@@ -92,9 +92,9 @@ export async function setUserPermission(jwt: string, userId: string) {
     console.error(error);
 
     if (error instanceof JWTExpired) {
-      return 'token-expired';
+      return 'tokenExpired';
     }
 
-    return 'toker-error';
+    return 'tokenError';
   }
 }

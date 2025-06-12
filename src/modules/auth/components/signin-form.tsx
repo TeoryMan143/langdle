@@ -24,7 +24,7 @@ function SignInForm() {
   });
 
   const router = useRouter();
-  const t = useTranslations('Errors');
+  const t = useTranslations('Errors.auth');
 
   const onSubmit = async (data: SignInSchema) => {
     const toastId = toast.loading('Signing in...');

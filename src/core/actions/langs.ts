@@ -107,16 +107,14 @@ export async function setLanguageData(
     if (!res.ok) {
       const error = await res.json();
       console.error(error);
-      return actionError(error.message);
+      return actionError(error.key);
     }
 
     revalidatePath(`/data/${code}`);
 
-    const lang = (await res.json()).message;
-
-    return actionSuccess(lang);
+    return actionSuccess('Language data updated successfully');
   } catch (e) {
-    let message = 'unknown error';
+    let message = 'unknown';
     if (e instanceof Error) {
       console.error(e);
       message = e.message;

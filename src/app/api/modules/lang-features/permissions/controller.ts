@@ -16,7 +16,10 @@ langPermissionsRouter.get('/:userId', async c => {
   const permissions = await getUserLangPermissions(userId);
 
   if (permissions.length === 0) {
-    return c.json({ message: 'No permissions for that user' }, 404);
+    return c.json(
+      { key: 'permissionNotFound', message: 'No permissions for that user' },
+      404,
+    );
   }
 
   return c.json(permissions);
@@ -28,6 +31,7 @@ langPermissionsRouter.get('/generatetoken/:lang', async c => {
   if (!sessionToken) {
     return c.json(
       {
+        key: 'notSignedIn',
         message: 'Must be signed in',
       },
       401,
@@ -39,6 +43,7 @@ langPermissionsRouter.get('/generatetoken/:lang', async c => {
   if (!session) {
     return c.json(
       {
+        key: 'notSignedIn',
         message: 'Must be signed in',
       },
       401,
@@ -48,6 +53,7 @@ langPermissionsRouter.get('/generatetoken/:lang', async c => {
   if (!user.admin) {
     return c.json(
       {
+        key: 'notAllowed',
         message: 'Not allowed to create edit URLs',
       },
       401,
@@ -61,6 +67,7 @@ langPermissionsRouter.get('/generatetoken/:lang', async c => {
   if (!languageData) {
     return c.json(
       {
+        key: 'languageNotFound',
         message: 'Language not found',
       },
       404,
@@ -72,6 +79,7 @@ langPermissionsRouter.get('/generatetoken/:lang', async c => {
   if (!token) {
     return c.json(
       {
+        key: 'tokenGenerationFailed',
         message: 'Token could not be generated',
       },
       500,
@@ -89,6 +97,7 @@ langPermissionsRouter.put('/set/:token', async c => {
   if (!sessionToken) {
     return c.json(
       {
+        key: 'notSignedIn',
         message: 'Must be signed in',
       },
       401,
@@ -100,6 +109,7 @@ langPermissionsRouter.put('/set/:token', async c => {
   if (!session) {
     return c.json(
       {
+        key: 'notSignedIn',
         message: 'Must be signed in',
       },
       401,
@@ -111,7 +121,10 @@ langPermissionsRouter.put('/set/:token', async c => {
   const message = await setUserPermission(token, user.id);
 
   if (typeof message === 'string') {
-    return c.json({ message }, 400);
+    return c.json(
+      { key: message, message: 'Permission could not be set' },
+      400,
+    );
   }
 
   return c.json({ lang: message.lang });
