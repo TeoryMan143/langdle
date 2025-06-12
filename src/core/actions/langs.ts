@@ -11,7 +11,7 @@ export async function getAllLanguages(): Promise<ActionResult<Language[]>> {
   try {
     const res = await fetch(`${baseUrl}/api/lang`);
 
-    if (res.status !== 200) {
+    if (!res.ok) {
       const error = await res.json();
       console.error(error);
       return actionError(error.message);
@@ -38,7 +38,7 @@ export async function getLanguagesByIds(
 
     const res = await fetch(`${baseUrl}/api/lang/?${searchIds}`);
 
-    if (res.status !== 200) {
+    if (!res.ok) {
       const error = await res.json();
       console.error(error);
       return actionError(error.message);
@@ -63,7 +63,7 @@ export async function getLanguage(
   try {
     const res = await fetch(`${baseUrl}/api/lang/${code}`);
 
-    if (res.status !== 200) {
+    if (!res.ok) {
       const error = await res.json();
       console.error(error);
       return actionError(error.message);
@@ -92,7 +92,7 @@ export async function setLanguageData(
     const sessionId = cookieStore.get('sessionToken')?.value;
 
     if (!sessionId) {
-      return actionError('Must be signed in');
+      return actionError('noSession');
     }
 
     const res = await fetch(`${baseUrl}/api/lang/${code}`, {
@@ -104,7 +104,7 @@ export async function setLanguageData(
       },
     });
 
-    if (res.status !== 200) {
+    if (!res.ok) {
       const error = await res.json();
       console.error(error);
       return actionError(error.message);
