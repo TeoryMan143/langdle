@@ -118,16 +118,13 @@ langPermissionsRouter.put('/set/:token', async c => {
 
   const token = c.req.param('token');
 
-  const message = await setUserPermission(token, user.id);
+  const result = await setUserPermission(token, user.id);
 
-  if (typeof message === 'string') {
-    return c.json(
-      { key: message, message: 'Permission could not be set' },
-      400,
-    );
+  if (typeof result === 'string') {
+    return c.json({ key: result, message: 'Permission could not be set' }, 400);
   }
 
-  return c.json({ lang: message.lang });
+  return c.json({ lang: result.lang });
 });
 
 export default langPermissionsRouter;
