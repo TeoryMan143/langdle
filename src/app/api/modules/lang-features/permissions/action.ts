@@ -2,6 +2,7 @@ import { db } from '@/core/database/relational/config';
 import {
   langPermissionTable,
   langTokenTable,
+  userTable,
 } from '@/core/database/relational/tables';
 import { sha256 } from '@oslojs/crypto/sha2';
 import {
@@ -54,6 +55,18 @@ export async function createLangPermissionToken(lang: string) {
 
 export async function setUserPermission(jwt: string, userId: string) {
   try {
+    const user = await db.query.userTable.findFirst({
+      where: eq(userTable.id, userId),
+    });
+
+    if (!user) {
+      return 'userNotFound';
+    }
+
+    if (user.admin) {
+      return 'userIsAdmin';
+    }
+
     const secret = jose.base64url.decode(process.env.JWT_SECRET as string);
 
     const { payload } = await jose.jwtDecrypt<{ lang: string; code: string }>(
@@ -95,6 +108,6 @@ export async function setUserPermission(jwt: string, userId: string) {
       return 'tokenExpired';
     }
 
-    return 'tokenError';
+    return 'unknown';
   }
 }

@@ -37,7 +37,7 @@ export async function getLangPermissionUrl(
     const sessionId = cookieStore.get('sessionToken')?.value;
 
     if (!sessionId) {
-      return actionError('Must be signed in');
+      return actionError('notSignedIn');
     }
 
     const res = await fetch(
@@ -78,7 +78,7 @@ export async function setLangPermission(
     const sessionId = cookieStore.get('sessionToken')?.value;
 
     if (!sessionId) {
-      return actionError('Must be signed in');
+      return actionError('notSignedIn');
     }
 
     const res = await fetch(`${baseUrl}/api/lang/permissions/set/${token}`, {

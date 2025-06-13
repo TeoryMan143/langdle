@@ -3,20 +3,23 @@
 import { toast } from 'sonner';
 import { getLangPermissionUrl } from '../actions';
 import { Button } from '@/core/components/ui/button';
+import { useTranslations } from 'next-intl';
 
 function SharePermissionButton({ lang }: { lang: string }) {
+  const t = useTranslations('Error.langPermissions');
+
   const handleClick = async () => {
-    const toastId = toast.loading('Generating URL...');
+    const toastId = toast.loading(t('loading'));
 
     const res = await getLangPermissionUrl(lang);
 
     if (!res.success) {
-      toast.error(res.error, { id: toastId });
+      toast.error(t(res.error), { id: toastId });
       return;
     }
 
-    toast.success('URL copied to clipboard', { id: toastId });
     await navigator.clipboard.writeText(res.result);
+    toast.success(t('genSuccess'), { id: toastId });
   };
 
   return (

@@ -175,7 +175,14 @@
       "permissionNotFound": "No permissions for that user",
       "notAllowed": "Not allowed to create edit URLs",
       "languageNotFound": "Language not found",
-      "tokenGenerationFailed": "Failed to generate token"
+      "tokenGenerationFailed": "Failed to generate token",
+      "genSuccess": "Token generated successfully and copied to clipboard",
+      "userHasPermissions": "User already has permissions for this language",
+      "userNotFound": "User not found",
+      "userIsAdmin": "User is an admin, no need to generate a token",
+      "tokenNotFound": "Token not found",
+      "tokenExpired": "Token expired",
+      "unknown": "Unknown error, the token could not be generated"
     }
   }
 }
