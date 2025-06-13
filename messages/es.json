@@ -147,5 +147,61 @@
       "interrogativeParticles": "Partículas interrogativas",
       "pharyngealization": "Faringalización"
     }
+  },
+  "Errors": {
+    "auth": {
+      "signingUp": "Creando tu cuenta",
+      "signingIn": "Iniciando sesión",
+      "unknownSu": "Error desconocido, no se pudo crear la cuenta",
+      "unknownSi": "Error desconocido, no se pudo iniciar sesión",
+      "invalidUserPassword": "Nombre de usuario o contraseña inválidos",
+      "nicknameAlreadyExists": "El nombre ya existe",
+      "failedCreateUser": "No se pudo crear el usuario",
+      "noSession": "Sin sesión",
+      "dataValidation": "Error de validación de datos",
+      "accountCreated": "Cuenta creada exitosamente",
+      "signedIn": "Inicio de sesión exitoso"
+    },
+
+    "langData": {
+      "loading": "Actualizando características",
+      "notFound": "Idioma no encontrado",
+      "notFounds": "Idiomas no encontrados",
+      "notSignedIn": "Debes iniciar sesión",
+      "notAllowed": "No tienes permiso para acceder a este idioma",
+      "invalidData": "Datos de idioma inválidos",
+      "unknown": "Error desconocido, no se pudieron establecer los datos del idioma",
+      "success": "Datos del idioma actualizados exitosamente"
+    },
+
+    "langPermissions": {
+      "loading": "Generando URL de edición",
+      "notSignedIn": "Debes iniciar sesión",
+      "permissionNotFound": "Sin permisos para ese usuario",
+      "notAllowed": "No tienes permiso para crear URLs de edición",
+      "languageNotFound": "Idioma no encontrado",
+      "tokenGenerationFailed": "No se pudo generar el token",
+      "genSuccess": "Token generado exitosamente y copiado al portapapeles",
+      "userHasPermissions": "El usuario ya tiene permisos para este idioma",
+      "userNotFound": "Usuario no encontrado",
+      "userIsAdmin": "El usuario es administrador, no es necesario generar un token",
+      "tokenNotFound": "Token no encontrado",
+      "tokenExpired": "Token expirado",
+      "unknown": "Error desconocido, no se pudo generar el token"
+    }
+  },
+  "AuthPage": {
+    "signIn": "Iniciar sesión",
+    "signUp": "Registrarse",
+    "nickname": "Nombre de usuario",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "noAccount": "¿No tienes una cuenta?",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "createAccount": "Crear cuenta",
+    "creatingAccount": "Creando cuenta...",
+    "signInHere": "Inicia sesión aquí",
+    "signUpHere": "Regístrate aquí",
+    "signingIn": "Iniciando sesión..."
   }
 }
