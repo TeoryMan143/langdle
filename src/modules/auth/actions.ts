@@ -53,7 +53,7 @@ export async function signUpUser(
     return actionSuccess(newUser);
   } catch (e) {
     console.error(e);
-    let message = 'unknown';
+    let message = 'unknownSu';
     if (e instanceof NeonDbError) {
       if (e.constraint === 'user_nickname_unique') {
         message = 'nicknameAlreadyExists';
@@ -109,10 +109,13 @@ export async function signInUser(
       new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
     );
 
-    return actionSuccess({ user: {nickname: user.nickname, id: user.id, admin: user.admin}, session });
+    return actionSuccess({
+      user: { nickname: user.nickname, id: user.id, admin: user.admin },
+      session,
+    });
   } catch (e) {
     console.error(e);
-    let message = 'unknown';
+    let message = 'unknownSi';
     if (e instanceof Error) {
       message = e.message;
     }

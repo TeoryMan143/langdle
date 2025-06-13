@@ -151,11 +151,17 @@
   },
   "Errors": {
     "auth": {
-      "unknown": "Unknown error",
+      "signingUp": "Creating your account",
+      "signingIn": "Signing in",
+      "unknownSu": "Unknown error, could not sign up",
+      "unknownSi": "Unknown error, could not sign in",
       "invalidUserPassword": "Invalid username or password",
       "nicknameAlreadyExists": "Nickname already exists",
       "failedCreateUser": "Failed to create user",
-      "noSession": "No session"
+      "noSession": "No session",
+      "dataValidation": "Data validation error",
+      "accountCreated": "Account created successfully",
+      "signedIn": "Signed in successfully"
     },
 
     "langData": {

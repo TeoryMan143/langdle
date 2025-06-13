@@ -11,7 +11,6 @@ import { toast } from 'sonner';
 import { signInUser } from '../actions';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { SignInError, signInErrors } from '../types';
 
 function SignInForm() {
   const {
@@ -27,15 +26,12 @@ function SignInForm() {
   const t = useTranslations('Errors.auth');
 
   const onSubmit = async (data: SignInSchema) => {
-    const toastId = toast.loading('Signing in...');
+    const toastId = toast.loading(`${t('signingIn')}...`);
 
     const res = await signInUser(data);
 
     if (res.error && typeof res.error === 'string') {
-      toast.error(
-        signInErrors.has(res.error as SignInError) ? t(res.error) : res.error,
-        { id: toastId },
-      );
+      toast.error(t(res.error), { id: toastId });
       return;
     }
 
@@ -46,11 +42,11 @@ function SignInForm() {
         });
       });
 
-      toast.error('Validation errors', { id: toastId });
+      toast.error(t('dataValidation'), { id: toastId });
       return;
     }
 
-    toast.success('Signed in successfuly ', { id: toastId });
+    toast.success(t('signedIn'), { id: toastId });
     router.push('/account');
   };
 

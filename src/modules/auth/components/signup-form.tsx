@@ -11,7 +11,6 @@ import { toast } from 'sonner';
 import { signUpUser } from '../actions';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { type SignUpError, signUpErrors } from '../types';
 
 function SignUpForm() {
   const {
@@ -28,16 +27,13 @@ function SignUpForm() {
   const t = useTranslations('Errors.auth');
 
   const onSubmit = async (data: SignUpSchema) => {
-    const toastId = toast.loading('Creating your account...');
+    const toastId = toast.loading(`${t('signingUp')}...`);
 
     try {
       const res = await signUpUser(data);
 
       if (res.error && typeof res.error === 'string') {
-        toast.error(
-          signUpErrors.has(res.error as SignUpError) ? t(res.error) : res.error,
-          { id: toastId },
-        );
+        toast.error(t(res.error), { id: toastId });
         return;
       }
 
@@ -48,11 +44,11 @@ function SignUpForm() {
           });
         });
 
-        toast.error('Validation errors', { id: toastId });
+        toast.error(t('Validation errors'), { id: toastId });
         return;
       }
 
-      toast.success('Account created successfully', { id: toastId });
+      toast.success(t('accountCreated'), { id: toastId });
       router.push('/signin');
     } catch (error) {
       console.error(error);
