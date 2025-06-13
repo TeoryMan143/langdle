@@ -190,5 +190,19 @@
       "tokenExpired": "Token expired",
       "unknown": "Unknown error, the token could not be generated"
     }
+  },
+  "AuthPage": {
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "nickname": "Nickname",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "noAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "createAccount": "Create account",
+    "creatingAccount": "Creating account...",
+    "signInHere": "Sign in here",
+    "signUpHere": "Sign up here",
+    "signingIn": "Signing in..."
   }
 }

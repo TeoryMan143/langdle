@@ -17,7 +17,7 @@ function SignUpForm() {
     register,
     handleSubmit,
     setError,
-    formState: { errors, isValid, isLoading },
+    formState: { errors, isLoading },
   } = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
   });
@@ -25,6 +25,7 @@ function SignUpForm() {
   const router = useRouter();
 
   const t = useTranslations('Errors.auth');
+  const tm = useTranslations('AuthPage');
 
   const onSubmit = async (data: SignUpSchema) => {
     const toastId = toast.loading(`${t('signingUp')}...`);
@@ -62,7 +63,7 @@ function SignUpForm() {
           className={cn({
             'ring-2 ring-red-500 focus-visible:ring-red-500': errors.nickname,
           })}
-          placeholder='nickname'
+          placeholder={tm('nickname')}
           {...register('nickname')}
         />
         {errors.nickname && <InputError message={errors.nickname.message} />}
@@ -71,7 +72,7 @@ function SignUpForm() {
           className={cn({
             'ring-2 ring-red-500 focus-visible:ring-red-500': errors.password,
           })}
-          placeholder='password'
+          placeholder={tm('password')}
           {...register('password')}
         />
         {errors.password && <InputError message={errors.password.message} />}
@@ -81,7 +82,7 @@ function SignUpForm() {
             'ring-2 ring-red-500 focus-visible:ring-red-500':
               errors.confirmPassword,
           })}
-          placeholder='confirm password'
+          placeholder={tm('confirmPassword')}
           {...register('confirmPassword')}
         />
         {errors.confirmPassword && (
@@ -89,18 +90,18 @@ function SignUpForm() {
         )}
       </div>
       <div className='flex justify-center'>
-        <Button disabled={!isValid || isLoading} type='submit'>
-          {isLoading ? 'Creating...' : 'Create Account'}{' '}
+        <Button disabled={isLoading} type='submit'>
+          {isLoading ? tm('creatingAccount') : tm('createAccount')}{' '}
         </Button>
       </div>
       <div>
         <p className='text-center'>
-          Already signed up?{' '}
+          {tm('alreadyHaveAccount')}{' '}
           <Link
             href='/signin'
             className='text-green-700 hover:underline hover:text-soft-det'
           >
-            Sign in here
+            {tm('signInHere')}
           </Link>
         </p>
       </div>

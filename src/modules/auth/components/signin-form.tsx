@@ -17,13 +17,14 @@ function SignInForm() {
     register,
     handleSubmit,
     setError,
-    formState: { errors, isValid, isLoading },
+    formState: { errors, isLoading },
   } = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
   });
 
   const router = useRouter();
   const t = useTranslations('Errors.auth');
+  const tm = useTranslations('AuthPage');
 
   const onSubmit = async (data: SignInSchema) => {
     const toastId = toast.loading(`${t('signingIn')}...`);
@@ -57,7 +58,7 @@ function SignInForm() {
           className={cn({
             'ring-2 ring-red-500 focus-visible:ring-red-500': errors.nickname,
           })}
-          placeholder='nickname'
+          placeholder={tm('nickname')}
           {...register('nickname')}
         />
         {errors.nickname && <InputError message={errors.nickname.message} />}
@@ -66,24 +67,24 @@ function SignInForm() {
           className={cn({
             'ring-2 ring-red-500 focus-visible:ring-red-500': errors.password,
           })}
-          placeholder='password'
+          placeholder={tm('password')}
           {...register('password')}
         />
         {errors.password && <InputError message={errors.password.message} />}
       </div>
       <div className='flex justify-center'>
-        <Button disabled={!isValid || isLoading} type='submit'>
-          {isLoading ? 'Creating...' : 'Sign In'}{' '}
+        <Button disabled={isLoading} type='submit'>
+          {isLoading ? tm('signingIn') : tm('signIn')}
         </Button>
       </div>
       <div>
         <p className='text-center'>
-          Don't have an account?{' '}
+          {tm('noAccount')}{' '}
           <Link
             href='/signup'
             className='text-green-700 hover:underline hover:text-soft-det'
           >
-            Sign up here
+            {tm('signUpHere')}
           </Link>
         </p>
       </div>
