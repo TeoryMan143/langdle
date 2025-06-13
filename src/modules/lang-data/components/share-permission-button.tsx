@@ -6,7 +6,7 @@ import { Button } from '@/core/components/ui/button';
 import { useTranslations } from 'next-intl';
 
 function SharePermissionButton({ lang }: { lang: string }) {
-  const t = useTranslations('Error.langPermissions');
+  const t = useTranslations('Errors.langPermissions');
 
   const handleClick = async () => {
     const toastId = toast.loading(t('loading'));
@@ -23,7 +23,7 @@ function SharePermissionButton({ lang }: { lang: string }) {
   };
 
   return (
-    <Button size='icon' onClick={handleClick}>
+    <Button className='ml-3' size='icon' onClick={handleClick}>
       <svg
         xmlns='http://www.w3.org/2000/svg'
         width='1em'

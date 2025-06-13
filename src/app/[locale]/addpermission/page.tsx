@@ -53,7 +53,7 @@ async function AddPermissionPage({ searchParams }: Props) {
 
   return (
     <Base success>
-      <h3 className='text-2xl'> Permission set </h3>
+      <h3 className='text-3xl text-center mb-2'> Permission set </h3>
       <p>Now you have permission to edit the language: {lang.name}</p>
     </Base>
   );
