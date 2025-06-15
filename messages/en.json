@@ -204,5 +204,11 @@
     "signInHere": "Sign in here",
     "signUpHere": "Sign up here",
     "signingIn": "Signing in..."
+  },
+  "AddPermissionPage": {
+    "permissionSet": "Permission set",
+    "goLangList": "Go to languages list",
+    "goHome": "Go to home",
+    "nowHavePermission": "You now have permission to edit the language {lang}"
   }
 }

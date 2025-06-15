@@ -20,6 +20,7 @@ async function AddPermissionPage({ searchParams }: Props) {
   const { token } = await searchParams;
 
   const t = await getTranslations('Errors.langPermissions');
+  const tm = await getTranslations('AddPermissionPage');
 
   if (!token) {
     return (
@@ -53,8 +54,8 @@ async function AddPermissionPage({ searchParams }: Props) {
 
   return (
     <Base success>
-      <h3 className='text-3xl text-center mb-2'> Permission set </h3>
-      <p>Now you have permission to edit the language: {lang.name}</p>
+      <h3 className='text-3xl text-center mb-2'>{tm('permissionSet')}</h3>
+      <p>{tm('nowHavePermission', { lang: lang.name })}</p>
     </Base>
   );
 }
@@ -63,13 +64,15 @@ async function Base({
   children,
   success,
 }: { children: React.ReactNode; success: boolean }) {
+  const tm = await getTranslations('AddPermissionPage');
+
   return (
     <div className='flex flex-col items-center justify-center gap-4 mt-5'>
       <div>{children}</div>
       <div>
         <Button asChild>
           <Link href={success ? '/data' : '/'}>
-            {success ? 'Go to languages list' : 'Go Home'}
+            {success ? tm('goLangList') : tm('goHome')}
           </Link>
         </Button>
       </div>

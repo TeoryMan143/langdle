@@ -203,5 +203,11 @@
     "signInHere": "Entre aqui",
     "signUpHere": "Registre-se aqui",
     "signingIn": "Entrando..."
+  },
+  "AddPermissionPage": {
+    "permissionSet": "Permissão definida",
+    "goLangList": "Ir para a lista de idiomas",
+    "goHome": "Ir para a página inicial",
+    "nowHavePermission": "Agora você tem permissão para editar o idioma {lang}"
   }
 }
