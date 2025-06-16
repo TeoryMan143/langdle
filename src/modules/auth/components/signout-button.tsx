@@ -11,12 +11,14 @@ import { useRouter } from 'next/navigation';
 function SignOutButton() {
   const { session } = useAuth();
   const t = useTranslations('Errors');
+  const tm = useTranslations('AccountPage');
+
   const router = useRouter();
 
   const handleSignOut = async () => {
-    const toastId = toast.loading('Signing out...');
+    const toastId = toast.loading(tm('signingOut'));
     if (!session) {
-      toast.error('No session found', { id: toastId });
+      toast.error(tm('noSession'), { id: toastId });
       return;
     }
 
@@ -30,13 +32,13 @@ function SignOutButton() {
       return;
     }
 
-    toast.success('Signed out successfully', { id: toastId });
+    toast.success(tm('successSignOut'), { id: toastId });
     router.push('/');
   };
 
   return (
     <div className='flex justify-center'>
-      <Button onClick={handleSignOut}>Sign out</Button>
+      <Button onClick={handleSignOut}>{tm('signOut')}</Button>
     </div>
   );
 }

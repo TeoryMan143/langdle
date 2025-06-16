@@ -2,6 +2,7 @@ import { dongle } from '@/core/lib/fonts';
 import { auth } from '@/modules/auth/actions';
 import { getLangPermissions } from '@/modules/lang-data/actions';
 import LangsList from '@/modules/lang-data/components/langs-list';
+import { getTranslations } from 'next-intl/server';
 import { redirect, RedirectType } from 'next/navigation';
 
 async function DataPage() {
@@ -24,10 +25,12 @@ async function DataPage() {
     redirect('/', RedirectType.replace);
   }
 
+  const t = await getTranslations('ListPage');
+
   return (
     <main className='mt-5'>
       <h2 className={`${dongle.className} text-6xl mb-5 text-center`}>
-        Languages list
+        {t('langList')}
       </h2>
 
       <div className='flex justify-center'>

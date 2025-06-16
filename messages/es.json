@@ -210,5 +210,15 @@
     "goLangList": "Ir a la lista de idiomas",
     "goHome": "Ir al inicio",
     "nowHavePermission": "Ahora tienes permiso para editar el idioma {lang}"
+  },
+  "ListPage": {
+    "langList": "Lista de idiomas"
+  },
+  "AccountPage": {
+    "title": "Cuenta",
+    "signOut": "Cerrar sesión",
+    "signingOut": "Cerrando sesión...",
+    "successSignOut": "Sesión cerrada exitosamente",
+    "noSession": "Sin sesión"
   }
 }

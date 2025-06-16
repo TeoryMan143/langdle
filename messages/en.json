@@ -211,5 +211,15 @@
     "goLangList": "Go to languages list",
     "goHome": "Go to home",
     "nowHavePermission": "You now have permission to edit the language {lang}"
+  },
+  "ListPage": {
+    "langList": "Languages list"
+  },
+  "AccountPage": {
+    "title": "Account",
+    "signOut": "Sign out",
+    "signingOut": "Signing out...",
+    "successSignOut": "Signed out successfully",
+    "noSession": "No session"
   }
 }
