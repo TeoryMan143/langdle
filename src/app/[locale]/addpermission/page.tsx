@@ -11,12 +11,6 @@ type Props = {
 };
 
 async function AddPermissionPage({ searchParams }: Props) {
-  const { session } = await auth();
-
-  if (!session) {
-    redirect('/', RedirectType.replace);
-  }
-
   const { token } = await searchParams;
 
   const t = await getTranslations('Errors.langPermissions');
@@ -28,6 +22,12 @@ async function AddPermissionPage({ searchParams }: Props) {
         <h3 className='text-2xl'>{t('tokenNotFound')}</h3>
       </Base>
     );
+  }
+
+  const { session } = await auth();
+
+  if (!session) {
+    return redirect(`/signup?redtk=${token}`, RedirectType.replace);
   }
 
   const res = await setLangPermission(token);

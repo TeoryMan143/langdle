@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { cn } from '@/core/lib/utils';
 import { toast } from 'sonner';
 import { signInUser } from '../actions';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 
 function SignInForm() {
@@ -25,6 +25,9 @@ function SignInForm() {
   const router = useRouter();
   const t = useTranslations('Errors.auth');
   const tm = useTranslations('AuthPage');
+
+  const sParams = useSearchParams();
+  const redtk = sParams.get('redtk');
 
   const onSubmit = async (data: SignInSchema) => {
     const toastId = toast.loading(`${t('signingIn')}...`);
@@ -48,7 +51,7 @@ function SignInForm() {
     }
 
     toast.success(t('signedIn'), { id: toastId });
-    router.push('/account');
+    router.push(redtk ? `/addpermission?token=${redtk}` : '/account');
   };
 
   return (

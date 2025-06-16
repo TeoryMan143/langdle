@@ -9,8 +9,9 @@ import Link from 'next/link';
 import { cn } from '@/core/lib/utils';
 import { toast } from 'sonner';
 import { signUpUser } from '../actions';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 
 function SignUpForm() {
   const {
@@ -26,6 +27,15 @@ function SignUpForm() {
 
   const t = useTranslations('Errors.auth');
   const tm = useTranslations('AuthPage');
+
+  const sParams = useSearchParams();
+  const redtk = sParams.get('redtk');
+
+  useEffect(() => {
+    if (redtk) {
+      toast.info(tm('needAccountForPerm'));
+    }
+  }, [redtk, tm]);
 
   const onSubmit = async (data: SignUpSchema) => {
     const toastId = toast.loading(`${t('signingUp')}...`);
@@ -50,7 +60,7 @@ function SignUpForm() {
       }
 
       toast.success(t('accountCreated'), { id: toastId });
-      router.push('/signin');
+      router.push(`/signin${redtk ? `?redtk=${redtk}` : ''}`);
     } catch (error) {
       console.error(error);
     }
@@ -98,7 +108,7 @@ function SignUpForm() {
         <p className='text-center'>
           {tm('alreadyHaveAccount')}{' '}
           <Link
-            href='/signin'
+            href={`/signin${redtk ? `?redtk=${redtk}` : ''}`}
             className='text-green-700 hover:underline hover:text-soft-det'
           >
             {tm('signInHere')}

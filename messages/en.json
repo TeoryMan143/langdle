@@ -183,7 +183,7 @@
       "languageNotFound": "Language not found",
       "tokenGenerationFailed": "Failed to generate token",
       "genSuccess": "Token generated successfully and copied to clipboard",
-      "userHasPermissions": "User already has permissions for this language",
+      "userHasPermission": "User already has permissions for this language",
       "userNotFound": "User not found",
       "userIsAdmin": "User is an admin, no need to generate a token",
       "tokenNotFound": "Token not found",
@@ -203,7 +203,8 @@
     "creatingAccount": "Creating account...",
     "signInHere": "Sign in here",
     "signUpHere": "Sign up here",
-    "signingIn": "Signing in..."
+    "signingIn": "Signing in...",
+    "needAccountForPerm": "You need an account to set the language permission"
   },
   "AddPermissionPage": {
     "permissionSet": "Permission set",

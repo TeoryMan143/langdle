@@ -9,7 +9,7 @@ import {
   encodeBase32LowerCaseNoPadding,
   encodeHexLowerCase,
 } from '@oslojs/encoding';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import * as jose from 'jose';
 import { JWTExpired } from 'jose/errors';
 
@@ -89,7 +89,10 @@ export async function setUserPermission(jwt: string, userId: string) {
     const lang = langToken.lang;
 
     const permission = await db.query.langPermissionTable.findFirst({
-      where: eq(langPermissionTable.lang, lang),
+      where: and(
+        eq(langPermissionTable.lang, lang),
+        eq(langPermissionTable.userId, userId),
+      ),
     });
 
     if (permission) {
@@ -98,6 +101,7 @@ export async function setUserPermission(jwt: string, userId: string) {
     }
 
     await db.insert(langPermissionTable).values({ userId, lang });
+    console.log(`User ${userId} granted permission for language ${lang}`);
     await db.delete(langTokenTable).where(eq(langTokenTable.code, encoded));
 
     return { lang };

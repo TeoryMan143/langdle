@@ -202,7 +202,8 @@
     "creatingAccount": "Criando conta...",
     "signInHere": "Entre aqui",
     "signUpHere": "Registre-se aqui",
-    "signingIn": "Entrando..."
+    "signingIn": "Entrando...",
+    "needAccountForPerm": "Você precisa de uma conta para definir a permissão de idioma"
   },
   "AddPermissionPage": {
     "permissionSet": "Permissão definida",

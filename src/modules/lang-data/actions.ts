@@ -92,7 +92,7 @@ export async function setLangPermission(
     const body = await res.json();
 
     if (!res.ok) {
-      return actionError(body.message);
+      return actionError(body.key);
     }
 
     return actionSuccess(body.lang);
