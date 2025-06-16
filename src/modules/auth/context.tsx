@@ -1,9 +1,9 @@
 'use client';
-import { Session, User } from './types';
+import { Session, UserDTO } from './types';
 import { createContext, useContext } from 'react';
 
 interface AuthProviderProps {
-  user: User | null;
+  user: UserDTO | null;
   session: Session | null;
 }
 
