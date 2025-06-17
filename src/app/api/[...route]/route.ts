@@ -12,7 +12,7 @@ const api = new Hono().basePath('/api');
 api.use(
   '/api/*',
   cors({
-    origin: '*',
+    origin: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
     allowMethods: ['GET', 'POST', 'PUT'],
   }),
 );
