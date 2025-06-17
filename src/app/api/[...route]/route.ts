@@ -5,17 +5,9 @@ import cron from 'node-cron';
 import { db } from '@/core/database/relational/config';
 import { langTokenTable } from '@/core/database/relational/tables';
 import { lt } from 'drizzle-orm';
-import { cors } from 'hono/cors';
 
 const api = new Hono().basePath('/api');
 
-api.use(
-  '/api/*',
-  cors({
-    origin: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
-    allowMethods: ['GET', 'POST', 'PUT'],
-  }),
-);
 api.route('/lang', langFeaturesHandler);
 
 export const GET = handle(api);
