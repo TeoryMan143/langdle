@@ -9,17 +9,22 @@ function SharePermissionButton({ lang }: { lang: string }) {
   const t = useTranslations('Errors.langPermissions');
 
   const handleClick = async () => {
-    const toastId = toast.loading(t('loading'));
+    try {
+      const toastId = toast.loading(t('loading'));
 
-    const res = await getLangPermissionUrl(lang);
+      const res = await getLangPermissionUrl(lang);
 
-    if (!res.success) {
-      toast.error(t(res.error), { id: toastId });
-      return;
+      if (!res.success) {
+        toast.error(t(res.error), { id: toastId });
+        return;
+      }
+
+      await navigator.clipboard.writeText(res.result);
+      toast.success(t('genSuccess'), { id: toastId });
+    } catch (e) {
+      console.error(e);
+      toast.error(t('unknownError'));
     }
-
-    await navigator.clipboard.writeText(res.result);
-    toast.success(t('genSuccess'), { id: toastId });
   };
 
   return (
