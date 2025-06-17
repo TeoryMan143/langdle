@@ -11,7 +11,7 @@ async function getById(id: string) {
 
 async function getAll() {
   const results = await client.ft.search('idx:langs', '*', {
-    RETURN: ['$.name', '$.exonym', '$.features'],
+    RETURN: ['$.name', '$.exonym', '$.features', '$.active'],
   });
 
   const langs = results.documents.map(doc => ({
@@ -19,6 +19,7 @@ async function getAll() {
     name: doc.value['$.name'],
     exonym: doc.value['$.exonym'],
     features: JSON.parse((doc.value['$.features'] as string) ?? '[]'),
+    active: doc.value['$.active'] ?? false,
   })) as Language[];
 
   return langs;

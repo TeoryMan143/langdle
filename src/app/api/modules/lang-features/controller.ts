@@ -90,7 +90,7 @@ langFeaturesRouter.put('/:id', async c => {
 
   const permissions = await getUserLangPermissions(user.id);
 
-  if (!permissions.includes(langId)) {
+  if (!permissions.includes(langId) && !user.admin) {
     return c.json(
       {
         key: 'notAllowed',
