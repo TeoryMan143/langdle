@@ -6,6 +6,7 @@ export default async function middleware(request: NextRequest) {
   const [, base] = request.nextUrl.pathname.split('/');
 
   if (request.method === 'POST') {
+    console.log(request);
     return NextResponse.next();
   }
 
