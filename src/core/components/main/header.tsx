@@ -3,9 +3,9 @@
 import { dongle } from '@/core/lib/fonts';
 import { Button } from '../ui/button';
 import User from '../icons/user';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/modules/auth/context';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import LangDataButton from './lang-data-button';
 
 function Header() {

@@ -5,7 +5,7 @@ import { getLangPermissions } from '@/modules/lang-data/actions';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import Admin from '../icons/admin';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 
 function OptionsSideBar() {
   const { user } = useAuth();

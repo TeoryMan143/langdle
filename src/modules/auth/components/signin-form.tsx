@@ -5,11 +5,12 @@ import { type SignInSchema, signInSchema } from '../schemas/signin';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormInput from './form-input';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { cn } from '@/core/lib/utils';
 import { toast } from 'sonner';
 import { signInUser } from '../actions';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 
 function SignInForm() {

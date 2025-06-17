@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { signOutUser } from '../actions';
 import { signOutErrors, SignOutError } from '../types';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 
 function SignOutButton() {
   const { session } = useAuth();
