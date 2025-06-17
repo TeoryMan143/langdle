@@ -5,11 +5,6 @@ import { type NextRequest, NextResponse } from 'next/server';
 export default async function middleware(request: NextRequest) {
   const [, base] = request.nextUrl.pathname.split('/');
 
-  if (request.method === 'POST') {
-    console.log(request);
-    return NextResponse.next();
-  }
-
   const response = NextResponse.next();
 
   if (request.method === 'GET') {
@@ -27,8 +22,7 @@ export default async function middleware(request: NextRequest) {
 
   if (request.method === 'GET' && base !== 'api') {
     const handleI18Routing = createMiddleware(routing);
-    const respose = handleI18Routing(request);
-    return respose;
+    return handleI18Routing(request);
   }
 
   return response;
