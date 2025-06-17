@@ -9,7 +9,13 @@ import { cors } from 'hono/cors';
 
 const api = new Hono().basePath('/api');
 
-api.use('/api/*', cors());
+api.use(
+  '/api/*',
+  cors({
+    origin: '*',
+    allowMethods: ['GET', 'POST', 'PUT'],
+  }),
+);
 api.route('/lang', langFeaturesHandler);
 
 export const GET = handle(api);
