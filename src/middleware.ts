@@ -5,6 +5,10 @@ import { type NextRequest, NextResponse } from 'next/server';
 export default async function middleware(request: NextRequest) {
   const [, base] = request.nextUrl.pathname.split('/');
 
+  if (request.method === 'POST') {
+    return NextResponse.next();
+  }
+
   const response = NextResponse.next();
 
   if (request.method === 'GET') {
