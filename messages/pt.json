@@ -28,6 +28,7 @@
       "vos": "Ordem sintática básica: Verbo Objeto Sujeito",
       "ovs": "Ordem sintática básica: Objeto Verbo Sujeito",
       "osv": "Ordem sintática básica: Objeto Sujeito Verbo",
+      "v2": "Ordem sintática em que o verbo aparece na segunda posição da oração",
       "stressTimed": "Tendência fonológica em que intervalos entre sílabas tônicas tendem a ser regulares",
       "syllableTimed": "Tendência fonológica em que cada sílaba é emitida em intervalos aproximadamente iguais",
       "moraTimed": "Estrutura temporal baseada na mora como unidade mínima de duração",

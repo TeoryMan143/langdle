@@ -28,6 +28,7 @@
       "vos": "Basic word order: Verb Object Subject",
       "ovs": "Basic word order: Object Verb Subject",
       "osv": "Basic word order: Object Subject Verb",
+      "v2": "Syntactic rule where the verb has to be the second word of a phrase",
       "stressTimed": "Phonetic tendency where the stressed syllables take relatively equal intervals, shortening the others",
       "syllableTimed": "Phonetic tendency where all syllables take relatively equal intervals",
       "moraTimed": "Small, roughly equal units of timing",

@@ -28,6 +28,7 @@
       "vos": "Orden básico de palabras: Verbo Objeto Sujeto",
       "ovs": "Orden básico de palabras: Objeto Verbo Sujeto",
       "osv": "Orden básico de palabras: Objeto Sujeto Verbo",
+      "v2": "Regla sintáctica donde el verbo debe ser la segunta palabra de una frase",
       "stressTimed": "Tendencia fonética donde las sílabas acentuadas ocurren a intervalos relativamente iguales, acortando las demás",
       "syllableTimed": "Tendencia fonética donde todas las sílabas ocurren a intervalos relativamente iguales",
       "moraTimed": "Unidades pequeñas de tiempo de duración aproximadamente igual",
