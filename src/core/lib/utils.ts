@@ -76,4 +76,5 @@ export const langFeatures = [
   'fixedWordOrder',
   'interrogativeParticles',
   'pharyngealization',
+  'aspiratedConsonants',
 ] as const;

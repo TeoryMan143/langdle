@@ -74,7 +74,8 @@
       "freeWordOrder": "Sistema sintático em que a ordem dos constituintes da oração é relativamente livre",
       "fixedWordOrder": "Sistema sintático em que a ordem dos constituintes da oração é rigidamente estabelecida",
       "interrogativeParticles": "Elementos gramaticais que marcam uma oração como interrogativa",
-      "pharyngealization": "Articulação de sons com constrição adicional na região da faringe"
+      "pharyngealization": "Articulação de sons com constrição adicional na região da faringe",
+      "aspiratedConsonants": "Consoantes pronunciadas com uma explosão de ar adicional"
     },
     "name": {
       "nasalization": "Nasalização",
@@ -147,7 +148,8 @@
       "freeWordOrder": "Ordem livre de palavras",
       "fixedWordOrder": "Ordem fixa de palavras",
       "interrogativeParticles": "Partículas interrogativas",
-      "pharyngealization": "Faringalização"
+      "pharyngealization": "Faringalização",
+      "aspiratedConsonants": "Consoantes aspiradas"
     }
   },
   "Errors": {

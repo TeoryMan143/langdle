@@ -74,7 +74,8 @@
       "freeWordOrder": "Syntactic feature where the arrangement of words in a sentence is not fixed and can vary without changing the sentence's meaning",
       "fixedWordOrder": "Syntactic rule where the arrangement of words has an specific order",
       "interrogativeParticles": "Morphemes used to mark a sentence as a question, often appearing at the beginning or end of a sentence",
-      "pharyngealization": "Phonetic process where a consonant is pronounced with a constriction in the pharynx, giving the sound a distinct \"throaty\" quality"
+      "pharyngealization": "Phonetic process where a consonant is pronounced with a constriction in the pharynx, giving the sound a distinct \"throaty\" quality",
+      "aspiratedConsonants": "Consonants that are pronounced with a strong burst of breath"
     },
 
     "name": {
@@ -148,7 +149,8 @@
       "freeWordOrder": "Free word order",
       "fixedWordOrder": "Fixed word order",
       "interrogativeParticles": "Interrogative particles",
-      "pharyngealization": "Pharyngealization"
+      "pharyngealization": "Pharyngealization",
+      "aspiratedConsonants": "Aspirated consonants"
     }
   },
   "Errors": {

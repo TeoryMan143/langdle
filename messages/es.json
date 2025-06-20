@@ -74,7 +74,8 @@
       "freeWordOrder": "Rasgo sintáctico donde el orden de las palabras no está fijo y puede variar sin cambiar el significado",
       "fixedWordOrder": "Regla sintáctica donde el orden de las palabras sigue un patrón específico",
       "interrogativeParticles": "Morfemas usados para marcar una oración como pregunta, a menudo al principio o al final de la misma",
-      "pharyngealization": "Proceso fonético donde una consonante se articula con una constricción en la faringe, dando un sonido áspero"
+      "pharyngealization": "Proceso fonético donde una consonante se articula con una constricción en la faringe, dando un sonido áspero",
+      "aspiratedConsonants": "Consotantes que se pronuncian con una explosión de aire adicional"
     },
     "name": {
       "nasalization": "Nasalización",
@@ -147,7 +148,8 @@
       "freeWordOrder": "Orden libre de palabras",
       "fixedWordOrder": "Orden fijo de palabras",
       "interrogativeParticles": "Partículas interrogativas",
-      "pharyngealization": "Faringalización"
+      "pharyngealization": "Faringalización",
+      "aspiratedConsonants": "Consonantes aspiradas"
     }
   },
   "Errors": {
