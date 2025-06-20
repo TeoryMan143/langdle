@@ -13,6 +13,7 @@ export async function getObjectByKey(group: string, id: string) {
 export async function setObjectToKey(
   group: string,
   id: string,
+  // biome-ignore lint/suspicious/noExplicitAny: There is no way to know the structure of the object
   obj: Record<string, any>,
 ) {
   try {
