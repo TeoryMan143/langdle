@@ -63,7 +63,10 @@ async function AddPermissionPage({ searchParams }: Props) {
 async function Base({
   children,
   success,
-}: { children: React.ReactNode; success: boolean }) {
+}: {
+  children: React.ReactNode;
+  success: boolean;
+}) {
   const tm = await getTranslations('AddPermissionPage');
 
   return (

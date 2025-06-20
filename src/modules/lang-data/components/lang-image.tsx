@@ -7,7 +7,10 @@ import { useState } from 'react';
 function LangImage({
   code,
   className,
-}: { code: string; className?: ClassValue }) {
+}: {
+  code: string;
+  className?: ClassValue;
+}) {
   const [imageUrl, setImageUrl] = useState(`/flags/${code}.webp`);
 
   return (
