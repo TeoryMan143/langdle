@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -7,8 +7,12 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": [],
-    "include": ["src", "messages", "next.config.ts", "biome.config.js"]
+    "includes": [
+      "**/src/**",
+      "**/messages/**",
+      "**/next.config.ts",
+      "**/biome.config.js"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -21,9 +25,7 @@
     "attributePosition": "auto",
     "bracketSpacing": true
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
@@ -41,7 +43,17 @@
       },
       "style": {
         "useNodejsImportProtocol": "off",
-        "useImportType": "off"
+        "useImportType": "off",
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error"
       },
       "complexity": {
         "noForEach": "off"
