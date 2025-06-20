@@ -8,9 +8,9 @@ import GuessesTable from './guesses-table';
 function Game() {
   return (
     <div className='space-y-6 flex flex-col items-center'>
-      <div className='flex items-center h-14 gap-2 w-[95%]'>
+      <div className='flex items-center md:h-14 gap-2 md:w-[95%]'>
         <Input className='text-center h-full' placeholder='Type your guess' />
-        <Button className='h-full'>
+        <Button className='md:h-full'>
           Guess
           <Send />
         </Button>

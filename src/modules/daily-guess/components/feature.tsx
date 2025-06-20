@@ -1,6 +1,8 @@
 import Check from '@/core/components/icons/check';
 import Xcancel from '@/core/components/icons/x';
 
+// import FeatureTooltip from '@/core/components/main/feature-tooltip';
+
 type Props = {
   feat: {
     id: string;
@@ -10,7 +12,8 @@ type Props = {
 
 function Feature({ feat: { id, match } }: Props) {
   return (
-    <div className='h-12 bg-[#FDFBFB] flex items-center gap-2 rounded-[3px] shadow-xl p-3 border border-soft-det'>
+    // <FeatureTooltip feature={feat} >
+    <div className='md:h-12 bg-[#FDFBFB] flex items-center gap-2 rounded-[3px] shadow-xl p-1 md:p-3 border border-soft-det'>
       <span className='text-xl'>
         {match ? (
           <Check className='text-main' />
@@ -20,6 +23,7 @@ function Feature({ feat: { id, match } }: Props) {
       </span>
       {id}
     </div>
+    // </FeatureTooltip>
   );
 }
 export default Feature;
