@@ -1,6 +1,6 @@
-import { userTable } from '@/core/database/relational/tables';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
+import { userTable } from '@/core/database/relational/tables';
 
 export const signUpSchema = createInsertSchema(userTable)
   .omit({ id: true })

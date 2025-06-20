@@ -1,5 +1,5 @@
-import { sessionTable, userTable } from '@/core/database/relational/tables';
 import type { InferSelectModel } from 'drizzle-orm';
+import { sessionTable, userTable } from '@/core/database/relational/tables';
 
 export type User = InferSelectModel<typeof userTable>;
 export type UserDTO = Omit<User, 'password'>;

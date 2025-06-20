@@ -1,11 +1,11 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+import React, { useCallback, useMemo, useState } from 'react';
 import FeatureToolTip from '@/core/components/main/feature-tooltip';
 import { Checkbox } from '@/core/components/ui/checkbox';
 import { Label } from '@/core/components/ui/label';
 import { LangFeatures } from '@/core/lib/types';
-import { useTranslations } from 'next-intl';
-import React, { useCallback, useMemo, useState } from 'react';
 
 type Props = {
   feat: LangFeatures;

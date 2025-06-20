@@ -1,11 +1,11 @@
-import { useAuth } from '@/modules/auth/context';
-import { Button } from '../ui/button';
-import { useMemo } from 'react';
-import { getLangPermissions } from '@/modules/lang-data/actions';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { toast } from 'sonner';
-import Admin from '../icons/admin';
 import { useRouter } from '@/i18n/navigation';
+import { useAuth } from '@/modules/auth/context';
+import { getLangPermissions } from '@/modules/lang-data/actions';
+import Admin from '../icons/admin';
+import { Button } from '../ui/button';
 
 function OptionsSideBar() {
   const { user } = useAuth();

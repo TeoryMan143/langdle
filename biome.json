@@ -14,6 +14,7 @@
       "**/biome.config.js"
     ]
   },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "formatter": {
     "enabled": true,
     "useEditorconfig": true,

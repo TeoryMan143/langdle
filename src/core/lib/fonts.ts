@@ -1,4 +1,4 @@
-import { Noto_Sans, Dongle } from 'next/font/google';
+import { Dongle, Noto_Sans } from 'next/font/google';
 
 export const noto = Noto_Sans({
   variable: '--font-noto',

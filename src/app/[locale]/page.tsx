@@ -1,6 +1,6 @@
+import { getTranslations } from 'next-intl/server';
 import { dongle } from '@/core/lib/fonts';
 import Game from '@/modules/daily-guess/components/game';
-import { getTranslations } from 'next-intl/server';
 
 export default async function Home() {
   const t = await getTranslations('Home');

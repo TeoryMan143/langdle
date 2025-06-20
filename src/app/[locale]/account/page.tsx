@@ -1,7 +1,7 @@
-import SignOutButton from '@/modules/auth/components/signout-button';
-import { auth } from '@/modules/auth/actions';
-import { redirect, RedirectType } from 'next/navigation';
+import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { auth } from '@/modules/auth/actions';
+import SignOutButton from '@/modules/auth/components/signout-button';
 
 async function AccountPage() {
   const { user, session } = await auth();

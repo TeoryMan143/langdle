@@ -1,10 +1,10 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import type { Language, LanguageData } from '../lib/types';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import {
   getAllLanguages,
   getLanguage,
   setLanguageData,
 } from '../actions/langs';
+import type { Language, LanguageData } from '../lib/types';
 
 type GetAllLanguages = {
   action: 'get';

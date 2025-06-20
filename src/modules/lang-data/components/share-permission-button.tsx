@@ -1,9 +1,9 @@
 'use client';
 
-import { toast } from 'sonner';
-import { getLangPermissionUrl } from '../actions';
-import { Button } from '@/core/components/ui/button';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
+import { Button } from '@/core/components/ui/button';
+import { getLangPermissionUrl } from '../actions';
 
 function SharePermissionButton({ lang }: { lang: string }) {
   const t = useTranslations('Errors.langPermissions');

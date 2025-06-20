@@ -1,11 +1,10 @@
 'use client';
 
 import { dongle } from '@/core/lib/fonts';
-import { Button } from '../ui/button';
-import User from '../icons/user';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 import { useAuth } from '@/modules/auth/context';
-import { useRouter } from '@/i18n/navigation';
+import User from '../icons/user';
+import { Button } from '../ui/button';
 import LangDataButton from './lang-data-button';
 
 function Header() {

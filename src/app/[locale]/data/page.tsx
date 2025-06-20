@@ -1,9 +1,9 @@
+import { RedirectType, redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { dongle } from '@/core/lib/fonts';
 import { auth } from '@/modules/auth/actions';
 import { getLangPermissions } from '@/modules/lang-data/actions';
 import LangsList from '@/modules/lang-data/components/langs-list';
-import { getTranslations } from 'next-intl/server';
-import { redirect, RedirectType } from 'next/navigation';
 
 async function DataPage() {
   const { session, user } = await auth();

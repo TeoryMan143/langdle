@@ -1,6 +1,6 @@
 'use client';
-import { Session, UserDTO } from './types';
 import { createContext, useContext } from 'react';
+import { Session, UserDTO } from './types';
 
 interface AuthProviderProps {
   user: UserDTO | null;

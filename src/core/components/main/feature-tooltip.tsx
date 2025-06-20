@@ -1,3 +1,5 @@
+import { useTranslations } from 'next-intl';
+import React, { useMemo } from 'react';
 import type { LangFeatures } from '@/core/lib/types';
 import {
   Tooltip,
@@ -5,8 +7,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
-import { useTranslations } from 'next-intl';
-import React, { useMemo } from 'react';
 
 type Props = {
   feature: LangFeatures;

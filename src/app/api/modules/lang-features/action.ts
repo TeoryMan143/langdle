@@ -1,5 +1,5 @@
-import type { LanguageData, Language } from '@/core/lib/types';
 import langRepository from '@/app/api/repositories/langs';
+import type { Language, LanguageData } from '@/core/lib/types';
 
 export async function getLanguageById(
   id: string,

@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Header from '@/core/components/main/header';
-import { noto } from '@/core/lib/fonts';
-import { Toaster } from 'sonner';
-import { hasLocale, NextIntlClientProvider } from 'next-intl';
-import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
+import { hasLocale, NextIntlClientProvider } from 'next-intl';
+import { Toaster } from 'sonner';
+import Header from '@/core/components/main/header';
 import Providers from '@/core/components/main/providers';
+import { noto } from '@/core/lib/fonts';
+import { routing } from '@/i18n/routing';
 import { auth } from '@/modules/auth/actions';
 
 export const metadata: Metadata = {

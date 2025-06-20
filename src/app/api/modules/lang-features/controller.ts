@@ -1,15 +1,15 @@
 import { Hono } from 'hono';
+import { getCookie } from 'hono/cookie';
 import { langDataSchema } from '@/core/lib/schemas/langs';
+import { validateSessionToken } from '@/modules/auth/manager';
 import {
   getAllLanguages,
   getLanguageById,
   getLanguagesByIds,
   setLanguageData,
 } from './action';
-import langPermissions from './permissions/controller';
 import { getUserLangPermissions } from './permissions/action';
-import { getCookie } from 'hono/cookie';
-import { validateSessionToken } from '@/modules/auth/manager';
+import langPermissions from './permissions/controller';
 
 const langFeaturesRouter = new Hono();
 

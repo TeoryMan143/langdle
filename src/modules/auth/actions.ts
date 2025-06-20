@@ -1,21 +1,14 @@
 'use server';
 
-import { actionError, ActionResult, actionSuccess } from '@/core/actions/utils';
-import { SignUpSchema, signUpSchema } from './schemas/signup';
+import { NeonDbError } from '@neondatabase/serverless';
+import argon2 from 'argon2';
+import { eq } from 'drizzle-orm';
+import { cookies } from 'next/headers';
+import { cache } from 'react';
 import { type typeToFlattenedError } from 'zod';
-import type {
-  Session,
-  SessionValidationResult,
-  SignInError,
-  SignUpError,
-  User,
-  UserDTO,
-} from './types';
+import { ActionResult, actionError, actionSuccess } from '@/core/actions/utils';
 import { db } from '@/core/database/relational/config';
 import { userTable } from '@/core/database/relational/tables';
-import argon2 from 'argon2';
-import { NeonDbError } from '@neondatabase/serverless';
-import { eq } from 'drizzle-orm';
 import {
   createSession,
   deleteSessionTokenCookie,
@@ -25,8 +18,15 @@ import {
   validateSessionToken,
 } from './manager';
 import { signInSchema } from './schemas/signin';
-import { cookies } from 'next/headers';
-import { cache } from 'react';
+import { SignUpSchema, signUpSchema } from './schemas/signup';
+import type {
+  Session,
+  SessionValidationResult,
+  SignInError,
+  SignUpError,
+  User,
+  UserDTO,
+} from './types';
 
 export async function signUpUser(
   data: object,

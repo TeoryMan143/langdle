@@ -1,5 +1,5 @@
-import SignUpForm from '@/modules/auth/components/signup-form';
 import { getTranslations } from 'next-intl/server';
+import SignUpForm from '@/modules/auth/components/signup-form';
 
 async function SignUpPage() {
   const t = await getTranslations('AuthPage');

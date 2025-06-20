@@ -1,12 +1,12 @@
 'use client';
 
-import { Button } from '@/core/components/ui/button';
-import { useAuth } from '../context';
-import { toast } from 'sonner';
-import { signOutUser } from '../actions';
-import { signOutErrors, SignOutError } from '../types';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
+import { Button } from '@/core/components/ui/button';
 import { useRouter } from '@/i18n/navigation';
+import { signOutUser } from '../actions';
+import { useAuth } from '../context';
+import { SignOutError, signOutErrors } from '../types';
 
 function SignOutButton() {
   const { session } = useAuth();

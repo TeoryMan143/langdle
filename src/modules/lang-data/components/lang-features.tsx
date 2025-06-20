@@ -1,14 +1,14 @@
 'use client';
 
-import type { LangFeatures, LanguageData } from '@/core/lib/types';
-import { useCallback, useState } from 'react';
-import FeatureChecker from './feature-checker';
-import { Button } from '@/core/components/ui/button';
 import objEquals from 'just-compare';
-import { langFeatures } from '@/core/lib/utils';
-import { setLanguageData } from '@/core/actions/langs';
-import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
+import { useCallback, useState } from 'react';
+import { toast } from 'sonner';
+import { setLanguageData } from '@/core/actions/langs';
+import { Button } from '@/core/components/ui/button';
+import type { LangFeatures, LanguageData } from '@/core/lib/types';
+import { langFeatures } from '@/core/lib/utils';
+import FeatureChecker from './feature-checker';
 
 type Props = {
   currentData: LanguageData;

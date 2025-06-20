@@ -1,10 +1,10 @@
+import { notFound, RedirectType, redirect } from 'next/navigation';
 import { getLanguage } from '@/core/actions/langs';
 import { auth } from '@/modules/auth/actions';
 import { getLangPermissions } from '@/modules/lang-data/actions';
 import LangFeaturesForm from '@/modules/lang-data/components/lang-features';
 import LangImage from '@/modules/lang-data/components/lang-image';
 import SharePermissionButton from '@/modules/lang-data/components/share-permission-button';
-import { notFound, redirect, RedirectType } from 'next/navigation';
 
 type Props = {
   params: Promise<{ code: string }>;

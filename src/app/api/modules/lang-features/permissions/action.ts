@@ -1,9 +1,3 @@
-import { db } from '@/core/database/relational/config';
-import {
-  langPermissionTable,
-  langTokenTable,
-  userTable,
-} from '@/core/database/relational/tables';
 import { sha256 } from '@oslojs/crypto/sha2';
 import {
   encodeBase32LowerCaseNoPadding,
@@ -12,6 +6,12 @@ import {
 import { and, eq } from 'drizzle-orm';
 import * as jose from 'jose';
 import { JWTExpired } from 'jose/errors';
+import { db } from '@/core/database/relational/config';
+import {
+  langPermissionTable,
+  langTokenTable,
+  userTable,
+} from '@/core/database/relational/tables';
 
 export async function getUserLangPermissions(userId: string) {
   try {

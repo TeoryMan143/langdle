@@ -1,10 +1,10 @@
+import { RedirectType, redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { getLanguage } from '@/core/actions/langs';
 import { Button } from '@/core/components/ui/button';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/modules/auth/actions';
 import { setLangPermission } from '@/modules/lang-data/actions';
-import { getTranslations } from 'next-intl/server';
-import { redirect, RedirectType } from 'next/navigation';
 
 type Props = {
   searchParams: Promise<{ token?: string }>;

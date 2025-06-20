@@ -1,12 +1,12 @@
-import { sessionTable, userTable } from '@/core/database/relational/tables';
+import { sha256 } from '@oslojs/crypto/sha2';
 import {
   encodeBase32LowerCaseNoPadding,
   encodeHexLowerCase,
 } from '@oslojs/encoding';
-import { sha256 } from '@oslojs/crypto/sha2';
-import { db } from '@/core/database/relational/config';
 import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
+import { db } from '@/core/database/relational/config';
+import { sessionTable, userTable } from '@/core/database/relational/tables';
 import type { Session, SessionValidationResult } from './types';
 
 export function generateSessionToken(): string {

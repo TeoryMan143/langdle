@@ -1,5 +1,5 @@
-import SigninForm from '@/modules/auth/components/signin-form';
 import { getTranslations } from 'next-intl/server';
+import SigninForm from '@/modules/auth/components/signin-form';
 
 async function SigninPage() {
   const t = await getTranslations('AuthPage');

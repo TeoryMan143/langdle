@@ -1,9 +1,9 @@
+import { client } from '@/core/database/redis/config';
 import {
   getObjectByKey,
   setObjectToKey,
 } from '@/core/database/redis/key-getters';
 import type { Language, LanguageData } from '@/core/lib/types';
-import { client } from '@/core/database/redis/config';
 
 async function getById(id: string) {
   return (await getObjectByKey('lang', id)) as LanguageData | undefined;

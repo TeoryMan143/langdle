@@ -1,18 +1,17 @@
 'use client';
 
-import { Button } from '@/core/components/ui/button';
-import { type SignUpSchema, signUpSchema } from '../schemas/signup';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import FormInput from './form-input';
-import { Link } from '@/i18n/navigation';
-import { cn } from '@/core/lib/utils';
-import { toast } from 'sonner';
-import { signUpUser } from '../actions';
 import { useSearchParams } from 'next/navigation';
-import { useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { Button } from '@/core/components/ui/button';
+import { cn } from '@/core/lib/utils';
+import { Link, useRouter } from '@/i18n/navigation';
+import { signUpUser } from '../actions';
+import { type SignUpSchema, signUpSchema } from '../schemas/signup';
+import FormInput from './form-input';
 
 function SignUpForm() {
   const {

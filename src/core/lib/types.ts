@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { langFeatures } from './utils';
 import { langDataSchema } from './schemas/langs';
+import { langFeatures } from './utils';
 
 export type LangFeatures = (typeof langFeatures)[number];
 export type LanguageData = z.TypeOf<typeof langDataSchema>;

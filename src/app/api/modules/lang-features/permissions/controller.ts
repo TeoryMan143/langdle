@@ -1,12 +1,12 @@
 import { Hono } from 'hono';
+import { getCookie } from 'hono/cookie';
+import langRepository from '@/app/api/repositories/langs';
+import { validateSessionToken } from '@/modules/auth/manager';
 import {
   createLangPermissionToken,
   getUserLangPermissions,
   setUserPermission,
 } from './action';
-import langRepository from '@/app/api/repositories/langs';
-import { getCookie } from 'hono/cookie';
-import { validateSessionToken } from '@/modules/auth/manager';
 
 const langPermissionsRouter = new Hono();
 
