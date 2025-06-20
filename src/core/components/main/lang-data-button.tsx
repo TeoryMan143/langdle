@@ -7,7 +7,7 @@ import { getLangPermissions } from '@/modules/lang-data/actions';
 import Admin from '../icons/admin';
 import { Button } from '../ui/button';
 
-function OptionsSideBar() {
+function LangDataButton() {
   const { user } = useAuth();
   const router = useRouter();
 
@@ -57,4 +57,4 @@ function OptionsSideBar() {
   );
 }
 
-export default OptionsSideBar;
+export default LangDataButton;
