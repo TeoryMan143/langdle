@@ -48,8 +48,8 @@ function LangFeaturesForm({ currentData, code }: Props) {
   };
 
   return (
-    <div>
-      <div className='flex flex-col min-w-2xl rounded-2xl overflow-clip'>
+    <div className='mx-4'>
+      <div className='flex flex-col lg:min-w-2xl rounded-2xl overflow-clip'>
         {langFeatures.map(feat => {
           return (
             <div className='p-2' key={feat}>

@@ -1,15 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { toast } from 'sonner';
-import { useRouter } from '@/i18n/navigation';
 import { useAuth } from '@/modules/auth/context';
 import { getLangPermissions } from '@/modules/lang-data/actions';
-import Admin from '../icons/admin';
-import { Button } from '../ui/button';
 
-function LangDataButton() {
+function LangDataAllowed({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
-  const router = useRouter();
 
   const {
     data: permissions,
@@ -42,19 +38,7 @@ function LangDataButton() {
     [user?.admin, permissions],
   );
 
-  return (
-    isSuccess &&
-    showLangData && (
-      <Button
-        className='bg-white hover:bg-background'
-        variant='noShadow'
-        size='icon'
-        onClick={() => router.push('/data')}
-      >
-        <Admin />
-      </Button>
-    )
-  );
+  return isSuccess && showLangData && children;
 }
 
-export default LangDataButton;
+export default LangDataAllowed;

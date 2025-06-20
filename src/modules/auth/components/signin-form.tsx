@@ -55,7 +55,7 @@ function SignInForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+    <form onSubmit={handleSubmit(onSubmit)} className='space-y-4 mx-10 lg:mx-0'>
       <div className='flex flex-col gap-2'>
         <FormInput
           className={cn({

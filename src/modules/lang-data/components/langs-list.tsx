@@ -15,7 +15,7 @@ async function LangsList({ allowedLangs }: { allowedLangs?: string[] }) {
   const langs = langsRes.result;
 
   return (
-    <div className='bg-background rounded-2xl border border-black overflow-clip'>
+    <div className='bg-background rounded-2xl border border-black overflow-clip mx-10 lg:mx-0'>
       {langs.map(({ id, name, exonym }) => (
         <Link
           href={`/data/${id}`}
