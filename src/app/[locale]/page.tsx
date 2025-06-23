@@ -7,7 +7,9 @@ export default async function Home() {
 
   return (
     <main className='pt-8'>
-      <h2 className={`${dongle.className} text-4xl md:text-7xl text-center`}>
+      <h2
+        className={`${dongle.className} mx-7 text-4xl md:text-7xl text-center`}
+      >
         {t('title')}
       </h2>
       <section className='mt-6 md:mt-16 flex justify-center'>

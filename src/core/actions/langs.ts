@@ -14,7 +14,7 @@ export async function getAllLanguages(): Promise<ActionResult<Language[]>> {
     if (!res.ok) {
       const error = await res.json();
       console.error(error);
-      return actionError(error.message);
+      return actionError(error.key);
     }
 
     const langs = (await res.json()) as Language[];
@@ -41,7 +41,7 @@ export async function getLanguagesByIds(
     if (!res.ok) {
       const error = await res.json();
       console.error(error);
-      return actionError(error.message);
+      return actionError(error.key);
     }
 
     const langs = (await res.json()) as Language[];
@@ -66,12 +66,37 @@ export async function getLanguage(
     if (!res.ok) {
       const error = await res.json();
       console.error(error);
-      return actionError(error.message);
+      return actionError(error.key);
     }
 
     const lang = (await res.json()) as Language;
 
     return actionSuccess(lang);
+  } catch (e) {
+    let message = 'unknown error';
+    if (e instanceof Error) {
+      console.error(e);
+      message = e.message;
+    }
+    return actionError(message);
+  }
+}
+
+export async function getLanguagesBySearch(
+  query: string,
+): Promise<ActionResult<Language[]>> {
+  try {
+    const res = await fetch(`${baseUrl}/api/lang/search?q=${query}`);
+
+    if (!res.ok) {
+      const error = await res.json();
+      console.error(error);
+      return actionError(error.key);
+    }
+
+    const langs = (await res.json()) as Language[];
+
+    return actionSuccess(langs);
   } catch (e) {
     let message = 'unknown error';
     if (e instanceof Error) {
