@@ -36,6 +36,10 @@ async function getById(id: string) {
 async function getAll() {
   const results = await client.ft.search('idx:langs', '*', {
     RETURN: ['$.name', '$.exonym', '$.features', '$.active'],
+    LIMIT: {
+      from: 0,
+      size: 50,
+    },
   });
 
   const langs = results.documents.map(docToLanguage) as Language[];
@@ -63,10 +67,18 @@ async function getFuzzy(q: string) {
 
   const resultsEx = await client.ft.search('idx:langs', `(@exonym:${safeQ}*)`, {
     RETURN: ['$.name', '$.exonym', '$.features', '$.active'],
+    LIMIT: {
+      from: 0,
+      size: 50,
+    },
   });
 
   const resultsNm = await client.ft.search('idx:langs', `(@name:${safeQ}*)`, {
     RETURN: ['$.name', '$.exonym', '$.features', '$.active'],
+    LIMIT: {
+      from: 0,
+      size: 50,
+    },
   });
 
   const langsEx = resultsEx.documents.map(docToLanguage);
