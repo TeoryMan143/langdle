@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import Check from '@/core/components/icons/check';
 import Xcancel from '@/core/components/icons/x';
 import FeatureTooltip from '@/core/components/main/feature-tooltip';
@@ -9,6 +10,8 @@ type Props = {
 };
 
 function Feature({ id, match = false }: Props) {
+  const t = useTranslations('Features.name');
+
   return (
     <FeatureTooltip feature={id}>
       <div className='md:h-12 bg-[#FDFBFB] flex items-center gap-2 rounded-[3px] shadow-xl p-1 md:p-3 border border-soft-det'>
@@ -19,7 +22,7 @@ function Feature({ id, match = false }: Props) {
             <Xcancel className='text-[#FF2C2C]' />
           )}
         </span>
-        {id}
+        {t(id)}
       </div>
     </FeatureTooltip>
   );
