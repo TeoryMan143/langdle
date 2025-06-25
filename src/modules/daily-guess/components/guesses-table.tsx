@@ -7,41 +7,14 @@ import {
   TableRow,
 } from '@/core/components/ui/table';
 import LangImage from '@/modules/lang-data/components/lang-image';
+import type { LanguageGuess } from '../types';
 import Feature from './feature';
 
-const PLACEHOLDER = [
-  {
-    code: 'en',
-    name: 'english',
-    features: [
-      {
-        id: 'latinAlphabet',
-        match: true,
-      },
-      {
-        id: 'stressTimed',
-        match: false,
-      },
-    ],
-  },
-  {
-    code: 'ru',
-    name: 'русский',
-    exonym: 'russian',
-    features: [
-      {
-        id: 'stressTimed',
-        match: false,
-      },
-      {
-        id: 'cyrillicAlphabet',
-        match: false,
-      },
-    ],
-  },
-];
+type Props = {
+  guesses: LanguageGuess[];
+};
 
-function GuessesTable() {
+function GuessesTable({ guesses }: Props) {
   return (
     <Table>
       <TableHeader className='md:text-lg md:h-28'>
@@ -53,14 +26,23 @@ function GuessesTable() {
         </TableRow>
       </TableHeader>
       <TableBody className='bg-background'>
-        {PLACEHOLDER.map(({ code, name, features, exonym }) => (
-          <TableRow key={code}>
+        {guesses.length === 0 && (
+          <TableRow>
+            <TableCell> </TableCell>
+            <TableCell className='text-center'>Do your first guess!</TableCell>
+          </TableRow>
+        )}
+        {guesses.map(({ id, name, matching, exonym }) => (
+          <TableRow key={id}>
             <TableCell className='md:w-[144px] text-center border-r-1 border-soft-det'>
-              <LangImage code={code} /> {name} {exonym && `(${exonym})`}
+              <LangImage code={id} /> {name} {exonym && `(${exonym})`}
             </TableCell>
             <TableCell className='flex gap-2.5 flex-wrap'>
-              {features.map(f => (
-                <Feature key={name + f.id} feat={f} />
+              {matching.correct.map(f => (
+                <Feature key={name + f} id={f} match />
+              ))}
+              {matching.incorrect.map(f => (
+                <Feature key={name + f} id={f} />
               ))}
             </TableCell>
           </TableRow>

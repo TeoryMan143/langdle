@@ -24,3 +24,22 @@ export async function setObjectToKey(
     return;
   }
 }
+
+export async function setStringToKey(key: string, value: string) {
+  try {
+    await client.set(key, value);
+    return true;
+  } catch (error) {
+    console.error('Redis error', error);
+    return false;
+  }
+}
+
+export async function getStringByKey(key: string) {
+  try {
+    return client.get(key);
+  } catch (error) {
+    console.error('Redis error', error);
+    return null;
+  }
+}

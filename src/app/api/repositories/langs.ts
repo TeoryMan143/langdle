@@ -30,7 +30,7 @@ function docToLanguage(doc: Doc) {
 }
 
 async function getById(id: string) {
-  return (await getObjectByKey('lang', id)) as LanguageData | undefined;
+  return { id, ...(await getObjectByKey('lang', id)) } as Language | undefined;
 }
 
 async function getAll() {

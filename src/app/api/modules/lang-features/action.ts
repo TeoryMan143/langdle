@@ -6,12 +6,7 @@ export async function getLanguageById(
 ): Promise<Language | undefined> {
   const data = await langRepository.getById(id);
 
-  if (!data) {
-    return;
-  }
-
-  const langData = { id, ...data };
-  return langData;
+  return data;
 }
 
 export function getAllLanguages(): Promise<Language[]> {
