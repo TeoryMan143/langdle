@@ -9,7 +9,13 @@ export function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+let initialized = false;
+
 export default function jobs() {
+  if (initialized) return;
+
+  initialized = true;
+
   cron.schedule('*/15 * * * *', async () => {
     try {
       await db
@@ -25,7 +31,7 @@ export default function jobs() {
     '0 0 * * *',
     async () => {
       try {
-        const langs = await langRepository.getAll();
+        const langs = await langRepository.getAll(true);
 
         const dayLang = langs[getRandomInt(0, langs.length - 1)];
 

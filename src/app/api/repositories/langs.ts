@@ -25,7 +25,7 @@ function docToLanguage(doc: Doc) {
     name: doc.value['$.name'],
     exonym: doc.value['$.exonym'],
     features: JSON.parse((doc.value['$.features'] as string) ?? '[]'),
-    active: doc.value['$.active'] ?? false,
+    active: doc.value['$.active'] === '1',
   } as Language;
 }
 
@@ -33,16 +33,20 @@ async function getById(id: string) {
   return { id, ...(await getObjectByKey('lang', id)) } as Language | undefined;
 }
 
-async function getAll() {
-  const results = await client.ft.search('idx:langs', '*', {
-    RETURN: ['$.name', '$.exonym', '$.features', '$.active'],
-    LIMIT: {
-      from: 0,
-      size: 50,
+async function getAll(onlyActives = false) {
+  const results = await client.ft.search(
+    'idx:langs',
+    onlyActives ? '@active:{true}' : '*',
+    {
+      RETURN: ['$.name', '$.exonym', '$.features', '$.active'],
+      LIMIT: {
+        from: 0,
+        size: 50,
+      },
     },
-  });
+  );
 
-  const langs = results.documents.map(docToLanguage) as Language[];
+  const langs = results.documents.map(docToLanguage);
 
   return langs;
 }
@@ -65,21 +69,29 @@ async function getByIds(ids: string[]): Promise<Language[]> {
 async function getFuzzy(q: string) {
   const safeQ = q.replace(/["]/g, '');
 
-  const resultsEx = await client.ft.search('idx:langs', `(@exonym:${safeQ}*)`, {
-    RETURN: ['$.name', '$.exonym', '$.features', '$.active'],
-    LIMIT: {
-      from: 0,
-      size: 50,
+  const resultsEx = await client.ft.search(
+    'idx:langs',
+    `(@exonym:${safeQ}*) @active:{true}`,
+    {
+      RETURN: ['$.name', '$.exonym', '$.features', '$.active'],
+      LIMIT: {
+        from: 0,
+        size: 50,
+      },
     },
-  });
+  );
 
-  const resultsNm = await client.ft.search('idx:langs', `(@name:${safeQ}*)`, {
-    RETURN: ['$.name', '$.exonym', '$.features', '$.active'],
-    LIMIT: {
-      from: 0,
-      size: 50,
+  const resultsNm = await client.ft.search(
+    'idx:langs',
+    `(@name:${safeQ}*) @active:{true}`,
+    {
+      RETURN: ['$.name', '$.exonym', '$.features', '$.active'],
+      LIMIT: {
+        from: 0,
+        size: 50,
+      },
     },
-  });
+  );
 
   const langsEx = resultsEx.documents.map(docToLanguage);
 

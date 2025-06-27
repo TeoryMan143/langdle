@@ -58,18 +58,24 @@ langFeaturesRouter.get('/:id', async c => {
 });
 
 langFeaturesRouter.get('/', async c => {
-  const langIds = new URL(c.req.url).searchParams.getAll('id');
+  const sParams = new URL(c.req.url).searchParams;
+
+  const langIds = sParams.getAll('id');
+  const onlyActive = sParams.get('oactive') === '1';
 
   const langs =
     langIds.length === 0
-      ? await getAllLanguages()
+      ? await getAllLanguages(onlyActive)
       : await getLanguagesByIds(langIds);
 
   if (!langs || langs.length === 0) {
-    return c.json({
-      key: 'notFounds',
-      message: 'No languages found',
-    });
+    return c.json(
+      {
+        key: 'notFounds',
+        message: 'No languages found',
+      },
+      404,
+    );
   }
 
   return c.json(langs);

@@ -1,5 +1,6 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import {
+  getAllActiveLanguages,
   getAllLanguages,
   getLanguage,
   getLanguagesBySearch,
@@ -12,6 +13,7 @@ type GetAllLanguages = {
   lang?: never;
   data?: never;
   query?: never;
+  onlyActives?: boolean;
 };
 
 type GetLanguageByCode = {
@@ -19,6 +21,7 @@ type GetLanguageByCode = {
   lang: string;
   data?: never;
   query?: never;
+  onlyActives?: never;
 };
 
 type GetLanguagesbySearch = {
@@ -26,6 +29,7 @@ type GetLanguagesbySearch = {
   lang?: never;
   query: string;
   data?: never;
+  onlyActives?: never;
 };
 
 type ModifyLanguage = {
@@ -33,6 +37,7 @@ type ModifyLanguage = {
   lang: string;
   data: LanguageData;
   query?: never;
+  onlyActives?: never;
 };
 
 export function useLang(options: GetAllLanguages): UseQueryResult<Language[]>;
@@ -52,13 +57,15 @@ export function useLang(
     | ModifyLanguage
     | GetLanguagesbySearch,
 ) {
-  const { action, lang, data, query } = options;
+  const { action, lang, data, query, onlyActives = false } = options;
 
   return useQuery({
     queryKey: ['langs', action, lang, query],
     queryFn: async () => {
       if (action === 'get' && lang === undefined) {
-        const { success, error, result } = await getAllLanguages();
+        const { success, error, result } = onlyActives
+          ? await getAllActiveLanguages()
+          : await getAllLanguages();
 
         if (!success) {
           throw new Error(error);

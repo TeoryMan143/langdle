@@ -30,6 +30,31 @@ export async function getAllLanguages(): Promise<ActionResult<Language[]>> {
   }
 }
 
+export async function getAllActiveLanguages(): Promise<
+  ActionResult<Language[]>
+> {
+  try {
+    const res = await fetch(`${baseUrl}/api/lang?oactive=1`);
+
+    if (!res.ok) {
+      const error = await res.json();
+      console.error(error);
+      return actionError(error.key);
+    }
+
+    const langs = (await res.json()) as Language[];
+
+    return actionSuccess(langs);
+  } catch (e) {
+    let message = 'unknown error';
+    if (e instanceof Error) {
+      console.error(e);
+      message = e.message;
+    }
+    return actionError(message);
+  }
+}
+
 export async function getLanguagesByIds(
   ids: string[],
 ): Promise<ActionResult<Language[]>> {

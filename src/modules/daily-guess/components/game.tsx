@@ -26,6 +26,7 @@ function Game() {
 
   const { data: allLangs } = useLang({
     action: 'get',
+    onlyActives: true,
   });
 
   const inputRef = useRef<HTMLInputElement>(null);

@@ -9,8 +9,8 @@ export async function getLanguageById(
   return data;
 }
 
-export function getAllLanguages(): Promise<Language[]> {
-  return langRepository.getAll();
+export function getAllLanguages(onlyActives = false): Promise<Language[]> {
+  return langRepository.getAll(onlyActives);
 }
 
 export function setLanguageData({
