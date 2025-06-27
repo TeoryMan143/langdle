@@ -12,6 +12,7 @@ import { useLang } from '@/core/hooks/use-lang';
 import { Language } from '@/core/lib/types';
 import { cn, getUTCDateString } from '@/core/lib/utils';
 import { useAuth } from '@/modules/auth/context';
+import LangImage from '@/modules/lang-data/components/lang-image';
 import { checkGuess } from '../actions';
 import { LanguageGuess } from '../types';
 import GuessesTable from './guesses-table';
@@ -20,7 +21,7 @@ import QueryRes from './query-res';
 type SavedGuesses = {
   date: string;
   guesses: LanguageGuess[];
-  won: boolean;
+  dailyLang: Language | null;
 };
 
 function Game() {
@@ -38,7 +39,7 @@ function Game() {
 
   const [localGuesses, setLocalGuesses] = useLocalStorage<SavedGuesses>(
     'day-save',
-    { date: 'invalid', guesses: [], won: false },
+    { date: 'invalid', guesses: [], dailyLang: null },
   );
 
   const { session } = useAuth();
@@ -47,6 +48,7 @@ function Game() {
   const [selectedLang, setSelectedLang] = useState<Language | null>(null);
   const [animateError, setAnimateError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [dailyLang, setDailyLang] = useState<Language | null>(null);
 
   const hasRetrievedSave = useRef(false);
 
@@ -58,6 +60,7 @@ function Game() {
     ) {
       hasRetrievedSave.current = true;
       setGuesses(localGuesses.guesses);
+      setDailyLang(localGuesses.dailyLang);
     } else if (
       !hasRetrievedSave.current &&
       !session &&
@@ -68,14 +71,14 @@ function Game() {
   }, [session, localGuesses]);
 
   useEffect(() => {
-    if (hasRetrievedSave.current && !session && !localGuesses.won) {
+    if (hasRetrievedSave.current && !session && !localGuesses.dailyLang) {
       setLocalGuesses({
         date: getUTCDateString(),
         guesses,
-        won: false,
+        dailyLang: null,
       });
     }
-  }, [guesses, setLocalGuesses, session, localGuesses.won]);
+  }, [guesses, setLocalGuesses, session, localGuesses.dailyLang]);
 
   useEffect(() => {
     if (inputRef.current && selectedLang) {
@@ -90,7 +93,7 @@ function Game() {
       return toast.error('No attempts left');
     }
 
-    if (localGuesses?.won) {
+    if (localGuesses.dailyLang) {
       return toast.info('You already guessed');
     }
 
@@ -112,9 +115,12 @@ function Game() {
       setLocalGuesses({
         date: getUTCDateString(),
         guesses,
-        won: true,
+        dailyLang: matching.guessed,
       });
-      return toast.success(matching.guessed.name);
+      setDailyLang(matching.guessed);
+      return toast.success(
+        `Congratulations you guessed the language: ${matching.guessed.name}`,
+      );
     }
 
     setGuesses(prev => [...prev, { ...selectedLang, matching }]);
@@ -125,7 +131,7 @@ function Game() {
   };
 
   return (
-    <div className='space-y-6 flex flex-col items-center'>
+    <div className='space-y-6 flex flex-col items-center w-full'>
       <div className='md:h-14 md:w-[95%]'>
         <search className='h-full flex items-center gap-2'>
           <div className='h-full flex-1 relative group/langs'>
@@ -183,7 +189,19 @@ function Game() {
           </Button>
         </search>
       </div>
-      <p className='text-gray-600'>Attempts left: {7 - guesses.length}</p>
+      <div className='text-gray-600 flex justify-center items-center gap-2'>
+        {dailyLang ? (
+          <>
+            <p>Language of the day:</p>
+            <LangImage code={dailyLang.id} />
+            <p>
+              {dailyLang.name} {dailyLang.exonym && `(${dailyLang.exonym})`}
+            </p>
+          </>
+        ) : (
+          <p>Attempts left: {7 - guesses.length}</p>
+        )}
+      </div>
       <GuessesTable guesses={guesses} />
     </div>
   );

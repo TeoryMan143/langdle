@@ -13,7 +13,7 @@ export default async function Home() {
         {t('title')}
       </h2>
       <section className='mt-6 md:mt-16 flex justify-center'>
-        <div className='md:min-w-2xl max-w-[90dvw] md:max-w-4xl'>
+        <div className='md:min-w-2xl max-w-[90dvw] md:w-4xl'>
           <Game />
         </div>
       </section>
