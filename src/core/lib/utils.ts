@@ -78,3 +78,8 @@ export const langFeatures = [
   'pharyngealization',
   'aspiratedConsonants',
 ] as const;
+
+export function getUTCDateString() {
+  const now = new Date();
+  return now.toISOString().split('T')[0];
+}

@@ -3,18 +3,25 @@
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { useDebounceValue } from 'usehooks-ts';
+import { useDebounceValue, useLocalStorage } from 'usehooks-ts';
 import Loading from '@/core/components/icons/loading';
 import Send from '@/core/components/icons/send';
 import { Button } from '@/core/components/ui/button';
 import { Input } from '@/core/components/ui/input';
 import { useLang } from '@/core/hooks/use-lang';
 import { Language } from '@/core/lib/types';
-import { cn } from '@/core/lib/utils';
+import { cn, getUTCDateString } from '@/core/lib/utils';
+import { useAuth } from '@/modules/auth/context';
 import { checkGuess } from '../actions';
 import { LanguageGuess } from '../types';
 import GuessesTable from './guesses-table';
 import QueryRes from './query-res';
+
+type SavedGuesses = {
+  date: string;
+  guesses: LanguageGuess[];
+  won: boolean;
+};
 
 function Game() {
   const [query, setQuery] = useDebounceValue('', 400);
@@ -29,13 +36,46 @@ function Game() {
     onlyActives: true,
   });
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [localGuesses, setLocalGuesses] = useLocalStorage<SavedGuesses>(
+    'day-save',
+    { date: 'invalid', guesses: [], won: false },
+  );
 
+  const { session } = useAuth();
+
+  const [guesses, setGuesses] = useState<LanguageGuess[]>([]);
   const [selectedLang, setSelectedLang] = useState<Language | null>(null);
   const [animateError, setAnimateError] = useState(false);
-  const [guesses, setGuesses] = useState<LanguageGuess[]>([]);
-
   const [loading, setLoading] = useState(false);
+
+  const hasRetrievedSave = useRef(false);
+
+  useEffect(() => {
+    if (
+      !hasRetrievedSave.current &&
+      !session &&
+      localGuesses.date === getUTCDateString()
+    ) {
+      hasRetrievedSave.current = true;
+      setGuesses(localGuesses.guesses);
+    } else if (
+      !hasRetrievedSave.current &&
+      !session &&
+      localGuesses.date !== getUTCDateString()
+    ) {
+      hasRetrievedSave.current = true;
+    }
+  }, [session, localGuesses]);
+
+  useEffect(() => {
+    if (hasRetrievedSave.current && !session && !localGuesses.won) {
+      setLocalGuesses({
+        date: getUTCDateString(),
+        guesses,
+        won: false,
+      });
+    }
+  }, [guesses, setLocalGuesses, session, localGuesses.won]);
 
   useEffect(() => {
     if (inputRef.current && selectedLang) {
@@ -43,7 +83,17 @@ function Game() {
     }
   }, [selectedLang]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleGuess = async () => {
+    if (guesses.length >= 7) {
+      return toast.error('No attempts left');
+    }
+
+    if (localGuesses?.won) {
+      return toast.info('You already guessed');
+    }
+
     if (!selectedLang) {
       setAnimateError(true);
       setTimeout(() => setAnimateError(false), 4000);
@@ -59,6 +109,11 @@ function Game() {
     const matching = res.result;
 
     if ('guessed' in matching) {
+      setLocalGuesses({
+        date: getUTCDateString(),
+        guesses,
+        won: true,
+      });
       return toast.success(matching.guessed.name);
     }
 
@@ -128,7 +183,7 @@ function Game() {
           </Button>
         </search>
       </div>
-      <p className='text-gray-600'>Attempts left: x</p>
+      <p className='text-gray-600'>Attempts left: {7 - guesses.length}</p>
       <GuessesTable guesses={guesses} />
     </div>
   );
