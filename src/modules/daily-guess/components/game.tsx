@@ -61,6 +61,7 @@ function Game() {
       hasRetrievedSave.current = true;
       setGuesses(localGuesses.guesses);
       setDailyLang(localGuesses.dailyLang);
+      console.log('GOT');
     } else if (
       !hasRetrievedSave.current &&
       !session &&
@@ -93,7 +94,7 @@ function Game() {
       return toast.error('No attempts left');
     }
 
-    if (localGuesses.dailyLang) {
+    if (dailyLang) {
       return toast.info('You already guessed');
     }
 
