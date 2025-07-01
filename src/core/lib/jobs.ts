@@ -36,6 +36,7 @@ export default function jobs() {
         const dayLang = langs[getRandomInt(0, langs.length - 1)];
 
         await setStringToKey('daylang', dayLang.id);
+        console.log('DAYLANG: ', dayLang.id);
       } catch (e) {
         console.error(e);
       }
