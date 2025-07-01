@@ -83,3 +83,7 @@ export function getUTCDateString() {
   const now = new Date();
   return now.toISOString().split('T')[0];
 }
+
+export function getRandomInt(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}

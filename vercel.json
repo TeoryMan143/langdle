@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/job/removetk",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/job/setdailylang",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}
