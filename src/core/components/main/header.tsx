@@ -13,7 +13,7 @@ function Header() {
   const { session } = useAuth();
 
   return (
-    <header className='bg-main relative'>
+    <header className='bg-main relative border-b-2 border-black'>
       <h1
         className={`${dongle.className} text-left ml-3 text-6xl lg:text-8xl lg:ml-0 text-white md:text-center relative top-1 md:top-2 overflow-clip`}
       >
