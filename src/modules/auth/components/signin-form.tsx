@@ -23,8 +23,7 @@ function SignInForm() {
   });
 
   const router = useRouter();
-  const t = useTranslations('Errors.auth');
-  const tm = useTranslations('AuthPage');
+  const t = useTranslations('AuthPage');
 
   const sParams = useSearchParams();
   const redtk = sParams.get('redtk');
@@ -35,7 +34,7 @@ function SignInForm() {
     const res = await signInUser(data);
 
     if (res.error && typeof res.error === 'string') {
-      toast.error(t(res.error), { id: toastId });
+      toast.error(t(`errors.${res.error}`), { id: toastId });
       return;
     }
 
@@ -46,7 +45,7 @@ function SignInForm() {
         });
       });
 
-      toast.error(t('dataValidation'), { id: toastId });
+      toast.error(t('errors.dataValidation'), { id: toastId });
       return;
     }
 
@@ -61,7 +60,7 @@ function SignInForm() {
           className={cn({
             'ring-2 ring-red-500 focus-visible:ring-red-500': errors.nickname,
           })}
-          placeholder={tm('nickname')}
+          placeholder={t('nickname')}
           {...register('nickname')}
         />
         {errors.nickname && <InputError message={errors.nickname.message} />}
@@ -70,24 +69,24 @@ function SignInForm() {
           className={cn({
             'ring-2 ring-red-500 focus-visible:ring-red-500': errors.password,
           })}
-          placeholder={tm('password')}
+          placeholder={t('password')}
           {...register('password')}
         />
         {errors.password && <InputError message={errors.password.message} />}
       </div>
       <div className='flex justify-center'>
         <Button disabled={isLoading} type='submit'>
-          {isLoading ? tm('signingIn') : tm('signIn')}
+          {isLoading ? t('signingIn') : t('signIn')}
         </Button>
       </div>
       <div>
         <p className='text-center'>
-          {tm('noAccount')}{' '}
+          {t('noAccount')}{' '}
           <Link
             href='/signup'
             className='text-green-700 hover:underline hover:text-soft-det'
           >
-            {tm('signUpHere')}
+            {t('signUpHere')}
           </Link>
         </p>
       </div>

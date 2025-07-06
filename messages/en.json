@@ -154,20 +154,6 @@
     }
   },
   "Errors": {
-    "auth": {
-      "signingUp": "Creating your account",
-      "signingIn": "Signing in",
-      "unknownSu": "Unknown error, could not sign up",
-      "unknownSi": "Unknown error, could not sign in",
-      "invalidUserPassword": "Invalid username or password",
-      "nicknameAlreadyExists": "Nickname already exists",
-      "failedCreateUser": "Failed to create user",
-      "noSession": "No session",
-      "dataValidation": "Data validation error",
-      "accountCreated": "Account created successfully",
-      "signedIn": "Signed in successfully"
-    },
-
     "langData": {
       "loading": "Updating features",
       "notFound": "Language not found",
@@ -204,11 +190,22 @@
     "noAccount": "Don't have an account?",
     "alreadyHaveAccount": "Already have an account?",
     "createAccount": "Create account",
-    "creatingAccount": "Creating account...",
     "signInHere": "Sign in here",
     "signUpHere": "Sign up here",
-    "signingIn": "Signing in...",
-    "needAccountForPerm": "You need an account to set the language permission"
+    "signingIn": "Signing in",
+    "needAccountForPerm": "You need an account to set the language permission",
+    "accountCreated": "Account created successfully",
+    "signedIn": "Signed in successfully",
+    "signingUp": "Creating your account",
+    "errors": {
+      "unknownSu": "Unknown error, could not sign up",
+      "unknownSi": "Unknown error, could not sign in",
+      "invalidUserPassword": "Invalid username or password",
+      "nicknameAlreadyExists": "Nickname already exists",
+      "failedCreateUser": "Failed to create user",
+      "noSession": "No session",
+      "dataValidation": "Data validation error"
+    }
   },
   "AddPermissionPage": {
     "permissionSet": "Permission set",

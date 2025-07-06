@@ -25,17 +25,16 @@ function SignUpForm() {
 
   const router = useRouter();
 
-  const t = useTranslations('Errors.auth');
-  const tm = useTranslations('AuthPage');
+  const t = useTranslations('AuthPage');
 
   const sParams = useSearchParams();
   const redtk = sParams.get('redtk');
 
   useEffect(() => {
     if (redtk) {
-      toast.info(tm('needAccountForPerm'));
+      toast.info(t('needAccountForPerm'));
     }
-  }, [redtk, tm]);
+  }, [redtk, t]);
 
   const onSubmit = async (data: SignUpSchema) => {
     const toastId = toast.loading(`${t('signingUp')}...`);
@@ -44,7 +43,7 @@ function SignUpForm() {
       const res = await signUpUser(data);
 
       if (res.error && typeof res.error === 'string') {
-        toast.error(t(res.error), { id: toastId });
+        toast.error(t(`errors.${res.error}`), { id: toastId });
         return;
       }
 
@@ -55,7 +54,7 @@ function SignUpForm() {
           });
         });
 
-        toast.error(t('Validation errors'), { id: toastId });
+        toast.error('Validation errors', { id: toastId });
         return;
       }
 
@@ -73,7 +72,7 @@ function SignUpForm() {
           className={cn({
             'ring-2 ring-red-500 focus-visible:ring-red-500': errors.nickname,
           })}
-          placeholder={tm('nickname')}
+          placeholder={t('nickname')}
           {...register('nickname')}
         />
         {errors.nickname && <InputError message={errors.nickname.message} />}
@@ -82,7 +81,7 @@ function SignUpForm() {
           className={cn({
             'ring-2 ring-red-500 focus-visible:ring-red-500': errors.password,
           })}
-          placeholder={tm('password')}
+          placeholder={t('password')}
           {...register('password')}
         />
         {errors.password && <InputError message={errors.password.message} />}
@@ -92,7 +91,7 @@ function SignUpForm() {
             'ring-2 ring-red-500 focus-visible:ring-red-500':
               errors.confirmPassword,
           })}
-          placeholder={tm('confirmPassword')}
+          placeholder={t('confirmPassword')}
           {...register('confirmPassword')}
         />
         {errors.confirmPassword && (
@@ -101,17 +100,17 @@ function SignUpForm() {
       </div>
       <div className='flex justify-center'>
         <Button disabled={isLoading} type='submit'>
-          {isLoading ? tm('creatingAccount') : tm('createAccount')}{' '}
+          {isLoading ? t('creatingAccount') : t('createAccount')}{' '}
         </Button>
       </div>
       <div>
         <p className='text-center'>
-          {tm('alreadyHaveAccount')}{' '}
+          {t('alreadyHaveAccount')}{' '}
           <Link
             href={`/signin${redtk ? `?redtk=${redtk}` : ''}`}
             className='text-green-700 hover:underline hover:text-soft-det'
           >
-            {tm('signInHere')}
+            {t('signInHere')}
           </Link>
         </p>
       </div>
