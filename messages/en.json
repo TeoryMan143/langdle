@@ -212,6 +212,8 @@
     "notAllowed": "You do not have permission to access this language",
     "invalidData": "Invalid language data",
     "unknown": "Unknown error, the language data could not be set",
+    "notActive": "You need the active param",
+    "noAdmin": "You need to be an administrator",
     "success": "Language data updated successfully"
   },
   "AccountPage": {

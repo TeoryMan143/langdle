@@ -211,6 +211,8 @@
     "notAllowed": "Você não tem permissão para acessar este idioma",
     "invalidData": "Dados do idioma inválidos",
     "unknown": "Erro desconhecido, os dados do idioma não puderam ser definidos",
+    "noAdmin": "Você não é administrador",
+    "notActive": "O parâmetro 'active' deve estar presente",
     "success": "Dados do idioma atualizados com sucesso"
   },
   "AccountPage": {

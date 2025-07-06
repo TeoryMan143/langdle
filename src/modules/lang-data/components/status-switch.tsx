@@ -1,6 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useId, useState } from 'react';
 import { toast } from 'sonner';
 import Loading from '@/core/components/icons/loading';
@@ -14,11 +15,13 @@ function StatusSwitch({ defStatus }: { defStatus: boolean }) {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(defStatus);
 
+  const t = useTranslations('LangData');
+
   const handleChecked = async (val: boolean) => {
     const res = await setLangStatus(code, val);
 
     if (!res.success) {
-      return toast.error(res.error);
+      return toast.error(t(res.error));
     }
 
     setStatus(val);
