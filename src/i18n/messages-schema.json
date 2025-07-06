@@ -1,0 +1,882 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Generated schema for Root",
+  "type": "object",
+  "properties": {
+    "Home": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": ["title"]
+    },
+    "Features": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "object",
+          "properties": {
+            "nasalization": {
+              "type": "string"
+            },
+            "clickConsonants": {
+              "type": "string"
+            },
+            "tones": {
+              "type": "string"
+            },
+            "pitchAccent": {
+              "type": "string"
+            },
+            "latinAlphabet": {
+              "type": "string"
+            },
+            "cyrillicAlphabet": {
+              "type": "string"
+            },
+            "alphabet": {
+              "type": "string"
+            },
+            "abjad": {
+              "type": "string"
+            },
+            "abugida": {
+              "type": "string"
+            },
+            "logographic": {
+              "type": "string"
+            },
+            "syllabary": {
+              "type": "string"
+            },
+            "agglutinative": {
+              "type": "string"
+            },
+            "fusional": {
+              "type": "string"
+            },
+            "isolating": {
+              "type": "string"
+            },
+            "polysynthetic": {
+              "type": "string"
+            },
+            "ergativeAlignment": {
+              "type": "string"
+            },
+            "nominativeAccusativeAlignment": {
+              "type": "string"
+            },
+            "tripartiteAlignment": {
+              "type": "string"
+            },
+            "svo": {
+              "type": "string"
+            },
+            "sov": {
+              "type": "string"
+            },
+            "vso": {
+              "type": "string"
+            },
+            "vos": {
+              "type": "string"
+            },
+            "ovs": {
+              "type": "string"
+            },
+            "osv": {
+              "type": "string"
+            },
+            "v2": {
+              "type": "string"
+            },
+            "stressTimed": {
+              "type": "string"
+            },
+            "syllableTimed": {
+              "type": "string"
+            },
+            "moraTimed": {
+              "type": "string"
+            },
+            "ejectiveConsonants": {
+              "type": "string"
+            },
+            "implosiveConsonants": {
+              "type": "string"
+            },
+            "retroflexConsonants": {
+              "type": "string"
+            },
+            "vowelHarmony": {
+              "type": "string"
+            },
+            "nounClasses": {
+              "type": "string"
+            },
+            "noClasses": {
+              "type": "string"
+            },
+            "dualNumber": {
+              "type": "string"
+            },
+            "trialNumber": {
+              "type": "string"
+            },
+            "inclusiveExclusiveWe": {
+              "type": "string"
+            },
+            "evidentiality": {
+              "type": "string"
+            },
+            "switchReference": {
+              "type": "string"
+            },
+            "prepositions": {
+              "type": "string"
+            },
+            "postpositions": {
+              "type": "string"
+            },
+            "noCopula": {
+              "type": "string"
+            },
+            "proDrop": {
+              "type": "string"
+            },
+            "focusMarker": {
+              "type": "string"
+            },
+            "topicMarker": {
+              "type": "string"
+            },
+            "caseMarking": {
+              "type": "string"
+            },
+            "reflexivePronouns": {
+              "type": "string"
+            },
+            "diminutives": {
+              "type": "string"
+            },
+            "augmentatives": {
+              "type": "string"
+            },
+            "ideophones": {
+              "type": "string"
+            },
+            "classifierSystem": {
+              "type": "string"
+            },
+            "tense": {
+              "type": "string"
+            },
+            "aspect": {
+              "type": "string"
+            },
+            "mood": {
+              "type": "string"
+            },
+            "personAgreement": {
+              "type": "string"
+            },
+            "politenessDistinctions": {
+              "type": "string"
+            },
+            "consonantClusters": {
+              "type": "string"
+            },
+            "openSyllablesOnly": {
+              "type": "string"
+            },
+            "highVowelInventory": {
+              "type": "string"
+            },
+            "lowVowelInventory": {
+              "type": "string"
+            },
+            "gemination": {
+              "type": "string"
+            },
+            "palatalization": {
+              "type": "string"
+            },
+            "lateralFricatives": {
+              "type": "string"
+            },
+            "creakyVoice": {
+              "type": "string"
+            },
+            "reduplication": {
+              "type": "string"
+            },
+            "auxiliaryVerbs": {
+              "type": "string"
+            },
+            "doubleNegation": {
+              "type": "string"
+            },
+            "freeWordOrder": {
+              "type": "string"
+            },
+            "fixedWordOrder": {
+              "type": "string"
+            },
+            "interrogativeParticles": {
+              "type": "string"
+            },
+            "pharyngealization": {
+              "type": "string"
+            },
+            "aspiratedConsonants": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "nasalization",
+            "clickConsonants",
+            "tones",
+            "pitchAccent",
+            "latinAlphabet",
+            "cyrillicAlphabet",
+            "alphabet",
+            "abjad",
+            "abugida",
+            "logographic",
+            "syllabary",
+            "agglutinative",
+            "fusional",
+            "isolating",
+            "polysynthetic",
+            "ergativeAlignment",
+            "nominativeAccusativeAlignment",
+            "tripartiteAlignment",
+            "svo",
+            "sov",
+            "vso",
+            "vos",
+            "ovs",
+            "osv",
+            "v2",
+            "stressTimed",
+            "syllableTimed",
+            "moraTimed",
+            "ejectiveConsonants",
+            "implosiveConsonants",
+            "retroflexConsonants",
+            "vowelHarmony",
+            "nounClasses",
+            "noClasses",
+            "dualNumber",
+            "trialNumber",
+            "inclusiveExclusiveWe",
+            "evidentiality",
+            "switchReference",
+            "prepositions",
+            "postpositions",
+            "noCopula",
+            "proDrop",
+            "focusMarker",
+            "topicMarker",
+            "caseMarking",
+            "reflexivePronouns",
+            "diminutives",
+            "augmentatives",
+            "ideophones",
+            "classifierSystem",
+            "tense",
+            "aspect",
+            "mood",
+            "personAgreement",
+            "politenessDistinctions",
+            "consonantClusters",
+            "openSyllablesOnly",
+            "highVowelInventory",
+            "lowVowelInventory",
+            "gemination",
+            "palatalization",
+            "lateralFricatives",
+            "creakyVoice",
+            "reduplication",
+            "auxiliaryVerbs",
+            "doubleNegation",
+            "freeWordOrder",
+            "fixedWordOrder",
+            "interrogativeParticles",
+            "pharyngealization",
+            "aspiratedConsonants"
+          ]
+        },
+        "name": {
+          "type": "object",
+          "properties": {
+            "nasalization": {
+              "type": "string"
+            },
+            "clickConsonants": {
+              "type": "string"
+            },
+            "tones": {
+              "type": "string"
+            },
+            "pitchAccent": {
+              "type": "string"
+            },
+            "latinAlphabet": {
+              "type": "string"
+            },
+            "cyrillicAlphabet": {
+              "type": "string"
+            },
+            "alphabet": {
+              "type": "string"
+            },
+            "abjad": {
+              "type": "string"
+            },
+            "abugida": {
+              "type": "string"
+            },
+            "logographic": {
+              "type": "string"
+            },
+            "syllabary": {
+              "type": "string"
+            },
+            "agglutinative": {
+              "type": "string"
+            },
+            "fusional": {
+              "type": "string"
+            },
+            "isolating": {
+              "type": "string"
+            },
+            "polysynthetic": {
+              "type": "string"
+            },
+            "ergativeAlignment": {
+              "type": "string"
+            },
+            "nominativeAccusativeAlignment": {
+              "type": "string"
+            },
+            "tripartiteAlignment": {
+              "type": "string"
+            },
+            "svo": {
+              "type": "string"
+            },
+            "sov": {
+              "type": "string"
+            },
+            "vso": {
+              "type": "string"
+            },
+            "vos": {
+              "type": "string"
+            },
+            "ovs": {
+              "type": "string"
+            },
+            "osv": {
+              "type": "string"
+            },
+            "v2": {
+              "type": "string"
+            },
+            "stressTimed": {
+              "type": "string"
+            },
+            "syllableTimed": {
+              "type": "string"
+            },
+            "moraTimed": {
+              "type": "string"
+            },
+            "ejectiveConsonants": {
+              "type": "string"
+            },
+            "implosiveConsonants": {
+              "type": "string"
+            },
+            "retroflexConsonants": {
+              "type": "string"
+            },
+            "vowelHarmony": {
+              "type": "string"
+            },
+            "nounClasses": {
+              "type": "string"
+            },
+            "noClasses": {
+              "type": "string"
+            },
+            "dualNumber": {
+              "type": "string"
+            },
+            "trialNumber": {
+              "type": "string"
+            },
+            "inclusiveExclusiveWe": {
+              "type": "string"
+            },
+            "evidentiality": {
+              "type": "string"
+            },
+            "switchReference": {
+              "type": "string"
+            },
+            "prepositions": {
+              "type": "string"
+            },
+            "postpositions": {
+              "type": "string"
+            },
+            "noCopula": {
+              "type": "string"
+            },
+            "proDrop": {
+              "type": "string"
+            },
+            "focusMarker": {
+              "type": "string"
+            },
+            "topicMarker": {
+              "type": "string"
+            },
+            "caseMarking": {
+              "type": "string"
+            },
+            "reflexivePronouns": {
+              "type": "string"
+            },
+            "diminutives": {
+              "type": "string"
+            },
+            "augmentatives": {
+              "type": "string"
+            },
+            "ideophones": {
+              "type": "string"
+            },
+            "classifierSystem": {
+              "type": "string"
+            },
+            "tense": {
+              "type": "string"
+            },
+            "aspect": {
+              "type": "string"
+            },
+            "mood": {
+              "type": "string"
+            },
+            "personAgreement": {
+              "type": "string"
+            },
+            "politenessDistinctions": {
+              "type": "string"
+            },
+            "consonantClusters": {
+              "type": "string"
+            },
+            "openSyllablesOnly": {
+              "type": "string"
+            },
+            "highVowelInventory": {
+              "type": "string"
+            },
+            "lowVowelInventory": {
+              "type": "string"
+            },
+            "gemination": {
+              "type": "string"
+            },
+            "palatalization": {
+              "type": "string"
+            },
+            "lateralFricatives": {
+              "type": "string"
+            },
+            "creakyVoice": {
+              "type": "string"
+            },
+            "reduplication": {
+              "type": "string"
+            },
+            "auxiliaryVerbs": {
+              "type": "string"
+            },
+            "doubleNegation": {
+              "type": "string"
+            },
+            "freeWordOrder": {
+              "type": "string"
+            },
+            "fixedWordOrder": {
+              "type": "string"
+            },
+            "interrogativeParticles": {
+              "type": "string"
+            },
+            "pharyngealization": {
+              "type": "string"
+            },
+            "aspiratedConsonants": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "nasalization",
+            "clickConsonants",
+            "tones",
+            "pitchAccent",
+            "latinAlphabet",
+            "cyrillicAlphabet",
+            "alphabet",
+            "abjad",
+            "abugida",
+            "logographic",
+            "syllabary",
+            "agglutinative",
+            "fusional",
+            "isolating",
+            "polysynthetic",
+            "ergativeAlignment",
+            "nominativeAccusativeAlignment",
+            "tripartiteAlignment",
+            "svo",
+            "sov",
+            "vso",
+            "vos",
+            "ovs",
+            "osv",
+            "v2",
+            "stressTimed",
+            "syllableTimed",
+            "moraTimed",
+            "ejectiveConsonants",
+            "implosiveConsonants",
+            "retroflexConsonants",
+            "vowelHarmony",
+            "nounClasses",
+            "noClasses",
+            "dualNumber",
+            "trialNumber",
+            "inclusiveExclusiveWe",
+            "evidentiality",
+            "switchReference",
+            "prepositions",
+            "postpositions",
+            "noCopula",
+            "proDrop",
+            "focusMarker",
+            "topicMarker",
+            "caseMarking",
+            "reflexivePronouns",
+            "diminutives",
+            "augmentatives",
+            "ideophones",
+            "classifierSystem",
+            "tense",
+            "aspect",
+            "mood",
+            "personAgreement",
+            "politenessDistinctions",
+            "consonantClusters",
+            "openSyllablesOnly",
+            "highVowelInventory",
+            "lowVowelInventory",
+            "gemination",
+            "palatalization",
+            "lateralFricatives",
+            "creakyVoice",
+            "reduplication",
+            "auxiliaryVerbs",
+            "doubleNegation",
+            "freeWordOrder",
+            "fixedWordOrder",
+            "interrogativeParticles",
+            "pharyngealization",
+            "aspiratedConsonants"
+          ]
+        }
+      },
+      "required": ["description", "name"]
+    },
+    "AuthPage": {
+      "type": "object",
+      "properties": {
+        "signIn": {
+          "type": "string"
+        },
+        "signUp": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "confirmPassword": {
+          "type": "string"
+        },
+        "noAccount": {
+          "type": "string"
+        },
+        "alreadyHaveAccount": {
+          "type": "string"
+        },
+        "createAccount": {
+          "type": "string"
+        },
+        "signInHere": {
+          "type": "string"
+        },
+        "signUpHere": {
+          "type": "string"
+        },
+        "needAccountForPerm": {
+          "type": "string"
+        },
+        "accountCreated": {
+          "type": "string"
+        },
+        "signedIn": {
+          "type": "string"
+        },
+        "signingUp": {
+          "type": "string"
+        },
+        "signingIn": {
+          "type": "string"
+        },
+        "errors": {
+          "type": "object",
+          "properties": {
+            "unknownSu": {
+              "type": "string"
+            },
+            "unknownSi": {
+              "type": "string"
+            },
+            "invalidUserPassword": {
+              "type": "string"
+            },
+            "nicknameAlreadyExists": {
+              "type": "string"
+            },
+            "failedCreateUser": {
+              "type": "string"
+            },
+            "noSession": {
+              "type": "string"
+            },
+            "dataValidation": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "unknownSu",
+            "unknownSi",
+            "invalidUserPassword",
+            "nicknameAlreadyExists",
+            "failedCreateUser",
+            "noSession",
+            "dataValidation"
+          ]
+        }
+      },
+      "required": [
+        "signIn",
+        "signUp",
+        "nickname",
+        "password",
+        "confirmPassword",
+        "noAccount",
+        "alreadyHaveAccount",
+        "createAccount",
+        "signInHere",
+        "signUpHere",
+        "needAccountForPerm",
+        "accountCreated",
+        "signedIn",
+        "signingUp",
+        "signingIn",
+        "errors"
+      ]
+    },
+    "AddPermissionPage": {
+      "type": "object",
+      "properties": {
+        "permissionSet": {
+          "type": "string"
+        },
+        "goLangList": {
+          "type": "string"
+        },
+        "goHome": {
+          "type": "string"
+        },
+        "nowHavePermission": {
+          "type": "string"
+        },
+        "loading": {
+          "type": "string"
+        },
+        "genSuccess": {
+          "type": "string"
+        },
+        "errors": {
+          "type": "object",
+          "properties": {
+            "notSignedIn": {
+              "type": "string"
+            },
+            "permissionNotFound": {
+              "type": "string"
+            },
+            "notAllowed": {
+              "type": "string"
+            },
+            "languageNotFound": {
+              "type": "string"
+            },
+            "tokenGenerationFailed": {
+              "type": "string"
+            },
+            "userHasPermission": {
+              "type": "string"
+            },
+            "userNotFound": {
+              "type": "string"
+            },
+            "userIsAdmin": {
+              "type": "string"
+            },
+            "tokenNotFound": {
+              "type": "string"
+            },
+            "tokenExpired": {
+              "type": "string"
+            },
+            "unknown": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "notSignedIn",
+            "permissionNotFound",
+            "notAllowed",
+            "languageNotFound",
+            "tokenGenerationFailed",
+            "userHasPermission",
+            "userNotFound",
+            "userIsAdmin",
+            "tokenNotFound",
+            "tokenExpired",
+            "unknown"
+          ]
+        }
+      },
+      "required": [
+        "permissionSet",
+        "goLangList",
+        "goHome",
+        "nowHavePermission",
+        "loading",
+        "genSuccess",
+        "errors"
+      ]
+    },
+    "ListPage": {
+      "type": "object",
+      "properties": {
+        "langList": {
+          "type": "string"
+        }
+      },
+      "required": ["langList"]
+    },
+    "LangData": {
+      "type": "object",
+      "properties": {
+        "loading": {
+          "type": "string"
+        },
+        "notFound": {
+          "type": "string"
+        },
+        "notFounds": {
+          "type": "string"
+        },
+        "notSignedIn": {
+          "type": "string"
+        },
+        "notAllowed": {
+          "type": "string"
+        },
+        "invalidData": {
+          "type": "string"
+        },
+        "unknown": {
+          "type": "string"
+        },
+        "success": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "loading",
+        "notFound",
+        "notFounds",
+        "notSignedIn",
+        "notAllowed",
+        "invalidData",
+        "unknown",
+        "success"
+      ]
+    },
+    "AccountPage": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "signOut": {
+          "type": "string"
+        },
+        "signingOut": {
+          "type": "string"
+        },
+        "successSignOut": {
+          "type": "string"
+        },
+        "noSession": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "signOut",
+        "signingOut",
+        "successSignOut",
+        "noSession"
+      ]
+    }
+  },
+  "required": [
+    "Home",
+    "Features",
+    "AuthPage",
+    "AddPermissionPage",
+    "ListPage",
+    "LangData",
+    "AccountPage"
+  ]
+}

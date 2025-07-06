@@ -13,13 +13,12 @@ type Props = {
 async function AddPermissionPage({ searchParams }: Props) {
   const { token } = await searchParams;
 
-  const t = await getTranslations('Errors.langPermissions');
-  const tm = await getTranslations('AddPermissionPage');
+  const t = await getTranslations('AddPermissionPage');
 
   if (!token) {
     return (
       <Base success={false}>
-        <h3 className='text-2xl'>{t('tokenNotFound')}</h3>
+        <h3 className='text-2xl'>{t('errors.tokenNotFound')}</h3>
       </Base>
     );
   }
@@ -35,7 +34,7 @@ async function AddPermissionPage({ searchParams }: Props) {
   if (!res.success) {
     return (
       <Base success={false}>
-        <h3 className='text-2xl'>{t(res.error)}</h3>
+        <h3 className='text-2xl'>{t(`errors.${res.error}`)}</h3>
       </Base>
     );
   }
@@ -45,7 +44,7 @@ async function AddPermissionPage({ searchParams }: Props) {
   if (!langRes.success) {
     return (
       <Base success={false}>
-        <h3 className='text-2xl'>{t('languageNotFound')}</h3>
+        <h3 className='text-2xl'>{t('errors.languageNotFound')}</h3>
       </Base>
     );
   }
@@ -54,8 +53,8 @@ async function AddPermissionPage({ searchParams }: Props) {
 
   return (
     <Base success>
-      <h3 className='text-3xl text-center mb-2'>{tm('permissionSet')}</h3>
-      <p>{tm('nowHavePermission', { lang: lang.name })}</p>
+      <h3 className='text-3xl text-center mb-2'>{t('permissionSet')}</h3>
+      <p>{t('nowHavePermission', { lang: lang.name })}</p>
     </Base>
   );
 }
@@ -67,7 +66,7 @@ async function Base({
   children: React.ReactNode;
   success: boolean;
 }) {
-  const tm = await getTranslations('AddPermissionPage');
+  const t = await getTranslations('AddPermissionPage');
 
   return (
     <div className='flex flex-col items-center justify-center gap-4 mt-5'>
@@ -75,7 +74,7 @@ async function Base({
       <div>
         <Button asChild>
           <Link href={success ? '/data' : '/'}>
-            {success ? tm('goLangList') : tm('goHome')}
+            {success ? t('goLangList') : t('goHome')}
           </Link>
         </Button>
       </div>

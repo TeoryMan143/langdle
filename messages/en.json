@@ -1,4 +1,5 @@
 {
+  "$schema": "../src/i18n/messages-schema.json",
   "Home": {
     "title": "Guess the language of the day"
   },
@@ -153,34 +154,6 @@
       "aspiratedConsonants": "Aspirated consonants"
     }
   },
-  "Errors": {
-    "langData": {
-      "loading": "Updating features",
-      "notFound": "Language not found",
-      "notFounds": "Languages not found",
-      "notSignedIn": "Must be signed in",
-      "notAllowed": "You do not have permission to access this language",
-      "invalidData": "Invalid language data",
-      "unknown": "Unknown error, the language data could not be set",
-      "success": "Language data updated successfully"
-    },
-
-    "langPermissions": {
-      "loading": "Generating edit URL",
-      "notSignedIn": "Must be signed in",
-      "permissionNotFound": "No permissions for that user",
-      "notAllowed": "Not allowed to create edit URLs",
-      "languageNotFound": "Language not found",
-      "tokenGenerationFailed": "Failed to generate token",
-      "genSuccess": "Token generated successfully and copied to clipboard",
-      "userHasPermission": "User already has permissions for this language",
-      "userNotFound": "User not found",
-      "userIsAdmin": "User is an admin, no need to generate a token",
-      "tokenNotFound": "Token not found",
-      "tokenExpired": "Token expired",
-      "unknown": "Unknown error, the token could not be generated"
-    }
-  },
   "AuthPage": {
     "signIn": "Sign in",
     "signUp": "Sign up",
@@ -192,11 +165,11 @@
     "createAccount": "Create account",
     "signInHere": "Sign in here",
     "signUpHere": "Sign up here",
-    "signingIn": "Signing in",
     "needAccountForPerm": "You need an account to set the language permission",
     "accountCreated": "Account created successfully",
     "signedIn": "Signed in successfully",
     "signingUp": "Creating your account",
+    "signingIn": "Signing in",
     "errors": {
       "unknownSu": "Unknown error, could not sign up",
       "unknownSi": "Unknown error, could not sign in",
@@ -211,10 +184,35 @@
     "permissionSet": "Permission set",
     "goLangList": "Go to languages list",
     "goHome": "Go to home",
-    "nowHavePermission": "You now have permission to edit the language {lang}"
+    "nowHavePermission": "You now have permission to edit the language {lang}",
+    "loading": "Generating edit URL",
+    "genSuccess": "Token generated successfully and copied to clipboard",
+    "errors": {
+      "notSignedIn": "Must be signed in",
+      "permissionNotFound": "No permissions for that user",
+      "notAllowed": "Not allowed to create edit URLs",
+      "languageNotFound": "Language not found",
+      "tokenGenerationFailed": "Failed to generate token",
+      "userHasPermission": "User already has permissions for this language",
+      "userNotFound": "User not found",
+      "userIsAdmin": "User is an admin, no need to generate a token",
+      "tokenNotFound": "Token not found",
+      "tokenExpired": "Token expired",
+      "unknown": "Unknown error, the token could not be generated"
+    }
   },
   "ListPage": {
     "langList": "Languages list"
+  },
+  "LangData": {
+    "loading": "Updating features",
+    "notFound": "Language not found",
+    "notFounds": "Languages not found",
+    "notSignedIn": "Must be signed in",
+    "notAllowed": "You do not have permission to access this language",
+    "invalidData": "Invalid language data",
+    "unknown": "Unknown error, the language data could not be set",
+    "success": "Language data updated successfully"
   },
   "AccountPage": {
     "title": "Account",

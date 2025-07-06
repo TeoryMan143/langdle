@@ -1,4 +1,5 @@
 {
+  "$schema": "../src/i18n/messages-schema.json",
   "Home": {
     "title": "Advinhe a linguagem do dia"
   },
@@ -152,48 +153,6 @@
       "aspiratedConsonants": "Consoantes aspiradas"
     }
   },
-  "Errors": {
-    "auth": {
-      "signingUp": "Criando sua conta",
-      "signingIn": "Entrando",
-      "unknownSu": "Erro desconhecido, não foi possível criar a conta",
-      "unknownSi": "Erro desconhecido, não foi possível entrar",
-      "invalidUserPassword": "Nome de usuário ou senha inválidos",
-      "nicknameAlreadyExists": "Nome de usuário já existe",
-      "failedCreateUser": "Falha ao criar o usuário",
-      "noSession": "Sem sessão",
-      "dataValidation": "Erro de validação de dados",
-      "accountCreated": "Conta criada com sucesso",
-      "signedIn": "Login realizado com sucesso"
-    },
-
-    "langData": {
-      "loading": "Atualizando características",
-      "notFound": "Idioma não encontrado",
-      "notFounds": "Idiomas não encontrados",
-      "notSignedIn": "É necessário estar logado",
-      "notAllowed": "Você não tem permissão para acessar este idioma",
-      "invalidData": "Dados do idioma inválidos",
-      "unknown": "Erro desconhecido, os dados do idioma não puderam ser definidos",
-      "success": "Dados do idioma atualizados com sucesso"
-    },
-
-    "langPermissions": {
-      "loading": "Gerando URL de edição",
-      "notSignedIn": "É necessário estar logado",
-      "permissionNotFound": "Sem permissões para esse usuário",
-      "notAllowed": "Não é permitido criar URLs de edição",
-      "languageNotFound": "Idioma não encontrado",
-      "tokenGenerationFailed": "Falha ao gerar o token",
-      "genSuccess": "Token gerado com sucesso e copiado para a área de transferência",
-      "userHasPermissions": "O usuário já tem permissões para este idioma",
-      "userNotFound": "Usuário não encontrado",
-      "userIsAdmin": "O usuário é administrador, não é necessário gerar um token",
-      "tokenNotFound": "Token não encontrado",
-      "tokenExpired": "Token expirado",
-      "unknown": "Erro desconhecido, não foi possível gerar o token"
-    }
-  },
   "AuthPage": {
     "signIn": "Entrar",
     "signUp": "Registrar-se",
@@ -203,20 +162,56 @@
     "noAccount": "Não tem uma conta?",
     "alreadyHaveAccount": "Já tem uma conta?",
     "createAccount": "Criar conta",
-    "creatingAccount": "Criando conta...",
     "signInHere": "Entre aqui",
     "signUpHere": "Registre-se aqui",
-    "signingIn": "Entrando...",
-    "needAccountForPerm": "Você precisa de uma conta para definir a permissão de idioma"
+    "needAccountForPerm": "Você precisa de uma conta para definir a permissão de idioma",
+    "accountCreated": "Conta criada com sucesso",
+    "signedIn": "Login realizado com sucesso",
+    "signingUp": "Criando sua conta",
+    "signingIn": "Entrando",
+    "errors": {
+      "unknownSu": "Erro desconhecido, não foi possível criar a conta",
+      "unknownSi": "Erro desconhecido, não foi possível entrar",
+      "invalidUserPassword": "Nome de usuário ou senha inválidos",
+      "nicknameAlreadyExists": "Nome de usuário já existe",
+      "failedCreateUser": "Falha ao criar o usuário",
+      "noSession": "Sem sessão",
+      "dataValidation": "Erro de validação de dados"
+    }
   },
   "AddPermissionPage": {
     "permissionSet": "Permissão definida",
     "goLangList": "Ir para a lista de idiomas",
     "goHome": "Ir para a página inicial",
-    "nowHavePermission": "Agora você tem permissão para editar o idioma {lang}"
+    "nowHavePermission": "Agora você tem permissão para editar o idioma {lang}",
+    "loading": "Gerando URL de edição",
+    "genSuccess": "Token gerado com sucesso e copiado para a área de transferência",
+    "errors": {
+      "notSignedIn": "É necessário estar logado",
+      "permissionNotFound": "Sem permissões para esse usuário",
+      "notAllowed": "Não é permitido criar URLs de edição",
+      "languageNotFound": "Idioma não encontrado",
+      "tokenGenerationFailed": "Falha ao gerar o token",
+      "userHasPermission": "O usuário já tem permissões para este idioma",
+      "userNotFound": "Usuário não encontrado",
+      "userIsAdmin": "O usuário é administrador, não é necessário gerar um token",
+      "tokenNotFound": "Token não encontrado",
+      "tokenExpired": "Token expirado",
+      "unknown": "Erro desconhecido, não foi possível gerar o token"
+    }
   },
   "ListPage": {
     "langList": "Lista de Idiomas"
+  },
+  "LangData": {
+    "loading": "Atualizando características",
+    "notFound": "Idioma não encontrado",
+    "notFounds": "Idiomas não encontrados",
+    "notSignedIn": "É necessário estar logado",
+    "notAllowed": "Você não tem permissão para acessar este idioma",
+    "invalidData": "Dados do idioma inválidos",
+    "unknown": "Erro desconhecido, os dados do idioma não puderam ser definidos",
+    "success": "Dados do idioma atualizados com sucesso"
   },
   "AccountPage": {
     "title": "Conta",

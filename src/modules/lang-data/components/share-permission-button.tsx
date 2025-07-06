@@ -6,7 +6,7 @@ import { Button } from '@/core/components/ui/button';
 import { getLangPermissionUrl } from '../actions';
 
 function SharePermissionButton({ lang }: { lang: string }) {
-  const t = useTranslations('Errors.langPermissions');
+  const t = useTranslations('AddPermissionPage');
 
   const handleClick = async () => {
     const toastId = toast.loading(t('loading'));

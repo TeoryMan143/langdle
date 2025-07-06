@@ -19,7 +19,7 @@ function LangFeaturesForm({ currentData, code }: Props) {
   const currentFeatures = currentData.features;
 
   const [newFeats, setNewFeats] = useState([...currentFeatures]);
-  const t = useTranslations('Errors.langData');
+  const t = useTranslations('LangData');
 
   const createFeatureActivation = useCallback(
     (feat: LangFeatures) => (active: boolean) => {
