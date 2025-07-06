@@ -56,6 +56,11 @@ async function set(id: string, data: LanguageData) {
   return res === 'OK';
 }
 
+async function setStatus(id: string, value: boolean) {
+  const res = await client.json.set(`lang:${id}`, '$.active', value);
+  return res === 'OK';
+}
+
 async function getByIds(ids: string[]): Promise<Language[]> {
   const langsData = (await Promise.all(
     ids.map(id => client.json.get(`lang:${id}`)),
@@ -104,4 +109,4 @@ async function getFuzzy(q: string) {
   return langsEx;
 }
 
-export default { getAll, getById, set, getByIds, getFuzzy };
+export default { getAll, getById, set, setStatus, getByIds, getFuzzy };

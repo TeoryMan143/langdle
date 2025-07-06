@@ -105,3 +105,40 @@ export async function setLangPermission(
     return actionError(message);
   }
 }
+
+export async function setLangStatus(langId: string, status: boolean) {
+  try {
+    const cookieStore = await cookies();
+
+    const sessionId = cookieStore.get('sessionToken')?.value;
+
+    if (!sessionId) {
+      return actionError('notSignedIn');
+    }
+
+    const res = await fetch(
+      `${baseUrl}/api/lang/${langId}/status?active=${status}`,
+      {
+        method: 'put',
+        cache: 'no-cache',
+        headers: {
+          Cookie: `sessionToken=${sessionId}`,
+        },
+      },
+    );
+    const body = await res.json();
+
+    if (!res.ok) {
+      return actionError(body.key);
+    }
+
+    return actionSuccess(body.lang);
+  } catch (e) {
+    console.error(e);
+    let message = 'unknown';
+    if (e instanceof Error) {
+      message = e.message;
+    }
+    return actionError(message);
+  }
+}

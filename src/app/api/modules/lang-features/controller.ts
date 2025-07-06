@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { getCookie } from 'hono/cookie';
+import langRepository from '@/app/api/repositories/langs';
 import { langDataSchema } from '@/core/lib/schemas/langs';
 import { validateSessionToken } from '@/modules/auth/manager';
 import {
@@ -162,6 +163,81 @@ langFeaturesRouter.put('/:id', async c => {
   return c.json({
     key: 'success',
     message: 'Language set',
+  });
+});
+
+langFeaturesRouter.put('/:id/status', async c => {
+  const active = new URL(c.req.url).searchParams.get('active');
+
+  if (!active) {
+    return c.json({
+      key: 'notActive',
+      message: 'You need the active param',
+    });
+  }
+
+  const sessionToken = getCookie(c, 'sessionToken');
+
+  if (!sessionToken) {
+    return c.json(
+      {
+        key: 'notSignedIn',
+        message: 'Must be signed in',
+      },
+      401,
+    );
+  }
+
+  const { user, session } = await validateSessionToken(sessionToken);
+
+  if (!session) {
+    return c.json(
+      {
+        key: 'notSignedIn',
+        message: 'Must be signed in',
+      },
+      401,
+    );
+  }
+
+  if (!user.admin) {
+    return c.json(
+      {
+        key: 'noAdmin',
+        message: 'You need to be an administrator',
+      },
+      401,
+    );
+  }
+
+  const id = c.req.param('id');
+
+  const lang = await getLanguageById(id);
+
+  if (!lang) {
+    return c.json(
+      {
+        key: 'noLang',
+        message: 'Language not found',
+      },
+      404,
+    );
+  }
+
+  const statusRes = await langRepository.setStatus(id, active === 'true');
+
+  if (!statusRes) {
+    return c.json(
+      {
+        key: 'statusChange',
+        message: 'Unknown error chaging language status',
+      },
+      500,
+    );
+  }
+
+  return c.json({
+    success: true,
   });
 });
 

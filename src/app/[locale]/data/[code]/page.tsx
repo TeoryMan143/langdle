@@ -5,6 +5,7 @@ import { getLangPermissions } from '@/modules/lang-data/actions';
 import LangFeaturesForm from '@/modules/lang-data/components/lang-features';
 import LangImage from '@/modules/lang-data/components/lang-image';
 import SharePermissionButton from '@/modules/lang-data/components/share-permission-button';
+import StatusSwitch from '@/modules/lang-data/components/status-switch';
 
 type Props = {
   params: Promise<{ code: string }>;
@@ -47,6 +48,7 @@ async function EditDataPage({ params }: Props) {
         <LangImage code={code} /> {`${name}${exonym ? ` (${exonym})` : ''}`}
         {user.admin && <SharePermissionButton lang={lang.id} />}
       </h2>
+      {user.admin && <StatusSwitch defStatus={lang.active} />}
       <div className='flex justify-center'>
         <LangFeaturesForm code={code} currentData={lang} />
       </div>
