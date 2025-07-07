@@ -1,3 +1,6 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
 import {
   Table,
   TableBody,
@@ -15,12 +18,14 @@ type Props = {
 };
 
 function GuessesTable({ guesses }: Props) {
+  const t = useTranslations('Game');
+
   return (
     <Table>
       <TableHeader className='md:text-lg md:h-28'>
         <TableRow>
           <TableHead className='md:w-[144px] text-center font-semibold relative after:h-[80%] after:w-[2px] after:bg-soft-det after:absolute after:right-0 after:top-1/2 after:-translate-y-1/2'>
-            Language
+            {t('lang')}
           </TableHead>
           <TableHead className='font-semibold text-center'>Features</TableHead>
         </TableRow>

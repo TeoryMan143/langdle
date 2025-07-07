@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useDebounceValue, useLocalStorage } from 'usehooks-ts';
@@ -32,7 +33,7 @@ function Game() {
     query,
   });
 
-  const { data: allLangs } = useLang({
+  const { data: allLangs, isLoading: allLoading } = useLang({
     action: 'get',
     onlyActives: true,
   });
@@ -131,6 +132,8 @@ function Game() {
     }
   };
 
+  const t = useTranslations('Game');
+
   return (
     <div className='space-y-6 flex flex-col items-center w-full'>
       <div className='md:h-14 md:w-[95%]'>
@@ -148,7 +151,7 @@ function Game() {
                 { grid: animateError },
               )}
             >
-              <p>Select a language to guess!</p>
+              <p>{t('selectToGuess')}</p>
             </motion.div>
 
             <Input
@@ -157,13 +160,13 @@ function Game() {
                 setSelectedLang(null);
               }}
               className='relative text-center h-full bg-white z-10'
-              placeholder='Type your guess'
+              placeholder={t('typeGuess')}
               ref={inputRef}
             />
 
             <QueryRes
               langs={query === '' ? allLangs : data}
-              loading={isLoading}
+              loading={isLoading || allLoading}
               error={isError}
               onSelect={lang => {
                 setSelectedLang(lang);
@@ -185,7 +188,7 @@ function Game() {
             }}
             disabled={loading}
           >
-            {loading ? <Loading /> : 'Guess'}
+            {loading ? <Loading /> : t('guess')}
             <Send />
           </Button>
         </search>
@@ -193,14 +196,16 @@ function Game() {
       <div className='text-gray-600 flex justify-center items-center gap-2'>
         {dailyLang ? (
           <>
-            <p>Language of the day:</p>
+            <p>{t('dailyLang')}:</p>
             <LangImage code={dailyLang.id} />
             <p>
               {dailyLang.name} {dailyLang.exonym && `(${dailyLang.exonym})`}
             </p>
           </>
         ) : (
-          <p>Attempts left: {7 - guesses.length}</p>
+          <p>
+            {t('attLeft')}: {7 - guesses.length}
+          </p>
         )}
       </div>
       <GuessesTable guesses={guesses} />

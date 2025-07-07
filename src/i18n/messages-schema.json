@@ -876,6 +876,53 @@
         "successSignOut",
         "noSession"
       ]
+    },
+    "Game": {
+      "type": "object",
+      "properties": {
+        "selectToGuess": {
+          "type": "string"
+        },
+        "typeGuess": {
+          "type": "string"
+        },
+        "guess": {
+          "type": "string"
+        },
+        "langNotFound": {
+          "type": "string"
+        },
+        "unkError": {
+          "type": "string"
+        },
+        "dailyLang": {
+          "type": "string"
+        },
+        "attLeft": {
+          "type": "string"
+        },
+        "lang": {
+          "type": "string"
+        },
+        "features": {
+          "type": "string"
+        },
+        "firstGuess": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "selectToGuess",
+        "typeGuess",
+        "guess",
+        "langNotFound",
+        "unkError",
+        "dailyLang",
+        "attLeft",
+        "lang",
+        "features",
+        "firstGuess"
+      ]
     }
   },
   "required": [
@@ -885,6 +932,7 @@
     "AddPermissionPage",
     "ListPage",
     "LangData",
-    "AccountPage"
+    "AccountPage",
+    "Game"
   ]
 }

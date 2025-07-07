@@ -221,5 +221,17 @@
     "signingOut": "Saindo...",
     "successSignOut": "Sessão encerrada com sucesso",
     "noSession": "Sem sessão"
+  },
+  "Game": {
+    "selectToGuess": "Selecione um idioma para adivinhar!",
+    "typeGuess": "Digite sua resposta",
+    "guess": "Adivinhar",
+    "langNotFound": "Idioma não encontrado",
+    "unkError": "Erro desconhecido",
+    "dailyLang": "Idioma do dia",
+    "attLeft": "Tentativas restantes",
+    "lang": "Idioma",
+    "features": "Características",
+    "firstGuess": "Faça sua primeira tentativa!"
   }
 }

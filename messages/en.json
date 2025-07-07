@@ -212,7 +212,7 @@
     "notAllowed": "You do not have permission to access this language",
     "invalidData": "Invalid language data",
     "unknown": "Unknown error, the language data could not be set",
-    "notActive": "You need the active param",
+    "notActive": "You need the 'active' param",
     "noAdmin": "You need to be an administrator",
     "success": "Language data updated successfully"
   },
@@ -222,5 +222,17 @@
     "signingOut": "Signing out...",
     "successSignOut": "Signed out successfully",
     "noSession": "No session"
+  },
+  "Game": {
+    "selectToGuess": "Select a language to guess!",
+    "typeGuess": "Type your guess",
+    "guess": "Guess",
+    "langNotFound": "Language not found",
+    "unkError": "Unknown error",
+    "dailyLang": "Language of the day",
+    "attLeft": "Attempts left",
+    "lang": "Language",
+    "features": "Features",
+    "firstGuess": "Do your first guess!"
   }
 }
