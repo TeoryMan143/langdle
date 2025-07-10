@@ -1,14 +1,13 @@
 import { Hono } from 'hono';
-import { getCookie } from 'hono/cookie';
+import { authMiddleware } from '@/app/api/middleware/auth';
 import langRepository from '@/app/api/repositories/langs';
-import { validateSessionToken } from '@/modules/auth/manager';
 import {
   createLangPermissionToken,
   getUserLangPermissions,
   setUserPermission,
 } from './action';
 
-const langPermissionsRouter = new Hono();
+export const langPermissionsRouter = new Hono();
 
 langPermissionsRouter.get('/:userId', async c => {
   const userId = c.req.param('userId');
@@ -25,30 +24,8 @@ langPermissionsRouter.get('/:userId', async c => {
   return c.json(permissions);
 });
 
-langPermissionsRouter.get('/generatetoken/:lang', async c => {
-  const sessionToken = getCookie(c, 'sessionToken');
-
-  if (!sessionToken) {
-    return c.json(
-      {
-        key: 'notSignedIn',
-        message: 'Must be signed in',
-      },
-      401,
-    );
-  }
-
-  const { user, session } = await validateSessionToken(sessionToken);
-
-  if (!session) {
-    return c.json(
-      {
-        key: 'notSignedIn',
-        message: 'Must be signed in',
-      },
-      401,
-    );
-  }
+langPermissionsRouter.get('/generatetoken/:lang', authMiddleware, async c => {
+  const user = c.get('user');
 
   if (!user.admin) {
     return c.json(
@@ -91,30 +68,8 @@ langPermissionsRouter.get('/generatetoken/:lang', async c => {
   });
 });
 
-langPermissionsRouter.put('/set/:token', async c => {
-  const sessionToken = getCookie(c, 'sessionToken');
-
-  if (!sessionToken) {
-    return c.json(
-      {
-        key: 'notSignedIn',
-        message: 'Must be signed in',
-      },
-      401,
-    );
-  }
-
-  const { user, session } = await validateSessionToken(sessionToken);
-
-  if (!session) {
-    return c.json(
-      {
-        key: 'notSignedIn',
-        message: 'Must be signed in',
-      },
-      401,
-    );
-  }
+langPermissionsRouter.put('/set/:token', authMiddleware, async c => {
+  const user = c.get('user');
 
   const token = c.req.param('token');
 

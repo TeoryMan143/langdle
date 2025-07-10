@@ -45,7 +45,7 @@ export async function getLangPermissionUrl(
       {
         cache: 'no-cache',
         headers: {
-          Cookie: `sessionToken=${sessionId}`,
+          Authorization: `Bearer ${sessionId}`,
         },
       },
     );
@@ -85,7 +85,7 @@ export async function setLangPermission(
       method: 'put',
       cache: 'no-cache',
       headers: {
-        Cookie: `sessionToken=${sessionId}`,
+        Authorization: `Bearer ${sessionId}`,
       },
     });
 
@@ -122,7 +122,7 @@ export async function setLangStatus(langId: string, status: boolean) {
         method: 'put',
         cache: 'no-cache',
         headers: {
-          Cookie: `sessionToken=${sessionId}`,
+          Authorization: `Bearer ${sessionId}`,
         },
       },
     );

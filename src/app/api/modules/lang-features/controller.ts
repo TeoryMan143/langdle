@@ -1,8 +1,7 @@
 import { Hono } from 'hono';
-import { getCookie } from 'hono/cookie';
 import langRepository from '@/app/api/repositories/langs';
 import { langDataSchema } from '@/core/lib/schemas/langs';
-import { validateSessionToken } from '@/modules/auth/manager';
+import { authMiddleware } from '../../middleware/auth';
 import {
   getAllLanguages,
   getLangSearch,
@@ -82,7 +81,7 @@ langFeaturesRouter.get('/', async c => {
   return c.json(langs);
 });
 
-langFeaturesRouter.put('/:id', async c => {
+langFeaturesRouter.put('/:id', authMiddleware, async c => {
   const langId = c.req.param('id');
 
   const lang = await getLanguageById(langId);
@@ -97,29 +96,7 @@ langFeaturesRouter.put('/:id', async c => {
     );
   }
 
-  const sessionToken = getCookie(c, 'sessionToken');
-
-  if (!sessionToken) {
-    return c.json(
-      {
-        key: 'notSignedIn',
-        message: 'Must be signed in',
-      },
-      401,
-    );
-  }
-
-  const { user, session } = await validateSessionToken(sessionToken);
-
-  if (!session) {
-    return c.json(
-      {
-        key: 'notSignedIn',
-        message: 'Must be signed in',
-      },
-      401,
-    );
-  }
+  const user = c.get('user');
 
   const permissions = await getUserLangPermissions(user.id);
 
@@ -166,7 +143,7 @@ langFeaturesRouter.put('/:id', async c => {
   });
 });
 
-langFeaturesRouter.put('/:id/status', async c => {
+langFeaturesRouter.put('/:id/status', authMiddleware, async c => {
   const active = new URL(c.req.url).searchParams.get('active');
 
   if (!active) {
@@ -176,29 +153,7 @@ langFeaturesRouter.put('/:id/status', async c => {
     });
   }
 
-  const sessionToken = getCookie(c, 'sessionToken');
-
-  if (!sessionToken) {
-    return c.json(
-      {
-        key: 'notSignedIn',
-        message: 'Must be signed in',
-      },
-      401,
-    );
-  }
-
-  const { user, session } = await validateSessionToken(sessionToken);
-
-  if (!session) {
-    return c.json(
-      {
-        key: 'notSignedIn',
-        message: 'Must be signed in',
-      },
-      401,
-    );
-  }
+  const user = c.get('user');
 
   if (!user.admin) {
     return c.json(

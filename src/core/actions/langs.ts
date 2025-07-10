@@ -150,7 +150,7 @@ export async function setLanguageData(
       body: JSON.stringify(data),
       cache: 'no-cache',
       headers: {
-        Cookie: `sessionToken=${sessionId}`,
+        Authorization: `Bearer ${sessionId}`,
       },
     });
 
