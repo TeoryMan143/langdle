@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import {
   Table,
@@ -15,6 +16,16 @@ import Feature from './feature';
 
 type Props = {
   guesses: LanguageGuess[];
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 function GuessesTable({ guesses }: Props) {
@@ -37,21 +48,35 @@ function GuessesTable({ guesses }: Props) {
             <TableCell className='text-center'>Do your first guess!</TableCell>
           </TableRow>
         )}
-        {guesses.map(({ id, name, matching, exonym }) => (
-          <TableRow key={id}>
-            <TableCell className='md:w-[144px] text-center border-r-1 border-soft-det'>
-              <LangImage code={id} /> {name} {exonym && `(${exonym})`}
-            </TableCell>
-            <TableCell className='flex gap-2.5 flex-wrap'>
-              {matching.correct.map(f => (
-                <Feature key={name + f} id={f} match />
-              ))}
-              {matching.incorrect.map(f => (
-                <Feature key={name + f} id={f} />
-              ))}
-            </TableCell>
-          </TableRow>
-        ))}
+        {guesses.map(({ id, name, matching, exonym }) => {
+          const haveMatches =
+            matching.correct.length > 0 || matching.incorrect.length > 0;
+
+          return (
+            <TableRow key={id}>
+              <TableCell className='md:w-[144px] text-center border-r-1 border-soft-det'>
+                <LangImage code={id} /> {name} {exonym && `(${exonym})`}
+              </TableCell>
+              <TableCell>
+                {haveMatches && (
+                  <motion.div
+                    className='flex gap-2.5 flex-wrap'
+                    variants={containerVariants}
+                    initial='hidden'
+                    animate='visible'
+                  >
+                    {matching.correct.map(f => (
+                      <Feature key={name + f} id={f} match />
+                    ))}
+                    {matching.incorrect.map(f => (
+                      <Feature key={name + f} id={f} />
+                    ))}
+                  </motion.div>
+                )}
+              </TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
     </Table>
   );
