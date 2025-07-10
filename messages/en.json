@@ -219,7 +219,7 @@
   "AccountPage": {
     "title": "Account",
     "signOut": "Sign out",
-    "signingOut": "Signing out...",
+    "signingOut": "Signing out",
     "successSignOut": "Signed out successfully",
     "noSession": "No session"
   },

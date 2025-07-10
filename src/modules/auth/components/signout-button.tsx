@@ -10,15 +10,14 @@ import { SignOutError, signOutErrors } from '../types';
 
 function SignOutButton() {
   const { session } = useAuth();
-  const t = useTranslations('Errors');
-  const tm = useTranslations('AccountPage');
+  const t = useTranslations('AccountPage');
 
   const router = useRouter();
 
   const handleSignOut = async () => {
-    const toastId = toast.loading(tm('signingOut'));
+    const toastId = toast.loading(t('signingOut'));
     if (!session) {
-      toast.error(tm('noSession'), { id: toastId });
+      toast.error(t('noSession'), { id: toastId });
       return;
     }
 
@@ -32,13 +31,13 @@ function SignOutButton() {
       return;
     }
 
-    toast.success(tm('successSignOut'), { id: toastId });
+    toast.success(t('successSignOut'), { id: toastId });
     router.push('/');
   };
 
   return (
     <div className='flex justify-center'>
-      <Button onClick={handleSignOut}>{tm('signOut')}</Button>
+      <Button onClick={handleSignOut}>{t('signOut')}</Button>
     </div>
   );
 }
