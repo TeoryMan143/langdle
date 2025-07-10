@@ -25,6 +25,8 @@ type SavedGuesses = {
   dailyLang: Language | null;
 };
 
+const MAX_ATTEMPTS = 5;
+
 function Game() {
   const [query, setQuery] = useDebounceValue('', 400);
 
@@ -91,7 +93,7 @@ function Game() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleGuess = async () => {
-    if (guesses.length >= 7) {
+    if (guesses.length >= MAX_ATTEMPTS) {
       return toast.error('No attempts left');
     }
 
@@ -204,7 +206,7 @@ function Game() {
           </>
         ) : (
           <p>
-            {t('attLeft')}: {7 - guesses.length}
+            {t('attLeft')}: {MAX_ATTEMPTS - guesses.length}
           </p>
         )}
       </div>
