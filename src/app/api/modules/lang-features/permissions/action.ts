@@ -38,7 +38,7 @@ export async function createLangPermissionToken(lang: string) {
     const code = encodeBase32LowerCaseNoPadding(bytes);
 
     const jwt = await new jose.EncryptJWT({ lang, code })
-      .setExpirationTime('10m')
+      .setExpirationTime('30m')
       .setProtectedHeader({ alg: 'dir', enc: 'A256CBC-HS512' })
       .encrypt(secret);
 
