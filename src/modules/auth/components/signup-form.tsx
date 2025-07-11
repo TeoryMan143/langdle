@@ -3,14 +3,17 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Button } from '@/core/components/ui/button';
+import { COUNTRIES } from '@/core/lib/countries';
+import { SelectMenuOption } from '@/core/lib/types';
 import { cn } from '@/core/lib/utils';
 import { Link, useRouter } from '@/i18n/navigation';
 import { signUpUser } from '../actions';
 import { type SignUpSchema, signUpSchema } from '../schemas/signup';
+import CountrySelector from './country-selector';
 import FormInput from './form-input';
 
 function SignUpForm() {
@@ -35,6 +38,9 @@ function SignUpForm() {
       toast.info(t('needAccountForPerm'));
     }
   }, [redtk, t]);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [country, setCountry] = useState('AF');
 
   const onSubmit = async (data: SignUpSchema) => {
     const toastId = toast.loading(`${t('signingUp')}...`);
@@ -97,6 +103,17 @@ function SignUpForm() {
         {errors.confirmPassword && (
           <InputError message={errors.confirmPassword.message} />
         )}
+        <CountrySelector
+          id={'countries'}
+          open={isOpen}
+          onToggle={() => setIsOpen(!isOpen)}
+          onChange={val => setCountry(val)}
+          selectedValue={
+            COUNTRIES.find(
+              option => option.value === country,
+            ) as SelectMenuOption
+          }
+        />
       </div>
       <div className='flex justify-center'>
         <Button disabled={isLoading} type='submit'>

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { COUNTRIES } from './countries';
 import { langDataSchema } from './schemas/langs';
 import { langFeatures } from './utils';
 
@@ -9,3 +10,5 @@ export type LanguageMatching = {
   correct: LangFeatures[];
   incorrect: LangFeatures[];
 };
+
+export type SelectMenuOption = (typeof COUNTRIES)[number];

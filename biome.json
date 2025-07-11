@@ -57,6 +57,12 @@
       },
       "complexity": {
         "noForEach": "off"
+      },
+      "nursery": {
+        "useUniqueElementIds": "off"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "off"
       }
     }
   },
