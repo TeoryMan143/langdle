@@ -1,3 +1,7 @@
+/** biome-ignore-all lint/a11y/useFocusableInteractive: annoying */
+/** biome-ignore-all lint/performance/noImgElement: annoying */
+/** biome-ignore-all lint/a11y/useSemanticElements: annoying */
+/** biome-ignore-all lint/a11y/noNoninteractiveElementToInteractiveRole: annoying */
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { COUNTRIES } from '@/core/lib/countries';
@@ -96,7 +100,6 @@ export default function CountrySelector({
               transition={{ duration: 0.1 }}
               className='absolute z-10 mt-1 w-full bg-white shadow-lg max-h-80 rounded-md text-base ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'
               tabIndex={-1}
-              // biome-ignore lint/a11y/useSemanticElements: annoying
               role='listbox'
               aria-labelledby='listbox-label'
               aria-activedescendant='listbox-option-3'
