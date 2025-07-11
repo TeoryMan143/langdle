@@ -1,11 +1,10 @@
-import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { userTable } from '@/core/database/relational/tables';
 
-export const signInSchema = createInsertSchema(userTable)
-  .omit({ id: true })
-  .extend({
-    nickname: z.string().min(1, { message: 'Nickname required' }).trim(),
-    password: z.string().min(1, { message: 'Password required' }).trim(),
-  });
+export const signInSchema: z.ZodObject<{
+  nickname: z.ZodString;
+  password: z.ZodString;
+}> = z.object({
+  nickname: z.string().min(1, { message: 'Nickname required' }).trim(),
+  password: z.string().min(1, { message: 'Password required' }).trim(),
+});
 export type SignInSchema = z.infer<typeof signInSchema>;

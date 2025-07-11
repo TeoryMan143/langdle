@@ -21,6 +21,7 @@ function SignUpForm() {
     register,
     handleSubmit,
     setError,
+    setValue,
     formState: { errors, isLoading },
   } = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
@@ -41,6 +42,10 @@ function SignUpForm() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [country, setCountry] = useState('AF');
+
+  useEffect(() => {
+    setValue('country', country);
+  }, [setValue, country]);
 
   const onSubmit = async (data: SignUpSchema) => {
     const toastId = toast.loading(`${t('signingUp')}...`);

@@ -43,6 +43,13 @@
       "when": 1749678849827,
       "tag": "0005_old_korvac",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1752276539064,
+      "tag": "0006_hot_lila_cheney",
+      "breakpoints": true
     }
   ]
 }

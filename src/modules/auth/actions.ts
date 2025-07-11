@@ -110,7 +110,13 @@ export async function signInUser(
     );
 
     return actionSuccess({
-      user: { nickname: user.nickname, id: user.id, admin: user.admin },
+      user: {
+        nickname: user.nickname,
+        id: user.id,
+        admin: user.admin,
+        googleId: user.googleId,
+        country: user.country,
+      },
       session,
     });
   } catch (e) {

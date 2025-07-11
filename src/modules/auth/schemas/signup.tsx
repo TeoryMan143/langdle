@@ -20,6 +20,7 @@ export const signUpSchema = createInsertSchema(userTable)
       .min(8, { message: 'Password must be at least 8 characters long' })
       .max(100, { message: 'Password must be at most 100 characters long' })
       .trim(),
+    country: z.string().min(1, { message: 'Country is required' }),
   })
   .refine(fields => fields.password === fields.confirmPassword, {
     message: 'Passwords do not match',
