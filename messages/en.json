@@ -65,7 +65,7 @@
       "openSyllablesOnly": "Phonotactics that only allow sylllables that end in a vowel",
       "highVowelInventory": "More than 9 phonemic vowels",
       "lowVowelInventory": "Less than 4 phonemic vowels",
-      "highConsonantInventory": "More than 20 phonemic consonants",
+      "highConsonantInventory": "More than 22 phonemic consonants",
       "lowConsonantInventory": "Less than 8 phonemic consonants",
       "gemination": "The length of the sounds has phonemic value",
       "palatalization": "Phonological process where a consonant is pronounced closer to the hard palate",
