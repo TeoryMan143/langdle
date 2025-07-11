@@ -65,6 +65,8 @@ export const langFeatures = [
   'openSyllablesOnly',
   'highVowelInventory',
   'lowVowelInventory',
+  'highConsonantInventory',
+  'lowConsonantInventory',
   'gemination',
   'palatalization',
   'lateralFricatives',

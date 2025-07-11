@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Generated schema for Root",
+  "title": "How you translations should look like",
   "type": "object",
   "properties": {
     "Home": {
@@ -198,6 +198,12 @@
             "lowVowelInventory": {
               "type": "string"
             },
+            "highConsonantInventory": {
+              "type": "string"
+            },
+            "lowConsonantInventory": {
+              "type": "string"
+            },
             "gemination": {
               "type": "string"
             },
@@ -296,6 +302,8 @@
             "openSyllablesOnly",
             "highVowelInventory",
             "lowVowelInventory",
+            "highConsonantInventory",
+            "lowConsonantInventory",
             "gemination",
             "palatalization",
             "lateralFricatives",
