@@ -40,6 +40,8 @@ export async function validateSessionToken(
         id: userTable.id,
         nickname: userTable.nickname,
         admin: userTable.admin,
+        country: userTable.country,
+        googleId: userTable.googleId,
       },
       session: sessionTable,
     })
