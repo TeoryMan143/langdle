@@ -141,6 +141,8 @@
       "openSyllablesOnly": "Apenas sílabas abertas",
       "highVowelInventory": "Inventário vocálico elevado",
       "lowVowelInventory": "Inventário vocálico reduzido",
+      "highConsonantInventory": "Inventário consonántico elevado",
+      "lowConsonantInventory": "Inventário consonántico reduzido",
       "gemination": "Geminação",
       "palatalization": "Palatalização",
       "lateralFricatives": "Fricativas laterais",
