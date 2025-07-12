@@ -1,5 +1,4 @@
 /** biome-ignore-all lint/a11y/useFocusableInteractive: annoying */
-/** biome-ignore-all lint/performance/noImgElement: annoying */
 /** biome-ignore-all lint/a11y/useSemanticElements: annoying */
 /** biome-ignore-all lint/a11y/noNoninteractiveElementToInteractiveRole: annoying */
 import { AnimatePresence, motion } from 'framer-motion';

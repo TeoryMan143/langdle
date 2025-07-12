@@ -1,6 +1,7 @@
 import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { auth } from '@/modules/auth/actions';
+import AccountData from '@/modules/auth/components/account-data';
 import SignOutButton from '@/modules/auth/components/signout-button';
 
 async function AccountPage() {
@@ -15,7 +16,7 @@ async function AccountPage() {
   return (
     <div>
       <h1 className='text-4xl text-center'>{t('title')}</h1>
-      <p className='text-center'>{user.nickname}</p>
+      <AccountData user={user} />
       <SignOutButton />
     </div>
   );
