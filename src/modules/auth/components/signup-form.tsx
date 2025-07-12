@@ -15,6 +15,7 @@ import { signUpUser } from '../actions';
 import { type SignUpSchema, signUpSchema } from '../schemas/signup';
 import CountrySelector from './country-selector';
 import FormInput from './form-input';
+import FormPasswordInput from './form-password-input';
 
 function SignUpForm() {
   const {
@@ -87,8 +88,7 @@ function SignUpForm() {
           {...register('nickname')}
         />
         {errors.nickname && <InputError message={errors.nickname.message} />}
-        <FormInput
-          type='password'
+        <FormPasswordInput
           className={cn({
             'ring-2 ring-red-500 focus-visible:ring-red-500': errors.password,
           })}
@@ -96,8 +96,7 @@ function SignUpForm() {
           {...register('password')}
         />
         {errors.password && <InputError message={errors.password.message} />}
-        <FormInput
-          type='password'
+        <FormPasswordInput
           className={cn({
             'ring-2 ring-red-500 focus-visible:ring-red-500':
               errors.confirmPassword,
