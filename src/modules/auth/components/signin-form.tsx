@@ -11,6 +11,7 @@ import { Link, useRouter } from '@/i18n/navigation';
 import { signInUser } from '../actions';
 import { type SignInSchema, signInSchema } from '../schemas/signin';
 import FormInput from './form-input';
+import FormPasswordInput from './form-password-input';
 
 function SignInForm() {
   const {
@@ -64,7 +65,7 @@ function SignInForm() {
           {...register('nickname')}
         />
         {errors.nickname && <InputError message={errors.nickname.message} />}
-        <FormInput
+        <FormPasswordInput
           type='password'
           className={cn({
             'ring-2 ring-red-500 focus-visible:ring-red-500': errors.password,
