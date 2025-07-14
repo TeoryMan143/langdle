@@ -50,6 +50,14 @@ export async function signUpUser(
       return actionError('failedCreateUser');
     }
 
+    const token = generateSessionToken();
+
+    await createSession(token, newUser.id);
+    await setSessionTokenCookie(
+      token,
+      new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+    );
+
     return actionSuccess(newUser);
   } catch (e) {
     console.error(e);

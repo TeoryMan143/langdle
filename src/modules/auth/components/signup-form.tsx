@@ -71,7 +71,7 @@ function SignUpForm() {
       }
 
       toast.success(t('accountCreated'), { id: toastId });
-      router.push(`/signin${redtk ? `?redtk=${redtk}` : ''}`);
+      router.push(redtk ? `/addpermission?token=${redtk}` : '/account');
     } catch (error) {
       console.error(error);
     }
