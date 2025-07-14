@@ -66,7 +66,6 @@ function SignInForm() {
         />
         {errors.nickname && <InputError message={errors.nickname.message} />}
         <FormPasswordInput
-          type='password'
           className={cn({
             'ring-2 ring-red-500 focus-visible:ring-red-500': errors.password,
           })}
