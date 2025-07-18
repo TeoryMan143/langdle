@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import Google from '@/core/components/icons/google';
 import { Button } from '@/core/components/ui/button';
 import { COUNTRIES } from '@/core/lib/countries';
 import { SelectMenuOption } from '@/core/lib/types';
@@ -119,9 +120,14 @@ function SignUpForm() {
           }
         />
       </div>
-      <div className='flex justify-center'>
+      <div className='flex justify-center gap-2'>
         <Button disabled={isLoading} type='submit'>
           {isLoading ? t('creatingAccount') : t('createAccount')}{' '}
+        </Button>
+        <Button className='bg-white' asChild>
+          <a href='/api/login/google'>
+            <Google />
+          </a>
         </Button>
       </div>
       <div>

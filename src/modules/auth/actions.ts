@@ -17,6 +17,10 @@ import {
   setSessionTokenCookie,
   validateSessionToken,
 } from './manager';
+import {
+  GoogleDataActionSchema,
+  googleDataActionSchema,
+} from './schemas/googledata';
 import { signInSchema } from './schemas/signin';
 import { SignUpSchema, signUpSchema } from './schemas/signup';
 import type {
@@ -96,6 +100,10 @@ export async function signInUser(
       .where(eq(userTable.nickname, userData.nickname))
       .limit(1);
 
+    if (!user.password) {
+      return actionError('invalidUserPassword');
+    }
+
     if (!user) {
       return actionError('invalidUserPassword');
     }
@@ -152,6 +160,51 @@ export async function signOutUser(): Promise<ActionResult<undefined>> {
     console.error(e);
     let message = 'unknown';
     if (e instanceof Error) {
+      message = e.message;
+    }
+    return actionError(message);
+  }
+}
+
+export async function createGoogleAccount(accountData: {
+  nickname: string;
+  googleId: string;
+  country: string;
+}): Promise<
+  ActionResult<UserDTO, string | typeToFlattenedError<GoogleDataActionSchema>>
+> {
+  const validation = googleDataActionSchema.safeParse(accountData);
+
+  if (!validation.success) {
+    return actionError(validation.error.flatten());
+  }
+
+  const userData = validation.data;
+
+  try {
+    const [newUser] = await db.insert(userTable).values(userData).returning();
+
+    if (!newUser) {
+      return actionError('failedCreateUser');
+    }
+
+    const token = generateSessionToken();
+
+    await createSession(token, newUser.id);
+    await setSessionTokenCookie(
+      token,
+      new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+    );
+
+    return actionSuccess(newUser);
+  } catch (e) {
+    console.error(e);
+    let message = 'unknownSu';
+    if (e instanceof NeonDbError) {
+      if (e.constraint === 'user_nickname_unique') {
+        message = 'nicknameAlreadyExists';
+      }
+    } else if (e instanceof Error) {
       message = e.message;
     }
     return actionError(message);

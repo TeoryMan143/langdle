@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import Google from '@/core/components/icons/google';
 import { Button } from '@/core/components/ui/button';
 import { cn } from '@/core/lib/utils';
 import { Link, useRouter } from '@/i18n/navigation';
@@ -74,9 +75,14 @@ function SignInForm() {
         />
         {errors.password && <InputError message={errors.password.message} />}
       </div>
-      <div className='flex justify-center'>
+      <div className='flex justify-center gap-2'>
         <Button disabled={isLoading} type='submit'>
           {isLoading ? t('signingIn') : t('signIn')}
+        </Button>
+        <Button className='bg-white' asChild>
+          <a href='/api/login/google'>
+            <Google />
+          </a>
         </Button>
       </div>
       <div>
