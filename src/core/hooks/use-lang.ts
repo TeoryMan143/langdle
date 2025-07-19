@@ -2,6 +2,7 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import {
   getAllActiveLanguages,
   getAllLanguages,
+  getDailyLanguage,
   getLanguage,
   getLanguagesBySearch,
   setLanguageData,
@@ -73,6 +74,17 @@ export function useLang(
 
         return result;
       }
+
+      if (action === 'get' && lang === 'daily') {
+        const { success, error, result } = await getDailyLanguage();
+
+        if (!success) {
+          throw new Error(error);
+        }
+
+        return result;
+      }
+
       if (action === 'get' && lang) {
         const { success, error, result } = await getLanguage(lang);
 

@@ -931,6 +931,12 @@
         },
         "youGuessed": {
           "type": "string"
+        },
+        "nextOne": {
+          "type": "string"
+        },
+        "theLangWas": {
+          "type": "string"
         }
       },
       "required": [
@@ -945,7 +951,9 @@
         "features",
         "firstGuess",
         "congrats",
-        "youGuessed"
+        "youGuessed",
+        "nextOne",
+        "theLangWas"
       ]
     }
   },

@@ -175,3 +175,26 @@ export async function setLanguageData(
     return actionError(message);
   }
 }
+
+export async function getDailyLanguage(): Promise<ActionResult<Language>> {
+  try {
+    const res = await fetch(`${baseUrl}/api/daily/correct`);
+
+    if (!res.ok) {
+      const error = await res.json();
+      console.error(error);
+      return actionError(error.key);
+    }
+
+    const lang = (await res.json()) as Language;
+
+    return actionSuccess(lang);
+  } catch (e) {
+    let message = 'unknown error';
+    if (e instanceof Error) {
+      console.error(e);
+      message = e.message;
+    }
+    return actionError(message);
+  }
+}

@@ -16,6 +16,7 @@ import { useAuth } from '@/modules/auth/context';
 import LangImage from '@/modules/lang-data/components/lang-image';
 import { checkGuess } from '../actions';
 import { LanguageGuess } from '../types';
+import FailDialog from './fail-dialog';
 import GuessesTable from './guesses-table';
 import QueryRes from './query-res';
 import WinDialog from './win-dialog';
@@ -65,15 +66,15 @@ function Game() {
       hasRetrievedSave.current = true;
       setGuesses(localGuesses.guesses);
       setDailyLang(localGuesses.dailyLang);
-      console.log('GOT');
     } else if (
       !hasRetrievedSave.current &&
       !session &&
       localGuesses.date !== getUTCDateString()
     ) {
+      setLocalGuesses({ date: 'invalid', guesses: [], dailyLang: null });
       hasRetrievedSave.current = true;
     }
-  }, [session, localGuesses]);
+  }, [session, localGuesses, setLocalGuesses]);
 
   useEffect(() => {
     if (hasRetrievedSave.current && !session && !localGuesses.dailyLang) {
@@ -123,9 +124,7 @@ function Game() {
         dailyLang: matching.guessed,
       });
       setDailyLang(matching.guessed);
-      return toast.success(
-        `Congratulations you guessed the language: ${matching.guessed.name}`,
-      );
+      return;
     }
 
     setGuesses(prev => [...prev, { ...selectedLang, matching }]);
@@ -140,6 +139,7 @@ function Game() {
   return (
     <div className='space-y-6 flex flex-col items-center w-full'>
       {dailyLang && <WinDialog lang={dailyLang} />}
+      {!dailyLang && guesses.length >= 5 && <FailDialog />}
       <div className='md:h-14 md:w-[95%]'>
         <search className='h-full flex items-center gap-2'>
           <div className='h-full flex-1 relative group/langs'>

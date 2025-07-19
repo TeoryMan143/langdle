@@ -238,6 +238,8 @@
     "features": "Características",
     "firstGuess": "Faça sua primeira tentativa!",
     "congrats": "Parabéns!",
-    "youGuessed": "Você adivinhou o idioma {lang}"
+    "youGuessed": "Você adivinhou o idioma {lang}",
+    "nextOne": "Mais sorte na próxima",
+    "theLangWas": "O idioma do dia era {lang}"
   }
 }

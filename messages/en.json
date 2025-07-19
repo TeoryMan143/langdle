@@ -239,6 +239,8 @@
     "features": "Features",
     "firstGuess": "Do your first guess!",
     "congrats": "Congratulations!",
-    "youGuessed": "You have guessed the language {lang}"
+    "youGuessed": "You have guessed the language {lang}",
+    "nextOne": "Better luck in the next one",
+    "theLangWas": "The language of the day was {lang}"
   }
 }

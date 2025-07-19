@@ -4,6 +4,11 @@ import langRepository from '../../repositories/langs';
 
 const dailyGuessRouter = new Hono();
 
+dailyGuessRouter.get('/correct', async c => {
+  const dailylang = await dailyRepository.getDailyLang();
+  return c.json(dailylang);
+});
+
 dailyGuessRouter.get('/:id', async c => {
   const id = c.req.param('id');
 
