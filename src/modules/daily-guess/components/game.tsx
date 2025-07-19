@@ -18,6 +18,7 @@ import { checkGuess } from '../actions';
 import { LanguageGuess } from '../types';
 import GuessesTable from './guesses-table';
 import QueryRes from './query-res';
+import WinDialog from './win-dialog';
 
 type SavedGuesses = {
   date: string;
@@ -138,6 +139,7 @@ function Game() {
 
   return (
     <div className='space-y-6 flex flex-col items-center w-full'>
+      {dailyLang && <WinDialog lang={dailyLang} />}
       <div className='md:h-14 md:w-[95%]'>
         <search className='h-full flex items-center gap-2'>
           <div className='h-full flex-1 relative group/langs'>

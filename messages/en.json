@@ -237,6 +237,8 @@
     "attLeft": "Attempts left",
     "lang": "Language",
     "features": "Features",
-    "firstGuess": "Do your first guess!"
+    "firstGuess": "Do your first guess!",
+    "congrats": "Congratulations!",
+    "youGuessed": "You have guessed the language {lang}"
   }
 }

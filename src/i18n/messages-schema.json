@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "How your translations should look like",
+  "title": "Generated schema for Root",
   "type": "object",
   "properties": {
     "Home": {
@@ -925,6 +925,12 @@
         },
         "firstGuess": {
           "type": "string"
+        },
+        "congrats": {
+          "type": "string"
+        },
+        "youGuessed": {
+          "type": "string"
         }
       },
       "required": [
@@ -937,7 +943,9 @@
         "attLeft",
         "lang",
         "features",
-        "firstGuess"
+        "firstGuess",
+        "congrats",
+        "youGuessed"
       ]
     }
   },

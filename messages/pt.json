@@ -236,6 +236,8 @@
     "attLeft": "Tentativas restantes",
     "lang": "Idioma",
     "features": "Características",
-    "firstGuess": "Faça sua primeira tentativa!"
+    "firstGuess": "Faça sua primeira tentativa!",
+    "congrats": "Parabéns!",
+    "youGuessed": "Você adivinhou o idioma {lang}"
   }
 }
