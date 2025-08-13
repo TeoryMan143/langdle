@@ -78,9 +78,9 @@
       "fixedWordOrder": "Syntactic rule where the arrangement of words has an specific order",
       "interrogativeParticles": "Morphemes used to mark a sentence as a question, often appearing at the beginning or end of a sentence",
       "pharyngealization": "Phonetic process where a consonant is pronounced with a constriction in the pharynx, giving the sound a distinct \"throaty\" quality",
-      "aspiratedConsonants": "Consonants that are pronounced with a strong burst of breath"
+      "aspiratedConsonants": "Consonants that are pronounced with a strong burst of breath",
+      "labialization": "Consonants that are pronounced with an extra labial articulation"
     },
-
     "name": {
       "nasalization": "Nasalization",
       "clickConsonants": "Click consonants",
@@ -155,7 +155,8 @@
       "fixedWordOrder": "Fixed word order",
       "interrogativeParticles": "Interrogative particles",
       "pharyngealization": "Pharyngealization",
-      "aspiratedConsonants": "Aspirated consonants"
+      "aspiratedConsonants": "Aspirated consonants",
+      "labialization": "Labialization"
     }
   },
   "AuthPage": {

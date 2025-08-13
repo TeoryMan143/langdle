@@ -78,7 +78,8 @@
       "fixedWordOrder": "Regla sintáctica donde el orden de las palabras sigue un patrón específico",
       "interrogativeParticles": "Morfemas usados para marcar una oración como pregunta, a menudo al principio o al final de la misma",
       "pharyngealization": "Proceso fonético donde una consonante se articula con una constricción en la faringe, dando un sonido áspero",
-      "aspiratedConsonants": "Consotantes que se pronuncian con una explosión de aire adicional"
+      "aspiratedConsonants": "Consotantes que se pronuncian con una explosión de aire adicional",
+      "labialization": "Consonantes que se pronuncian con una articulación labial extra"
     },
     "name": {
       "nasalization": "Nasalización",
@@ -154,7 +155,8 @@
       "fixedWordOrder": "Orden fijo de palabras",
       "interrogativeParticles": "Partículas interrogativas",
       "pharyngealization": "Faringalización",
-      "aspiratedConsonants": "Consonantes aspiradas"
+      "aspiratedConsonants": "Consonantes aspiradas",
+      "labialization": "Labialización"
     }
   },
   "AuthPage": {
