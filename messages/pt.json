@@ -219,7 +219,11 @@
     "unknown": "Erro desconhecido, os dados do idioma não puderam ser definidos",
     "noAdmin": "Você não é administrador",
     "notActive": "O parâmetro 'active' deve estar presente",
-    "success": "Dados do idioma atualizados com sucesso"
+    "success": "Dados do idioma atualizados com sucesso",
+    "phonology": "Fonologia",
+    "wordOrder": "Ordem de palavra",
+    "writingSystem": "Sistema de estrita",
+    "morphosyntax": "Morfo-Sintaxe"
   },
   "AccountPage": {
     "title": "Conta",

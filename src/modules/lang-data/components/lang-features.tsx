@@ -24,9 +24,11 @@ function FeatureGroup({
   group: string;
   children: React.ReactNode;
 }) {
+  const t = useTranslations('LangData');
+
   return (
     <div className='p-5 rounded-lg bg-background h-[30rem] overflow-y-hidden w-[32rem] pb-2'>
-      <h3 className='text-center text-2xl font-bold'>{group}</h3>
+      <h3 className='text-center text-2xl font-bold'>{t(group)}</h3>
       <div className='p-2 h-full overflow-y-auto'>{children}</div>
     </div>
   );

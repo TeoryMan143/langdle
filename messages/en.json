@@ -219,7 +219,11 @@
     "unknown": "Unknown error, the language data could not be set",
     "notActive": "You need the 'active' param",
     "noAdmin": "You need to be an administrator",
-    "success": "Language data updated successfully"
+    "success": "Language data updated successfully",
+    "phonology": "Phonology",
+    "wordOrder": "Word order",
+    "writingSystem": "Writing System",
+    "morphosyntax": "Morpho-Syntax"
   },
   "AccountPage": {
     "title": "Account",
