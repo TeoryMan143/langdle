@@ -78,7 +78,8 @@
       "fixedWordOrder": "Sistema sintático em que a ordem dos constituintes da oração é rigidamente estabelecida",
       "interrogativeParticles": "Elementos gramaticais que marcam uma oração como interrogativa",
       "pharyngealization": "Articulação de sons com constrição adicional na região da faringe",
-      "aspiratedConsonants": "Consoantes pronunciadas com uma explosão de ar adicional"
+      "aspiratedConsonants": "Consoantes pronunciadas com uma explosão de ar adicional",
+      "labialization": "Consoantes pronunciadas com uma articulação labial adicional"
     },
     "name": {
       "nasalization": "Nasalização",
@@ -154,7 +155,8 @@
       "fixedWordOrder": "Ordem fixa de palavras",
       "interrogativeParticles": "Partículas interrogativas",
       "pharyngealization": "Faringalização",
-      "aspiratedConsonants": "Consoantes aspiradas"
+      "aspiratedConsonants": "Consoantes aspiradas",
+      "labialization": "Labialização"
     }
   },
   "AuthPage": {
@@ -217,7 +219,11 @@
     "unknown": "Erro desconhecido, os dados do idioma não puderam ser definidos",
     "noAdmin": "Você não é administrador",
     "notActive": "O parâmetro 'active' deve estar presente",
-    "success": "Dados do idioma atualizados com sucesso"
+    "success": "Dados do idioma atualizados com sucesso",
+    "phonology": "Fonologia",
+    "wordOrder": "Ordem de palavra",
+    "writingSystem": "Sistema de estrita",
+    "morphosyntax": "Morfo-Sintaxe"
   },
   "AccountPage": {
     "title": "Conta",

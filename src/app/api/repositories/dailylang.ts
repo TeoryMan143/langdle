@@ -1,5 +1,9 @@
 import { getStringByKey } from '@/core/database/redis/key-getters';
-import type { Language, LanguageMatching } from '@/core/lib/types';
+import type {
+  LangFeatures,
+  Language,
+  LanguageMatching,
+} from '@/core/lib/types';
 import langRepository from './langs';
 
 async function getDailyLang() {
@@ -26,8 +30,8 @@ async function isDaily(guess: string) {
 async function getMatching(guessedLang: Language): Promise<LanguageMatching> {
   const dailyLang = await getDailyLang();
 
-  const guessFeatures = new Set(guessedLang.features);
-  const dailyFeatures = new Set(dailyLang.features);
+  const guessFeatures = new Set(guessedLang.features as LangFeatures[]);
+  const dailyFeatures = new Set(dailyLang.features as LangFeatures[]);
 
   const correct = [...dailyFeatures.intersection(guessFeatures)];
   const incorrect = [...guessFeatures.difference(dailyFeatures)];
