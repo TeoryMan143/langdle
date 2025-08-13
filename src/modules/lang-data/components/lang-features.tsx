@@ -66,11 +66,11 @@ function LangFeaturesForm({ currentData, code }: Props) {
     ...currentData,
     features: Object.entries(newFeaturesData)
       .filter(([_, state]) => state === 'present')
-      .map(([feat]) => feat)
+      .map(([feat]) => feat as LangFeatures)
       .sort(),
     partial: Object.entries(newFeaturesData)
       .filter(([_, state]) => state === 'partial')
-      .map(([feat]) => feat)
+      .map(([feat]) => feat as LangFeatures)
       .sort(),
   });
 

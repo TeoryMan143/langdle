@@ -83,7 +83,12 @@ export const groupedLangFeatures = {
   ],
 } as const;
 
-export const langFeatures = Object.values(groupedLangFeatures).flat();
+export const langFeatures = [
+  ...groupedLangFeatures.phonology,
+  ...groupedLangFeatures.wordOrder,
+  ...groupedLangFeatures.writingSystem,
+  ...groupedLangFeatures.morphosyntax,
+] as const;
 
 export function getUTCDateString() {
   const now = new Date();
