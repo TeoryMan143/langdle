@@ -31,10 +31,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       {/* <head>
-        <script
-          crossOrigin='anonymous'
-          src='//unpkg.com/react-scan/dist/auto.global.js'
-        />
+        <script src='https://unpkg.com/react-scan/dist/auto.global.js' />
       </head> */}
       <body className={`${noto.className} antialiased flex flex-col min-h-dvh`}>
         <Providers sessionData={sessionData}>
