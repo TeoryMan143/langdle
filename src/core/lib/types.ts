@@ -9,6 +9,7 @@ export type Language = { id: string } & LanguageData;
 export type LanguageMatching = {
   correct: LangFeatures[];
   incorrect: LangFeatures[];
+  partial: LangFeatures[];
 };
 
 export type SelectMenuOption = (typeof COUNTRIES)[number];

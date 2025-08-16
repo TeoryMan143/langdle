@@ -14,9 +14,9 @@ dailyGuessRouter.get('/:id', async c => {
 
   const isCorrect = await dailyRepository.isDaily(id);
 
-  if (isCorrect) {
-    const dailylang = await dailyRepository.getDailyLang();
+  const dailylang = await dailyRepository.getDailyLang();
 
+  if (isCorrect) {
     return c.json({
       guessed: dailylang,
     });
@@ -34,7 +34,7 @@ dailyGuessRouter.get('/:id', async c => {
     );
   }
 
-  const matching = await dailyRepository.getMatching(guessedLang);
+  const matching = await dailyRepository.getMatching(guessedLang, dailylang);
 
   return c.json(matching);
 });

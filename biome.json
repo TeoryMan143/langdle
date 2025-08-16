@@ -10,8 +10,10 @@
     "includes": [
       "**/src/**",
       "**/messages/**",
+      "**/tests/**",
       "**/next.config.ts",
-      "**/biome.config.js"
+      "**/biome.config.js",
+      "./vitest.*.ts"
     ]
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
