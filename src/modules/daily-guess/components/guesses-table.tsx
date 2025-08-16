@@ -61,10 +61,13 @@ function GuessesTable({ guesses }: Props) {
                 animate='visible'
               >
                 {matching.correct.map(f => (
-                  <Feature key={name + f} id={f} match />
+                  <Feature key={name + f} id={f} match='correct' />
+                ))}
+                {matching.partial.map(f => (
+                  <Feature key={name + f} id={f} match='partial' />
                 ))}
                 {matching.incorrect.map(f => (
-                  <Feature key={name + f} id={f} />
+                  <Feature key={name + f} id={f} match='incorrect' />
                 ))}
               </motion.div>
             </TableCell>

@@ -27,16 +27,28 @@ async function isDaily(guess: string) {
   return guess === daily.id;
 }
 
-async function getMatching(guessedLang: Language): Promise<LanguageMatching> {
-  const dailyLang = await getDailyLang();
-
+async function getMatching(
+  guessedLang: Language,
+  targetLang: Language,
+): Promise<LanguageMatching> {
   const guessFeatures = new Set(guessedLang.features as LangFeatures[]);
-  const dailyFeatures = new Set(dailyLang.features as LangFeatures[]);
+  const guessPartial = new Set(guessedLang.partial as LangFeatures[]);
+  const dailyFeatures = new Set(targetLang.features as LangFeatures[]);
+  const dailyPartial = new Set(targetLang.partial as LangFeatures[]);
 
-  const correct = [...dailyFeatures.intersection(guessFeatures)];
-  const incorrect = [...guessFeatures.difference(dailyFeatures)];
+  const correct = [
+    ...dailyFeatures.intersection(guessFeatures.union(guessPartial)),
+  ];
+  const partial = [
+    ...dailyPartial.intersection(guessFeatures.union(guessPartial)),
+  ];
+  const incorrect = [
+    ...guessFeatures
+      .union(guessPartial)
+      .difference(dailyFeatures.union(dailyPartial)),
+  ];
 
-  return { correct, incorrect };
+  return { correct, incorrect, partial };
 }
 
 export default { isDaily, getMatching, getDailyLang };

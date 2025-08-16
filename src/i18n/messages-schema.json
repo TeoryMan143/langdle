@@ -239,6 +239,9 @@
             },
             "aspiratedConsonants": {
               "type": "string"
+            },
+            "labialization": {
+              "type": "string"
             }
           },
           "required": [
@@ -315,7 +318,8 @@
             "fixedWordOrder",
             "interrogativeParticles",
             "pharyngealization",
-            "aspiratedConsonants"
+            "aspiratedConsonants",
+            "labialization"
           ]
         },
         "name": {
@@ -542,6 +546,9 @@
             },
             "aspiratedConsonants": {
               "type": "string"
+            },
+            "labialization": {
+              "type": "string"
             }
           },
           "required": [
@@ -618,7 +625,8 @@
             "fixedWordOrder",
             "interrogativeParticles",
             "pharyngealization",
-            "aspiratedConsonants"
+            "aspiratedConsonants",
+            "labialization"
           ]
         }
       },
@@ -851,6 +859,18 @@
         },
         "success": {
           "type": "string"
+        },
+        "phonology": {
+          "type": "string"
+        },
+        "wordOrder": {
+          "type": "string"
+        },
+        "writingSystem": {
+          "type": "string"
+        },
+        "morphosyntax": {
+          "type": "string"
         }
       },
       "required": [
@@ -863,7 +883,11 @@
         "unknown",
         "notActive",
         "noAdmin",
-        "success"
+        "success",
+        "phonology",
+        "wordOrder",
+        "writingSystem",
+        "morphosyntax"
       ]
     },
     "AccountPage": {
