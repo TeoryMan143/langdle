@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout
+        uses: actions/checkout@v4
       
       - name: Setup node
-        uses: actions/setup-node
+        uses: actions/setup-node@cv4
         with:
           node-version: '22'
       
