@@ -27,4 +27,7 @@ jobs:
       
       - name: Run tests
         run: pnpm test
-        
+        env: 
+          REDIS_USER: ${{secrets.REDIS_USER}}
+          REDIS_PASSWORD: ${{secrets.REDIS_PASSWORD}}
+          REDIS_HOST: ${{secrets.REDIS_HOST}}
