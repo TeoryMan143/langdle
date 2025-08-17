@@ -1,0 +1,34 @@
+name: Run tests
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      
+      - name: Enable pnpm
+        run: corepack enable pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Run tests
+        run: pnpm test
+        env: 
+          REDIS_USER: ${{secrets.REDIS_USER}}
+          REDIS_PASSWORD: ${{secrets.REDIS_PASSWORD}}
+          REDIS_HOST: ${{secrets.REDIS_HOST}}
+          REDIS_PORT: 19097

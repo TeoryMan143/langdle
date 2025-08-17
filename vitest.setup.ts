@@ -1,5 +1,3 @@
-// import * as dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 
-// dotenv.config();
-
-process.loadEnvFile();
+dotenv.config();
