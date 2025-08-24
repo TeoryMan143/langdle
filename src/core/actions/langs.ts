@@ -108,31 +108,6 @@ export async function getLanguage(
   }
 }
 
-export async function getLanguagesBySearch(
-  query: string,
-): Promise<ActionResult<Language[]>> {
-  try {
-    const res = await fetch(`${baseUrl}/api/lang/search?q=${query}`);
-
-    if (!res.ok) {
-      const error = await res.json();
-      console.error(error);
-      return actionError(error.key);
-    }
-
-    const langs = (await res.json()) as Language[];
-
-    return actionSuccess(langs);
-  } catch (e) {
-    let message = 'unknown error';
-    if (e instanceof Error) {
-      console.error(e);
-      message = e.message;
-    }
-    return actionError(message);
-  }
-}
-
 export async function setLanguageData(
   code: string,
   data: LanguageData,

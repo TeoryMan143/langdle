@@ -68,6 +68,9 @@ importers:
       drizzle-zod:
         specifier: ^0.7.1
         version: 0.7.1(drizzle-orm@0.43.1(@neondatabase/serverless@1.0.0)(@types/pg@8.11.14)(knex@0.8.6))(zod@3.24.3)
+      fastest-levenshtein:
+        specifier: ^1.0.16
+        version: 1.0.16
       framer-motion:
         specifier: ^12.19.1
         version: 12.19.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -1845,6 +1848,10 @@ packages:
 
   extend@2.0.2:
     resolution: {integrity: sha512-AgFD4VU+lVLP6vjnlNfF7OeInLTyeyckCNPEsuxz1vi786UuK/nk6ynPuhn/h+Ju9++TQyr5EpLRI14fc1QtTQ==}
+
+  fastest-levenshtein@1.0.16:
+    resolution: {integrity: sha512-eRnCtTTtGZFpQCwhJiUOuxPQWRXVKYDn0b2PeHfXL6/Zi53SLAzAHfVhVWK2AryC/WH05kGfxhFIPvTF0SXQzg==}
+    engines: {node: '>= 4.9.1'}
 
   fdir@6.5.0:
     resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
@@ -3991,6 +3998,8 @@ snapshots:
 
   extend@2.0.2:
     optional: true
+
+  fastest-levenshtein@1.0.16: {}
 
   fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:

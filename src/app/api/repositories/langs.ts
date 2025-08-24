@@ -19,14 +19,16 @@ type Doc = {
   value: SearchDocumentValue;
 };
 
-function docToLanguage(doc: Doc) {
+function docToLanguage(doc: Doc): Language {
   return {
     id: doc.id.slice(5),
-    name: doc.value['$.name'],
-    exonym: doc.value['$.exonym'],
+    name: doc.value['$.name'] as string,
+    exonym: doc.value['$.exonym'] as string,
     features: JSON.parse((doc.value['$.features'] as string) ?? '[]'),
     active: doc.value['$.active'] === '1',
-  } as Language;
+    partial: JSON.parse((doc.value['$.partial'] as string) ?? '[]'),
+    searchParams: JSON.parse((doc.value['$.searchParams'] as string) ?? '[]'),
+  };
 }
 
 async function getById(id: string) {
@@ -38,7 +40,14 @@ async function getAll(onlyActives = false) {
     'idx:langs',
     onlyActives ? '@active:{true}' : '*',
     {
-      RETURN: ['$.name', '$.exonym', '$.features', '$.active'],
+      RETURN: [
+        '$.name',
+        '$.exonym',
+        '$.features',
+        '$.active',
+        '$.partial',
+        '$.searchParams',
+      ],
       LIMIT: {
         from: 0,
         size: 50,
@@ -71,42 +80,4 @@ async function getByIds(ids: string[]): Promise<Language[]> {
   return langs;
 }
 
-async function getFuzzy(q: string) {
-  const safeQ = q.replace(/["]/g, '');
-
-  const resultsEx = await client.ft.search(
-    'idx:langs',
-    `(@exonym:${safeQ}*) @active:{true}`,
-    {
-      RETURN: ['$.name', '$.exonym', '$.features', '$.active'],
-      LIMIT: {
-        from: 0,
-        size: 50,
-      },
-    },
-  );
-
-  const resultsNm = await client.ft.search(
-    'idx:langs',
-    `(@name:${safeQ}*) @active:{true}`,
-    {
-      RETURN: ['$.name', '$.exonym', '$.features', '$.active'],
-      LIMIT: {
-        from: 0,
-        size: 50,
-      },
-    },
-  );
-
-  const langsEx = resultsEx.documents.map(docToLanguage);
-
-  const langsNm = resultsNm.documents.map(docToLanguage);
-
-  const exCodes = langsEx.map(l => l.id);
-
-  langsEx.push(...langsNm.filter(l => !exCodes.includes(l.id)));
-
-  return langsEx;
-}
-
-export default { getAll, getById, set, setStatus, getByIds, getFuzzy };
+export default { getAll, getById, set, setStatus, getByIds };
