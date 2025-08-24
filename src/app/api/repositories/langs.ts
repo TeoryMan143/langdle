@@ -57,7 +57,9 @@ async function getAll(onlyActives = false) {
 
   const langs = results.documents.map(docToLanguage);
 
-  return langs;
+  return langs.sort((a, b) => {
+    return a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase());
+  });
 }
 
 async function set(id: string, data: LanguageData) {
