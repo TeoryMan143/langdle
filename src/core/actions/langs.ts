@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
-import { getLocale } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { ActionResult, actionError, actionSuccess } from '@/core/actions/utils';
 import type { Language, LanguageData } from '@/core/lib/types';
 
@@ -45,7 +45,11 @@ export async function getAllActiveLanguages(): Promise<
 
     const langs = (await res.json()) as Language[];
 
-    return actionSuccess(langs);
+    const t = await getTranslations('Exonyms');
+
+    return actionSuccess(
+      langs.map(l => ({ ...l, searchParams: [...l.searchParams, t(l.id)] })),
+    );
   } catch (e) {
     let message = 'unknown error';
     if (e instanceof Error) {

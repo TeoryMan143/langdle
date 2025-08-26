@@ -14,6 +14,7 @@ type Props = {
 
 function QueryRes({ langs, loading, error, onSelect }: Props) {
   const t = useTranslations('Game');
+  const exo = useTranslations('Exonyms');
 
   return (
     <ul className='hidden absolute top-[calc(100%+0.3rem)] w-full rounded-lg h-40 overflow-y-scroll bg-white z-10 border-2 group-focus-within/langs:block'>
@@ -29,7 +30,7 @@ function QueryRes({ langs, loading, error, onSelect }: Props) {
         </li>
       )}
       {langs?.map(lang => {
-        const { id, name, exonym } = lang;
+        const { id, name } = lang;
 
         return (
           <li
@@ -41,7 +42,7 @@ function QueryRes({ langs, loading, error, onSelect }: Props) {
               onClick={() => onSelect(lang)}
               className='text-sm md:text-base flex gap-2 justify-center py-2 cursor-pointer bg-none realtive z-30 size-full'
             >
-              <LangImage code={id} /> {name} {exonym && `(${exonym})`}
+              <LangImage code={id} /> {name} ({exo(id)})
             </button>
           </li>
         );
