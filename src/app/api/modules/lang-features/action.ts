@@ -26,7 +26,3 @@ export function setLanguageData({
 export function getLanguagesByIds(ids: string[]) {
   return langRepository.getByIds(ids);
 }
-
-export async function getLangSearch(q: string) {
-  return langRepository.getFuzzy(q);
-}

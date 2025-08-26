@@ -4,7 +4,6 @@ import { langDataSchema } from '@/core/lib/schemas/langs';
 import { authMiddleware } from '../../middleware/auth';
 import {
   getAllLanguages,
-  getLangSearch,
   getLanguageById,
   getLanguagesByIds,
   setLanguageData,
@@ -13,31 +12,6 @@ import { getUserLangPermissions } from './permissions/action';
 import langPermissions from './permissions/controller';
 
 const langFeaturesRouter = new Hono();
-
-langFeaturesRouter.get('/search', async c => {
-  const q = new URL(c.req.url).searchParams.get('q');
-
-  if (!q || q.length < 2) {
-    return c.json(
-      {
-        key: 'invalidQuery',
-        message: 'Query must be at least 2 characters long',
-      },
-      400,
-    );
-  }
-
-  const langs = await getLangSearch(q);
-
-  if (!langs) {
-    return c.json({
-      key: 'notFounds',
-      message: 'No languages found',
-    });
-  }
-
-  return c.json(langs);
-});
 
 langFeaturesRouter.get('/:id', async c => {
   const langId = c.req.param('id');

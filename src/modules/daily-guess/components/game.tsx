@@ -32,14 +32,13 @@ const MAX_ATTEMPTS = 5;
 function Game() {
   const [query, setQuery] = useDebounceValue('', 400);
 
-  const { data, isError, isLoading } = useLang({
+  const {
+    data: querylangs,
+    isError,
+    isLoading,
+  } = useLang({
     action: 'search',
     query,
-  });
-
-  const { data: allLangs, isLoading: allLoading } = useLang({
-    action: 'get',
-    onlyActives: true,
   });
 
   const [localGuesses, setLocalGuesses] = useLocalStorage<SavedGuesses>(
@@ -169,8 +168,8 @@ function Game() {
             />
 
             <QueryRes
-              langs={query === '' ? allLangs : data}
-              loading={isLoading || allLoading}
+              langs={querylangs}
+              loading={isLoading}
               error={isError}
               onSelect={lang => {
                 setSelectedLang(lang);

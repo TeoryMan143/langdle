@@ -7,4 +7,5 @@ export const langDataSchema = z.object({
   features: z.enum(langFeatures).array(),
   active: z.boolean(),
   partial: z.enum(langFeatures).array(),
+  searchParams: z.string().array(),
 });

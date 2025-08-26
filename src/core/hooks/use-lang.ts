@@ -1,10 +1,10 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import { distance } from 'fastest-levenshtein';
 import {
   getAllActiveLanguages,
   getAllLanguages,
   getDailyLanguage,
   getLanguage,
-  getLanguagesBySearch,
   setLanguageData,
 } from '../actions/langs';
 import type { Language, LanguageData } from '../lib/types';
@@ -50,7 +50,6 @@ export function useLang(
   options: GetLanguagesbySearch,
 ): UseQueryResult<Language[]>;
 
-// Implementation
 export function useLang(
   options:
     | GetAllLanguages
@@ -95,15 +94,26 @@ export function useLang(
         return result;
       }
       if (action === 'search' && query !== undefined) {
-        if (query === '') {
-          return [];
-        }
+        const { success, error, result: langs } = await getAllActiveLanguages();
 
-        const { success, error, result } = await getLanguagesBySearch(query);
+        console.log(langs);
 
         if (!success) {
           throw new Error(error);
         }
+
+        if (query.length === 0) {
+          return langs;
+        }
+
+        const result = langs
+          .map(lang => ({
+            ...lang,
+            score: Math.min(
+              ...lang.searchParams.map(param => distance(query, param)),
+            ),
+          }))
+          .sort((a, b) => a.score - b.score);
 
         return result;
       }
