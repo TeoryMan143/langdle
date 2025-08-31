@@ -2,138 +2,33 @@
 
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
-import { useDebounceValue, useLocalStorage } from 'usehooks-ts';
+import { useState } from 'react';
 import Loading from '@/core/components/icons/loading';
 import Send from '@/core/components/icons/send';
 import { Button } from '@/core/components/ui/button';
 import { Input } from '@/core/components/ui/input';
-import { useLang } from '@/core/hooks/use-lang';
-import { Language } from '@/core/lib/types';
-import { cn, getUTCDateString } from '@/core/lib/utils';
-import { useAuth } from '@/modules/auth/context';
+import { cn } from '@/core/lib/utils';
 import LangImage from '@/modules/lang-data/components/lang-image';
-import { checkGuess } from '../actions';
-import { LanguageGuess } from '../types';
+import { useGame } from '../hooks/use-game';
 import FailDialog from './fail-dialog';
 import GuessesTable from './guesses-table';
 import QueryRes from './query-res';
 import WinDialog from './win-dialog';
 
-type SavedGuesses = {
-  date: string;
-  guesses: LanguageGuess[];
-  dailyLang: Language | null;
-};
-
-const MAX_ATTEMPTS = 5;
-
 function Game() {
-  const [query, setQuery] = useDebounceValue('', 400);
+  const [loading, setLoading] = useState(false);
+  const t = useTranslations('Game');
 
   const {
-    data: querylangs,
-    isError,
-    isLoading,
-  } = useLang({
-    action: 'search',
-    query,
-  });
-
-  const [localGuesses, setLocalGuesses] = useLocalStorage<SavedGuesses>(
-    'day-save',
-    { date: 'invalid', guesses: [], dailyLang: null },
-  );
-
-  const { session } = useAuth();
-
-  const [guesses, setGuesses] = useState<LanguageGuess[]>([]);
-  const [selectedLang, setSelectedLang] = useState<Language | null>(null);
-  const [animateError, setAnimateError] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [dailyLang, setDailyLang] = useState<Language | null>(null);
-
-  const hasRetrievedSave = useRef(false);
-
-  useEffect(() => {
-    if (
-      !hasRetrievedSave.current &&
-      !session &&
-      localGuesses.date === getUTCDateString()
-    ) {
-      hasRetrievedSave.current = true;
-      setGuesses(localGuesses.guesses);
-      setDailyLang(localGuesses.dailyLang);
-    } else if (
-      !hasRetrievedSave.current &&
-      !session &&
-      localGuesses.date !== getUTCDateString()
-    ) {
-      setLocalGuesses({ date: 'invalid', guesses: [], dailyLang: null });
-      hasRetrievedSave.current = true;
-    }
-  }, [session, localGuesses, setLocalGuesses]);
-
-  useEffect(() => {
-    if (hasRetrievedSave.current && !session && !localGuesses.dailyLang) {
-      setLocalGuesses({
-        date: getUTCDateString(),
-        guesses,
-        dailyLang: null,
-      });
-    }
-  }, [guesses, setLocalGuesses, session, localGuesses.dailyLang]);
-
-  useEffect(() => {
-    if (inputRef.current && selectedLang) {
-      inputRef.current.value = selectedLang.name;
-    }
-  }, [selectedLang]);
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleGuess = async () => {
-    if (guesses.length >= MAX_ATTEMPTS) {
-      return toast.error('No attempts left');
-    }
-
-    if (dailyLang) {
-      return toast.info('You already guessed');
-    }
-
-    if (!selectedLang) {
-      setAnimateError(true);
-      setTimeout(() => setAnimateError(false), 4000);
-      return;
-    }
-
-    const res = await checkGuess(selectedLang.id);
-
-    if (!res.success) {
-      return toast.error(res.error);
-    }
-
-    const matching = res.result;
-
-    if ('guessed' in matching) {
-      setLocalGuesses({
-        date: getUTCDateString(),
-        guesses,
-        dailyLang: matching.guessed,
-      });
-      setDailyLang(matching.guessed);
-      return;
-    }
-
-    setGuesses(prev => [...prev, { ...selectedLang, matching }]);
-    setSelectedLang(null);
-    if (inputRef.current) {
-      inputRef.current.value = '';
-    }
-  };
-
-  const t = useTranslations('Game');
+    MAX_ATTEMPTS,
+    dailyLang,
+    guesses,
+    queryError,
+    setQuery,
+    setSelectedLang,
+    inputRef,
+    handleGuess,
+  } = useGame();
 
   return (
     <div className='space-y-6 flex flex-col items-center w-full'>
@@ -143,7 +38,7 @@ function Game() {
         <search className='h-full flex items-center gap-2'>
           <div className='h-full flex-1 relative group/langs'>
             <motion.div
-              animate={animateError ? { y: [0, -50, -50, 0] } : {}}
+              animate={queryError ? { y: [0, -50, -50, 0] } : {}}
               transition={{
                 duration: 4,
                 times: [0, 0.05, 0.95, 1],
@@ -151,7 +46,7 @@ function Game() {
               }}
               className={cn(
                 'hidden w-[90%] md:w-auto text-xs md:text-base absolute text-red-600 rounded-lg shadow-xl show-animation md:px-4 h-[80%] place-items-center left-1/2 -translate-x-1/2 z-[5] border-2 bg-white',
-                { grid: animateError },
+                { grid: queryError },
               )}
             >
               <p>{t('selectToGuess')}</p>
@@ -168,9 +63,6 @@ function Game() {
             />
 
             <QueryRes
-              langs={querylangs}
-              loading={isLoading}
-              error={isError}
               onSelect={lang => {
                 setSelectedLang(lang);
                 if (
