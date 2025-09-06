@@ -21,19 +21,21 @@ function Game() {
 
   const {
     MAX_ATTEMPTS,
-    dailyLang,
+    targetLang,
     guesses,
     queryError,
     setQuery,
     setSelectedLang,
     inputRef,
     handleGuess,
+    hasGuessed,
   } = useGame();
 
   return (
     <div className='space-y-6 flex flex-col items-center w-full'>
-      {dailyLang && <WinDialog lang={dailyLang} />}
-      {!dailyLang && guesses.length >= 5 && <FailDialog />}
+      {hasGuessed && <WinDialog lang={targetLang} />}
+      {!hasGuessed && guesses.length >= 5 && <FailDialog lang={targetLang} />}
+
       <div className='md:h-14 md:w-[95%]'>
         <search className='h-full flex items-center gap-2'>
           <div className='h-full flex-1 relative group/langs'>
@@ -61,7 +63,6 @@ function Game() {
               placeholder={t('typeGuess')}
               ref={inputRef}
             />
-
             <QueryRes
               onSelect={lang => {
                 setSelectedLang(lang);
@@ -89,12 +90,12 @@ function Game() {
         </search>
       </div>
       <div className='text-gray-600 flex justify-center items-center gap-2'>
-        {dailyLang ? (
+        {MAX_ATTEMPTS - guesses.length === 0 || hasGuessed ? (
           <>
             <p>{t('dailyLang')}:</p>
-            <LangImage code={dailyLang.id} />
+            <LangImage code={targetLang.id} />
             <p>
-              {dailyLang.name} {dailyLang.exonym && `(${dailyLang.exonym})`}
+              {targetLang.name} {targetLang.exonym && `(${targetLang.exonym})`}
             </p>
           </>
         ) : (
@@ -103,7 +104,7 @@ function Game() {
           </p>
         )}
       </div>
-      <GuessesTable guesses={guesses} />
+      <GuessesTable />
     </div>
   );
 }

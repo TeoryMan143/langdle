@@ -1,9 +1,9 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { distance } from 'fastest-levenshtein';
+import { getDailyLanguage } from '@/modules/lang-guess/actions';
 import {
   getAllActiveLanguages,
   getAllLanguages,
-  getDailyLanguage,
   getLanguage,
   setLanguageData,
 } from '../actions/langs';

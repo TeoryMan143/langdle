@@ -6,7 +6,7 @@ import langFeaturesHandler from '../modules/lang-features/controller';
 const api = new Hono().basePath('/api');
 
 api.route('/lang', langFeaturesHandler);
-api.route('/daily', dailyGuessRouter);
+api.route('/guess', dailyGuessRouter);
 
 export const GET = handle(api);
 export const POST = handle(api);

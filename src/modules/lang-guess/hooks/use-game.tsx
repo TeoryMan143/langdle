@@ -32,7 +32,7 @@ type SavedGuesses = {
 
 type UseGameProps = {
   langSearchData: UseQueryResult<Language[]>;
-  dailyLang: Language | null;
+  targetLang: Language;
   guesses: LanguageGuess[];
   query: string;
   setQuery: DebouncedState<(value: string) => void>;
@@ -42,7 +42,7 @@ type UseGameProps = {
   setSelectedLang: Dispatch<SetStateAction<Language | null>>;
   selectedLang: Language | null;
   inputRef: RefObject<HTMLInputElement | null>;
-  type: 'daily' | 'random';
+  hasGuessed: boolean;
 };
 
 const GameContext = createContext<UseGameProps | null>(null);
@@ -51,9 +51,11 @@ const MAX_ATTEMPTS = 5;
 
 export const GameProvider = ({
   children,
+  targetLang,
   type,
 }: {
   children: React.ReactNode;
+  targetLang: Language;
   type: 'daily' | 'random';
 }) => {
   const [query, setQuery] = useDebounceValue('', 400);
@@ -73,38 +75,42 @@ export const GameProvider = ({
   const [guesses, setGuesses] = useState<LanguageGuess[]>([]);
   const [selectedLang, setSelectedLang] = useState<Language | null>(null);
   const [queryError, setQueryError] = useState(false);
-  const [dailyLang, setDailyLang] = useState<Language | null>(null);
+  const [hasGuessed, setHasGuessed] = useState(false);
 
   const hasRetrievedSave = useRef(false);
 
   useEffect(() => {
-    if (
-      !hasRetrievedSave.current &&
-      !session &&
-      localGuesses.date === getUTCDateString()
-    ) {
-      hasRetrievedSave.current = true;
-      setGuesses(localGuesses.guesses);
-      setDailyLang(localGuesses.dailyLang);
-    } else if (
-      !hasRetrievedSave.current &&
-      !session &&
-      localGuesses.date !== getUTCDateString()
-    ) {
-      setLocalGuesses({ date: 'invalid', guesses: [], dailyLang: null });
-      hasRetrievedSave.current = true;
+    if (type === 'daily') {
+      if (
+        !hasRetrievedSave.current &&
+        !session &&
+        localGuesses.date === getUTCDateString()
+      ) {
+        hasRetrievedSave.current = true;
+        setGuesses(localGuesses.guesses);
+        setHasGuessed(true);
+      } else if (
+        !hasRetrievedSave.current &&
+        !session &&
+        localGuesses.date !== getUTCDateString()
+      ) {
+        setLocalGuesses({ date: 'invalid', guesses: [], dailyLang: null });
+        hasRetrievedSave.current = true;
+      }
     }
-  }, [session, localGuesses, setLocalGuesses]);
+  }, [session, localGuesses, setLocalGuesses, type]);
 
   useEffect(() => {
-    if (hasRetrievedSave.current && !session && !localGuesses.dailyLang) {
-      setLocalGuesses({
-        date: getUTCDateString(),
-        guesses,
-        dailyLang: null,
-      });
+    if (type === 'daily') {
+      if (hasRetrievedSave.current && !session && !localGuesses.dailyLang) {
+        setLocalGuesses({
+          date: getUTCDateString(),
+          guesses,
+          dailyLang: null,
+        });
+      }
     }
-  }, [guesses, setLocalGuesses, session, localGuesses.dailyLang]);
+  }, [guesses, setLocalGuesses, session, localGuesses.dailyLang, type]);
 
   useEffect(() => {
     if (inputRef.current && selectedLang) {
@@ -119,7 +125,7 @@ export const GameProvider = ({
       return toast.error('No attempts left');
     }
 
-    if (dailyLang) {
+    if (hasGuessed) {
       return toast.info('You already guessed');
     }
 
@@ -129,7 +135,12 @@ export const GameProvider = ({
       return;
     }
 
-    const res = await checkGuess(selectedLang.id);
+    if (selectedLang.id === targetLang.id) {
+      setHasGuessed(true);
+      return;
+    }
+
+    const res = await checkGuess(selectedLang.id, targetLang.id);
 
     if (!res.success) {
       return toast.error(res.error);
@@ -143,7 +154,7 @@ export const GameProvider = ({
         guesses,
         dailyLang: matching.guessed,
       });
-      setDailyLang(matching.guessed);
+      setHasGuessed(true);
       return;
     }
 
@@ -156,7 +167,7 @@ export const GameProvider = ({
 
   const value = {
     langSearchData,
-    dailyLang,
+    targetLang,
     guesses,
     query,
     setQuery,
@@ -166,7 +177,7 @@ export const GameProvider = ({
     setSelectedLang,
     selectedLang,
     inputRef,
-    type,
+    hasGuessed,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

@@ -11,12 +11,8 @@ import {
   TableRow,
 } from '@/core/components/ui/table';
 import LangImage from '@/modules/lang-data/components/lang-image';
-import type { LanguageGuess } from '../types';
+import { useGame } from '../hooks/use-game';
 import Feature from './feature';
-
-type Props = {
-  guesses: LanguageGuess[];
-};
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -28,8 +24,10 @@ const containerVariants = {
   },
 };
 
-function GuessesTable({ guesses }: Props) {
+function GuessesTable() {
   const t = useTranslations('Game');
+
+  const { guesses } = useGame();
 
   return (
     <Table>
