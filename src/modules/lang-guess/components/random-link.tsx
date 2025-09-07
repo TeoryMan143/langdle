@@ -18,12 +18,9 @@ function RandomLink() {
     <TooltipProvider>
       <Tooltip>
         <TooltipContent>
-          <p className='text-2xl'>Guess random</p>
+          <p className='text-lg'>Guess random</p>
         </TooltipContent>
-        <TooltipTrigger
-          className='absolute top-1/2 -translate-y-1/2 -right-20'
-          asChild
-        >
+        <TooltipTrigger asChild>
           <Button
             onClick={() => {
               if (path !== '/random') {
@@ -33,6 +30,7 @@ function RandomLink() {
               }
             }}
             variant='noShadow'
+            className='text-xs md:text-base'
           >
             <Random />
           </Button>

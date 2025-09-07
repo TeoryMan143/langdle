@@ -96,8 +96,6 @@ export function useLang(
       if (action === 'search' && query !== undefined) {
         const { success, error, result: langs } = await getAllActiveLanguages();
 
-        console.log(langs);
-
         if (!success) {
           throw new Error(error);
         }

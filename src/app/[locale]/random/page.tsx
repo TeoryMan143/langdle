@@ -19,11 +19,12 @@ export default async function Home() {
       <h2
         className={`${dongle.className} mx-7 text-4xl md:text-7xl text-center`}
       >
-        <span className='relative'>
-          Guess random <RandomLink />
-        </span>
+        Guess random
       </h2>
-      <section className='mt-6 md:mt-16 flex justify-center'>
+      <div className='grid place-content-center'>
+        <RandomLink />
+      </div>
+      <section className='mt-6 md:mt-10 flex justify-center'>
         <div className='md:min-w-2xl max-w-[90dvw] md:w-4xl'>
           <GameProvider targetLang={tLangRes.result} type='random'>
             <Game />
