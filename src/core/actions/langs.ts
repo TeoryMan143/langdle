@@ -114,7 +114,9 @@ export async function getLanguage(
 
 export async function getRandomLanguage(): Promise<ActionResult<Language>> {
   try {
-    const res = await fetch(`${baseUrl}/api/lang/random`);
+    const res = await fetch(`${baseUrl}/api/lang/random`, {
+      cache: 'no-store',
+    });
 
     if (!res.ok) {
       const error = await res.json();
