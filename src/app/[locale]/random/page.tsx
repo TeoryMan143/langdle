@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import { getRandomLanguage } from '@/core/actions/langs';
 import { dongle } from '@/core/lib/fonts';
 import Game from '@/modules/lang-guess/components/game';
@@ -8,6 +9,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export default async function Home() {
+  const t = await getTranslations('Game');
   const tLangRes = await getRandomLanguage();
 
   if (!tLangRes.success) {
@@ -19,7 +21,7 @@ export default async function Home() {
       <h2
         className={`${dongle.className} mx-7 text-4xl md:text-7xl text-center`}
       >
-        Guess random
+        {t('guessRandom')}
       </h2>
       <div className='grid place-content-center'>
         <RandomLink />

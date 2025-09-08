@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import Random from '@/core/components/icons/random';
 import { Button } from '@/core/components/ui/button';
 import {
@@ -13,12 +14,13 @@ import { usePathname, useRouter } from '@/i18n/navigation';
 function RandomLink() {
   const router = useRouter();
   const path = usePathname();
+  const t = useTranslations('Game');
 
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipContent>
-          <p className='text-lg'>Guess random</p>
+          <p className='text-lg'>{t('guessRandom')}</p>
         </TooltipContent>
         <TooltipTrigger asChild>
           <Button

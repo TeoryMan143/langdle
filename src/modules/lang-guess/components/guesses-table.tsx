@@ -36,7 +36,9 @@ function GuessesTable() {
           <TableHead className='md:w-[144px] text-center font-semibold relative after:h-[80%] after:w-[2px] after:bg-soft-det after:absolute after:right-0 after:top-1/2 after:-translate-y-1/2'>
             {t('lang')}
           </TableHead>
-          <TableHead className='font-semibold text-center'>Features</TableHead>
+          <TableHead className='font-semibold text-center'>
+            {t('features')}
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className='bg-background'>

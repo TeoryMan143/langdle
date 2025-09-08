@@ -1,6 +1,7 @@
 'use client';
 
 import { type UseQueryResult } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 import {
   createContext,
   Dispatch,
@@ -36,7 +37,7 @@ type UseGameProps = {
   guesses: LanguageGuess[];
   query: string;
   setQuery: DebouncedState<(value: string) => void>;
-  queryError: boolean;
+  queryError: string | null;
   handleGuess: () => Promise<string | number | undefined>;
   MAX_ATTEMPTS: number;
   setSelectedLang: Dispatch<SetStateAction<Language | null>>;
@@ -72,9 +73,11 @@ export const GameProvider = ({
 
   const { session } = useAuth();
 
+  const t = useTranslations('Game');
+
   const [guesses, setGuesses] = useState<LanguageGuess[]>([]);
   const [selectedLang, setSelectedLang] = useState<Language | null>(null);
-  const [queryError, setQueryError] = useState(false);
+  const [queryError, setQueryError] = useState<string | null>(null);
   const [hasGuessed, setHasGuessed] = useState(false);
 
   const hasRetrievedSave = useRef(false);
@@ -130,8 +133,16 @@ export const GameProvider = ({
     }
 
     if (!selectedLang) {
-      setQueryError(true);
-      setTimeout(() => setQueryError(false), 4000);
+      setQueryError(t('selectToGuess'));
+      setTimeout(() => setQueryError(null), 4000);
+      return;
+    }
+
+    const guessFound = guesses.find(g => g.id === selectedLang.id);
+
+    if (guessFound) {
+      setQueryError(t('langTried'));
+      setTimeout(() => setQueryError(null), 4000);
       return;
     }
 
