@@ -18,7 +18,7 @@ import FormInput from './form-input';
 function GoogleDataForm({
   accountData,
 }: {
-  accountData: { nickname: string; googleId: string };
+  accountData: { nickname: string; googleId: string; email: string };
 }) {
   const {
     register,
@@ -42,6 +42,7 @@ function GoogleDataForm({
         formData.nickname.length > 0 ? formData.nickname : accountData.nickname,
       googleId: accountData.googleId,
       country: formData.country,
+      email: accountData.email,
     });
 
     if (res.error && typeof res.error === 'string') {

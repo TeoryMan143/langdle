@@ -43,6 +43,7 @@ export async function validateSessionToken(
         admin: userTable.admin,
         country: userTable.country,
         googleId: userTable.googleId,
+        email: userTable.email,
       },
       session: sessionTable,
     })

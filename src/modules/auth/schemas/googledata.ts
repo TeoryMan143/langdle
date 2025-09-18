@@ -7,6 +7,7 @@ export const googleDataSchema = z.object({
 
 export const googleDataActionSchema = googleDataSchema.extend({
   googleId: z.string().min(1, { message: 'googleId required' }),
+  email: z.string().email({ message: 'It must be an email' }),
 });
 
 export type GoogleDataSchema = z.infer<typeof googleDataSchema>;

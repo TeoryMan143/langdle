@@ -12,12 +12,13 @@ const validateAccountData = async (dataToken: string) => {
   try {
     const secret = jose.base64url.decode(process.env.JWT_SECRET as string);
     const {
-      payload: { nickname, googleId },
-    } = await jose.jwtDecrypt<{ nickname: string; googleId: string }>(
-      dataToken,
-      secret,
-    );
-    return { nickname, googleId };
+      payload: { nickname, googleId, email },
+    } = await jose.jwtDecrypt<{
+      nickname: string;
+      googleId: string;
+      email: string;
+    }>(dataToken, secret);
+    return { nickname, googleId, email };
   } catch (_) {
     return null;
   }
