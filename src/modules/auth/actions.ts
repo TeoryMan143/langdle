@@ -132,6 +132,7 @@ export async function signInUser(
         admin: user.admin,
         googleId: user.googleId,
         country: user.country,
+        email: user.email,
       },
       session,
     });
@@ -170,6 +171,7 @@ export async function createGoogleAccount(accountData: {
   nickname: string;
   googleId: string;
   country: string;
+  email: string;
 }): Promise<
   ActionResult<UserDTO, string | typeToFlattenedError<GoogleDataActionSchema>>
 > {

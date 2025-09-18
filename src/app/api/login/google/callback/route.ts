@@ -46,9 +46,12 @@ export async function GET(request: Request): Promise<Response> {
   const claims = decodeIdToken(tokens.idToken()) as {
     sub: string;
     name: string;
+    email: string;
   };
+
   const googleUserId = claims.sub;
   const username = claims.name;
+  const email = claims.email;
 
   try {
     const [existingUser] = await db
@@ -72,6 +75,7 @@ export async function GET(request: Request): Promise<Response> {
     const dataToken = await new jose.EncryptJWT({
       nickname: username,
       googleId: googleUserId,
+      email,
     })
       .setExpirationTime('30m')
       .setProtectedHeader({ alg: 'dir', enc: 'A256CBC-HS512' })

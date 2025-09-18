@@ -10,6 +10,12 @@ export const signUpSchema = createInsertSchema(userTable)
       .min(3, { message: 'Nickname must be at least 3 characters long' })
       .max(20, { message: 'Nickname must be at most 20 characters long' })
       .trim(),
+    email: z
+      .string()
+      .email({ message: 'It must be a valid email' })
+      .min(3, { message: 'Nickname must be at least 3 characters long' })
+      .max(20, { message: 'Nickname must be at most 20 characters long' })
+      .trim(),
     password: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters long' })

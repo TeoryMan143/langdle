@@ -89,6 +89,14 @@ function SignUpForm() {
           {...register('nickname')}
         />
         {errors.nickname && <InputError message={errors.nickname.message} />}
+        <FormInput
+          className={cn({
+            'ring-2 ring-red-500 focus-visible:ring-red-500': errors.email,
+          })}
+          placeholder={t('email')}
+          {...register('email')}
+        />
+        {errors.email && <InputError message={errors.email.message} />}
         <FormPasswordInput
           className={cn({
             'ring-2 ring-red-500 focus-visible:ring-red-500': errors.password,
