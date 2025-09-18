@@ -91,7 +91,7 @@ export const GameProvider = ({
       ) {
         hasRetrievedSave.current = true;
         setGuesses(localGuesses.guesses);
-        setHasGuessed(true);
+        setHasGuessed(localGuesses.dailyLang !== null);
       } else if (
         !hasRetrievedSave.current &&
         !session &&
@@ -147,6 +147,11 @@ export const GameProvider = ({
     }
 
     if (selectedLang.id === targetLang.id) {
+      setLocalGuesses({
+        date: getUTCDateString(),
+        guesses,
+        dailyLang: targetLang,
+      });
       setHasGuessed(true);
       return;
     }
