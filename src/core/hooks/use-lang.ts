@@ -1,9 +1,9 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { distance } from 'fastest-levenshtein';
+import { getDailyLanguage } from '@/modules/lang-guess/actions';
 import {
   getAllActiveLanguages,
   getAllLanguages,
-  getDailyLanguage,
   getLanguage,
   setLanguageData,
 } from '../actions/langs';
@@ -95,8 +95,6 @@ export function useLang(
       }
       if (action === 'search' && query !== undefined) {
         const { success, error, result: langs } = await getAllActiveLanguages();
-
-        console.log(langs);
 
         if (!success) {
           throw new Error(error);

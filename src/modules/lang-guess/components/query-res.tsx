@@ -4,17 +4,19 @@ import { useTranslations } from 'next-intl';
 import Loading from '@/core/components/icons/loading';
 import { Language } from '@/core/lib/types';
 import LangImage from '@/modules/lang-data/components/lang-image';
+import { useGame } from '../hooks/use-game';
 
 type Props = {
-  langs: Language[] | undefined;
-  loading: boolean;
-  error: boolean;
   onSelect: (lang: Language) => void;
 };
 
-function QueryRes({ langs, loading, error, onSelect }: Props) {
+function QueryRes({ onSelect }: Props) {
   const t = useTranslations('Game');
   const exo = useTranslations('Exonyms');
+
+  const {
+    langSearchData: { data: langs, error, isLoading: loading },
+  } = useGame();
 
   return (
     <ul className='hidden absolute top-[calc(100%+0.3rem)] w-full rounded-lg h-40 overflow-y-scroll bg-white z-10 border-2 group-focus-within/langs:block'>

@@ -11,12 +11,8 @@ import {
   TableRow,
 } from '@/core/components/ui/table';
 import LangImage from '@/modules/lang-data/components/lang-image';
-import type { LanguageGuess } from '../types';
+import { useGame } from '../hooks/use-game';
 import Feature from './feature';
-
-type Props = {
-  guesses: LanguageGuess[];
-};
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -28,8 +24,10 @@ const containerVariants = {
   },
 };
 
-function GuessesTable({ guesses }: Props) {
+function GuessesTable() {
   const t = useTranslations('Game');
+
+  const { guesses } = useGame();
 
   return (
     <Table>
@@ -38,7 +36,9 @@ function GuessesTable({ guesses }: Props) {
           <TableHead className='md:w-[144px] text-center font-semibold relative after:h-[80%] after:w-[2px] after:bg-soft-det after:absolute after:right-0 after:top-1/2 after:-translate-y-1/2'>
             {t('lang')}
           </TableHead>
-          <TableHead className='font-semibold text-center'>Features</TableHead>
+          <TableHead className='font-semibold text-center'>
+            {t('features')}
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className='bg-background'>

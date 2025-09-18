@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import langRepository from '@/app/api/repositories/langs';
 import { langDataSchema } from '@/core/lib/schemas/langs';
+import { getRandomInt } from '@/core/lib/utils';
 import { authMiddleware } from '../../middleware/auth';
 import {
   getAllLanguages,
@@ -12,6 +13,14 @@ import { getUserLangPermissions } from './permissions/action';
 import langPermissions from './permissions/controller';
 
 const langFeaturesRouter = new Hono();
+
+langFeaturesRouter.get('/random', async c => {
+  const langs = await langRepository.getAll(true);
+
+  const randomLang = langs[getRandomInt(0, langs.length - 1)];
+
+  return c.json(randomLang);
+});
 
 langFeaturesRouter.get('/:id', async c => {
   const langId = c.req.param('id');

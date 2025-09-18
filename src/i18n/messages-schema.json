@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Generated schema for Root",
+  "title": "The most accurate translation schema :)",
   "type": "object",
   "properties": {
     "Home": {
@@ -961,6 +961,12 @@
         },
         "theLangWas": {
           "type": "string"
+        },
+        "langTried": {
+          "type": "string"
+        },
+        "guessRandom": {
+          "type": "string"
         }
       },
       "required": [
@@ -977,7 +983,140 @@
         "congrats",
         "youGuessed",
         "nextOne",
-        "theLangWas"
+        "theLangWas",
+        "langTried",
+        "guessRandom"
+      ]
+    },
+    "Exonyms": {
+      "type": "object",
+      "properties": {
+        "ar": {
+          "type": "string"
+        },
+        "bg": {
+          "type": "string"
+        },
+        "bn": {
+          "type": "string"
+        },
+        "de": {
+          "type": "string"
+        },
+        "el": {
+          "type": "string"
+        },
+        "en": {
+          "type": "string"
+        },
+        "es": {
+          "type": "string"
+        },
+        "fa": {
+          "type": "string"
+        },
+        "fr": {
+          "type": "string"
+        },
+        "hak": {
+          "type": "string"
+        },
+        "he": {
+          "type": "string"
+        },
+        "hi": {
+          "type": "string"
+        },
+        "it": {
+          "type": "string"
+        },
+        "ja": {
+          "type": "string"
+        },
+        "ko": {
+          "type": "string"
+        },
+        "nan": {
+          "type": "string"
+        },
+        "nl": {
+          "type": "string"
+        },
+        "pl": {
+          "type": "string"
+        },
+        "pt": {
+          "type": "string"
+        },
+        "ro": {
+          "type": "string"
+        },
+        "ru": {
+          "type": "string"
+        },
+        "sh": {
+          "type": "string"
+        },
+        "sv": {
+          "type": "string"
+        },
+        "te": {
+          "type": "string"
+        },
+        "th": {
+          "type": "string"
+        },
+        "tr": {
+          "type": "string"
+        },
+        "uk": {
+          "type": "string"
+        },
+        "vi": {
+          "type": "string"
+        },
+        "xh": {
+          "type": "string"
+        },
+        "yue": {
+          "type": "string"
+        },
+        "zh": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ar",
+        "bg",
+        "bn",
+        "de",
+        "el",
+        "en",
+        "es",
+        "fa",
+        "fr",
+        "hak",
+        "he",
+        "hi",
+        "it",
+        "ja",
+        "ko",
+        "nan",
+        "nl",
+        "pl",
+        "pt",
+        "ro",
+        "ru",
+        "sh",
+        "sv",
+        "te",
+        "th",
+        "tr",
+        "uk",
+        "vi",
+        "xh",
+        "yue",
+        "zh"
       ]
     }
   },
@@ -989,6 +1128,7 @@
     "ListPage",
     "LangData",
     "AccountPage",
-    "Game"
+    "Game",
+    "Exonyms"
   ]
 }

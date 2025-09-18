@@ -112,6 +112,31 @@ export async function getLanguage(
   }
 }
 
+export async function getRandomLanguage(): Promise<ActionResult<Language>> {
+  try {
+    const res = await fetch(`${baseUrl}/api/lang/random`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      console.error(error);
+      return actionError(error.key);
+    }
+
+    const lang = (await res.json()) as Language;
+
+    return actionSuccess(lang);
+  } catch (e) {
+    let message = 'unknown error';
+    if (e instanceof Error) {
+      console.error(e);
+      message = e.message;
+    }
+    return actionError(message);
+  }
+}
+
 export async function setLanguageData(
   code: string,
   data: LanguageData,
@@ -147,29 +172,6 @@ export async function setLanguageData(
     return actionSuccess('Language data updated successfully');
   } catch (e) {
     let message = 'unknown';
-    if (e instanceof Error) {
-      console.error(e);
-      message = e.message;
-    }
-    return actionError(message);
-  }
-}
-
-export async function getDailyLanguage(): Promise<ActionResult<Language>> {
-  try {
-    const res = await fetch(`${baseUrl}/api/daily/correct`);
-
-    if (!res.ok) {
-      const error = await res.json();
-      console.error(error);
-      return actionError(error.key);
-    }
-
-    const lang = (await res.json()) as Language;
-
-    return actionSuccess(lang);
-  } catch (e) {
-    let message = 'unknown error';
     if (e instanceof Error) {
       console.error(e);
       message = e.message;

@@ -246,7 +246,9 @@
     "congrats": "Parabéns!",
     "youGuessed": "Você adivinhou o idioma {lang}",
     "nextOne": "Mais sorte na próxima",
-    "theLangWas": "O idioma do dia era {lang}"
+    "theLangWas": "O idioma do dia era {lang}",
+    "langTried": "Você já tentou com esse idioma!",
+    "guessRandom": "Adivina un idioma aleatório"
   },
   "Exonyms": {
     "ar": "árabe",
