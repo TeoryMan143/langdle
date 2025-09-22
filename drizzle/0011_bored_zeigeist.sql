@@ -1,0 +1,1 @@
+ALTER TABLE "lang_token" ALTER COLUMN "expires_at" SET DEFAULT '2025-09-22T22:44:44.097Z';

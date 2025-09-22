@@ -17,15 +17,8 @@ export const userTable = pgTable('user', {
   googleId: text(),
   country: text().notNull(),
   admin: boolean('admin').notNull().default(false),
-});
-
-export const profileTable = pgTable('profile', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id')
-    .notNull()
-    .references(() => userTable.id, { onDelete: 'cascade' }),
-  nativeLanguage: text('native_language').notNull(),
-  fluent: text('fluent').notNull(),
+  nativeLanguage: text('native_language'),
+  fluent: text('fluent'),
 });
 
 export const gameStory = pgTable('game_story', {
