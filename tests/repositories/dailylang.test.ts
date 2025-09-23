@@ -20,6 +20,7 @@ test('the language should match the right features', async () => {
       'postpositions',
       'ejectiveConsonants',
     ],
+    searchParams: [],
   };
 
   const guessedEx: Language = {
@@ -34,11 +35,10 @@ test('the language should match the right features', async () => {
       'palatalization',
     ],
     partial: ['abjad', 'aspiratedConsonants', 'proDrop', 'openSyllablesOnly'],
+    searchParams: [],
   };
 
   const matching = await dailyRepository.getMatching(guessedEx, targetEx);
-
-  console.log(matching);
 
   expect(matching).toEqual({
     correct: ['abjad', 'aspect', 'aspiratedConsonants', 'augmentatives'],
