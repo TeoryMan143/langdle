@@ -101,7 +101,6 @@ export async function setUserPermission(jwt: string, userId: string) {
     }
 
     await db.insert(langPermissionTable).values({ userId, lang });
-    console.log(`User ${userId} granted permission for language ${lang}`);
     await db.delete(langTokenTable).where(eq(langTokenTable.code, encoded));
 
     return { lang };

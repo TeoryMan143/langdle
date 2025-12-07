@@ -5,12 +5,14 @@ import {
   getAllActiveLanguages,
   getAllLanguages,
   getLanguage,
+  getLanguagesByIds,
   setLanguageData,
 } from '../actions/langs';
 import type { Language, LanguageData } from '../lib/types';
 
 type GetAllLanguages = {
   action: 'get';
+  langs?: never;
   lang?: never;
   data?: never;
   query?: never;
@@ -19,7 +21,17 @@ type GetAllLanguages = {
 
 type GetLanguageByCode = {
   action: 'get';
+  langs?: never;
   lang: string;
+  data?: never;
+  query?: never;
+  onlyActives?: never;
+};
+
+type GetLanguageByCodes = {
+  action: 'get';
+  langs?: string[];
+  lang?: never;
   data?: never;
   query?: never;
   onlyActives?: never;
@@ -27,6 +39,7 @@ type GetLanguageByCode = {
 
 type GetLanguagesbySearch = {
   action: 'search';
+  langs: never;
   lang?: never;
   query: string;
   data?: never;
@@ -35,6 +48,7 @@ type GetLanguagesbySearch = {
 
 type ModifyLanguage = {
   action: 'modify';
+  langs?: never;
   lang: string;
   data: LanguageData;
   query?: never;
@@ -49,18 +63,22 @@ export function useLang(
 export function useLang(
   options: GetLanguagesbySearch,
 ): UseQueryResult<Language[]>;
+export function useLang(
+  options: GetLanguageByCodes,
+): UseQueryResult<Language[]>;
 
 export function useLang(
   options:
     | GetAllLanguages
     | GetLanguageByCode
     | ModifyLanguage
-    | GetLanguagesbySearch,
+    | GetLanguagesbySearch
+    | GetLanguageByCodes,
 ) {
-  const { action, lang, data, query, onlyActives = false } = options;
+  const { action, lang, data, query, onlyActives = false, langs } = options;
 
   return useQuery({
-    queryKey: ['langs', action, lang, query],
+    queryKey: ['langs', action, lang, query, langs],
     queryFn: async () => {
       if (action === 'get' && lang === undefined) {
         const { success, error, result } = onlyActives
@@ -86,6 +104,15 @@ export function useLang(
 
       if (action === 'get' && lang) {
         const { success, error, result } = await getLanguage(lang);
+
+        if (!success) {
+          throw new Error(error);
+        }
+
+        return result;
+      }
+      if (action === 'get' && langs) {
+        const { success, error, result } = await getLanguagesByIds(langs);
 
         if (!success) {
           throw new Error(error);

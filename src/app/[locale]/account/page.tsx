@@ -2,6 +2,7 @@ import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { auth } from '@/modules/auth/actions';
 import AccountData from '@/modules/auth/components/account-data';
+import SignOutButton from '@/modules/auth/components/signout-button';
 
 async function AccountPage() {
   const { user, session } = await auth();
@@ -18,6 +19,7 @@ async function AccountPage() {
       <div className='flex justify-center'>
         <div className='flex'>
           <AccountData user={user} />
+          <SignOutButton />
           <div className='flex-1'>
             <p>GameStory</p>
           </div>
