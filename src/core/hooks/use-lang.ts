@@ -39,7 +39,7 @@ type GetLanguageByCodes = {
 
 type GetLanguagesbySearch = {
   action: 'search';
-  langs: never;
+  langs?: never;
   lang?: never;
   query: string;
   data?: never;
