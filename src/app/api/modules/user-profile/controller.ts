@@ -72,17 +72,31 @@ userProfileRouter.put('/fluent', authMiddleware, async c => {
   const result = updateFluentLangsSchema.safeParse(body);
 
   if (!result.success) {
-    return c.json(result.error.flatten());
+    return c.json(result.error.flatten(), 400);
   }
 
   const fluentIds = result.data.fluent;
 
+  if (!fluentIds || fluentIds.length === 0) {
+    await editUserFluentLangs({
+      userId: user.id,
+      fluentLangs: null,
+    });
+
+    return c.json({
+      message: 'No ids provided, all fluents removed',
+    });
+  }
+
   try {
     langsRepository.getByIds(fluentIds);
   } catch (_) {
-    return c.json({
-      message: 'A provided language is not in the database',
-    });
+    return c.json(
+      {
+        message: 'A provided language is not in the database',
+      },
+      400,
+    );
   }
 
   const newUserData = await editUserFluentLangs({

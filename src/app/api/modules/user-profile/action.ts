@@ -44,7 +44,7 @@ export async function editUserFluentLangs({
   fluentLangs,
 }: {
   userId: string;
-  fluentLangs: string;
+  fluentLangs: string | null;
 }) {
   try {
     const [newUser] = await db

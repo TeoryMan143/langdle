@@ -1,5 +1,5 @@
 import { UserDTO } from '../types';
-// import FluentLangs from './fluent-langs';
+import FluentLangs from './fluent-langs';
 import NativeLang from './native-lang';
 
 function AccountData({ user }: { user: UserDTO }) {
@@ -13,9 +13,9 @@ function AccountData({ user }: { user: UserDTO }) {
         />
         <h4 className='text-center text-2xl'>{user.nickname}</h4>
       </div>
-      <div className='space-y-5 min-w-96'>
+      <div className='space-y-2 min-w-96'>
         <NativeLang langId={user.nativeLanguage} />
-        {/* <FluentLangs fluent={user.fluent} /> */}
+        <FluentLangs fluent={user.fluent} />
       </div>
     </div>
   );

@@ -80,7 +80,7 @@ export function useLang(
   return useQuery({
     queryKey: ['langs', action, lang, query, langs],
     queryFn: async () => {
-      if (action === 'get' && lang === undefined) {
+      if (action === 'get' && lang === undefined && langs === undefined) {
         const { success, error, result } = onlyActives
           ? await getAllActiveLanguages()
           : await getAllLanguages();

@@ -5,5 +5,5 @@ export const updateNativeLangSchema = z.object({
 });
 
 export const updateFluentLangsSchema = z.object({
-  fluent: z.string().transform(langIds => langIds.split(',')),
+  fluent: z.string().array(),
 });

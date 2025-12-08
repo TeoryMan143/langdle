@@ -255,6 +255,49 @@ export async function editNativeLanguage(
   }
 }
 
+export async function editFluentLanguages(
+  langIds: string[],
+): Promise<ActionResult<User, string>> {
+  try {
+    const cookieStore = await cookies();
+
+    const sessionId = cookieStore.get('sessionToken')?.value;
+
+    if (!sessionId) {
+      return actionError('notSignedIn');
+    }
+
+    const res = await fetch(`${baseUrl}/api/user/fluent`, {
+      method: 'put',
+      body: JSON.stringify({
+        fluent: langIds,
+      }),
+      cache: 'no-cache',
+      headers: {
+        Authorization: `Bearer ${sessionId}`,
+      },
+    });
+
+    const body = await res.json();
+
+    if (!res.ok) {
+      return actionError(body.message);
+    }
+
+    const locale = await getLocale();
+
+    revalidatePath(`/${locale}/account`);
+    return actionSuccess(body.updated);
+  } catch (e) {
+    console.error(e);
+    let message = 'unknown';
+    if (e instanceof Error) {
+      message = e.message;
+    }
+    return actionError(message);
+  }
+}
+
 export const auth = cache(async (): Promise<SessionValidationResult> => {
   const cookieStore = await cookies();
 
