@@ -1,3 +1,5 @@
+import { InferSelectModel } from 'drizzle-orm';
+import { gameHistoryTable } from '@/core/database/relational/tables';
 import { LanguageMatching } from '@/core/lib/types';
 
 export type LanguageGuess = {
@@ -6,3 +8,5 @@ export type LanguageGuess = {
   exonym?: string;
   matching: LanguageMatching;
 };
+
+export type GameHistory = InferSelectModel<typeof gameHistoryTable>;

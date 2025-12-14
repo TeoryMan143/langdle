@@ -12,6 +12,7 @@ import { GuessHistoryReq } from '@/app/api/modules/daily-guess/schemas';
 import { ActionResult, actionError, actionSuccess } from '@/core/actions/utils';
 import { db } from '@/core/database/relational/config';
 import { userTable } from '@/core/database/relational/tables';
+import { GameHistory } from '../lang-guess/types';
 import {
   createSession,
   deleteSessionTokenCookie,
@@ -336,6 +337,33 @@ export async function addGameHistory(historyData: GuessHistoryReq) {
     }
     return actionError(message);
   }
+}
+
+export async function getGameHistory(): Promise<
+  ActionResult<GameHistory[], string>
+> {
+  const cookieStore = await cookies();
+
+  const sessionId = cookieStore.get('sessionToken')?.value;
+
+  if (!sessionId) {
+    return actionError('notSignedIn');
+  }
+
+  const res = await fetch(`${baseUrl}/api/guess/history`, {
+    cache: 'no-cache',
+    headers: {
+      Authorization: `Bearer ${sessionId}`,
+    },
+  });
+
+  const body = await res.json();
+
+  if (!res.ok) {
+    return actionError(body.message);
+  }
+
+  return actionSuccess(body);
 }
 
 export const auth = cache(async (): Promise<SessionValidationResult> => {
