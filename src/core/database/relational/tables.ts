@@ -21,7 +21,7 @@ export const userTable = pgTable('user', {
   fluent: text('fluent'),
 });
 
-export const gameStory = pgTable('game_story', {
+export const gameHistoryTable = pgTable('game_history', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id')
     .notNull()

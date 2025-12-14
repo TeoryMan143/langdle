@@ -8,6 +8,7 @@ import { cookies } from 'next/headers';
 import { getLocale } from 'next-intl/server';
 import { cache } from 'react';
 import { type typeToFlattenedError } from 'zod';
+import { GuessHistoryReq } from '@/app/api/modules/daily-guess/schemas';
 import { ActionResult, actionError, actionSuccess } from '@/core/actions/utils';
 import { db } from '@/core/database/relational/config';
 import { userTable } from '@/core/database/relational/tables';
@@ -272,6 +273,45 @@ export async function editFluentLanguages(
       body: JSON.stringify({
         fluent: langIds,
       }),
+      cache: 'no-cache',
+      headers: {
+        Authorization: `Bearer ${sessionId}`,
+      },
+    });
+
+    const body = await res.json();
+
+    if (!res.ok) {
+      return actionError(body.message);
+    }
+
+    const locale = await getLocale();
+
+    revalidatePath(`/${locale}/account`);
+    return actionSuccess(body.updated);
+  } catch (e) {
+    console.error(e);
+    let message = 'unknown';
+    if (e instanceof Error) {
+      message = e.message;
+    }
+    return actionError(message);
+  }
+}
+
+export async function addGameHistory(historyData: GuessHistoryReq) {
+  try {
+    const cookieStore = await cookies();
+
+    const sessionId = cookieStore.get('sessionToken')?.value;
+
+    if (!sessionId) {
+      return actionError('notSignedIn');
+    }
+
+    const res = await fetch(`${baseUrl}/api/guess/history`, {
+      method: 'put',
+      body: JSON.stringify(historyData),
       cache: 'no-cache',
       headers: {
         Authorization: `Bearer ${sessionId}`,

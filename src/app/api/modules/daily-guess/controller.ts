@@ -1,7 +1,10 @@
 import { Hono } from 'hono';
 import type { Language } from '@/core/lib/types';
+import { authMiddleware } from '../../middleware/auth';
 import dailyRepository from '../../repositories/dailylang';
 import langRepository from '../../repositories/langs';
+import { addGuessesHistory } from './action';
+import { guessHistoryReqSchema } from './schemas';
 
 const dailyGuessRouter = new Hono();
 
@@ -54,6 +57,22 @@ dailyGuessRouter.get('/:id', async c => {
   const matching = await dailyRepository.getMatching(guessedLang, target);
 
   return c.json(matching);
+});
+
+dailyGuessRouter.put('/history', authMiddleware, async c => {
+  const body = await c.req.json();
+
+  const result = guessHistoryReqSchema.safeParse(body);
+
+  if (!result.success) {
+    return c.json(result.error.flatten(), 400);
+  }
+
+  const historyData = result.data;
+
+  const historyResult = await addGuessesHistory(c.get('user').id, historyData);
+
+  return c.json(historyResult);
 });
 
 export default dailyGuessRouter;

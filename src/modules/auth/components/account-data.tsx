@@ -4,7 +4,7 @@ import NativeLang from './native-lang';
 
 function AccountData({ user }: { user: UserDTO }) {
   return (
-    <div className='p-5 bg-background border-2 rounded-base space-y-3'>
+    <div className='p-5 bg-background border-2 rounded-base space-y-3 flex-1'>
       <div className='flex justify-center items-center gap-2'>
         <img
           className='h-8 rounded-sm aspect-video'
