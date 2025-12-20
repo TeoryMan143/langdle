@@ -3,12 +3,16 @@
 import { NeonDbError } from '@neondatabase/serverless';
 import argon2 from 'argon2';
 import { eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
+import { getLocale } from 'next-intl/server';
 import { cache } from 'react';
 import { type typeToFlattenedError } from 'zod';
+import { GuessHistoryReq } from '@/app/api/modules/daily-guess/schemas';
 import { ActionResult, actionError, actionSuccess } from '@/core/actions/utils';
 import { db } from '@/core/database/relational/config';
 import { userTable } from '@/core/database/relational/tables';
+import { GameHistory } from '../lang-guess/types';
 import {
   createSession,
   deleteSessionTokenCookie,
@@ -31,6 +35,8 @@ import type {
   User,
   UserDTO,
 } from './types';
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export async function signUpUser(
   data: object,
@@ -100,11 +106,11 @@ export async function signInUser(
       .where(eq(userTable.nickname, userData.nickname))
       .limit(1);
 
-    if (!user.password) {
+    if (!user) {
       return actionError('invalidUserPassword');
     }
 
-    if (!user) {
+    if (!user.password) {
       return actionError('invalidUserPassword');
     }
 
@@ -125,15 +131,10 @@ export async function signInUser(
       new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
     );
 
+    const { password: _, ...userWithoutPassword } = user;
+
     return actionSuccess({
-      user: {
-        nickname: user.nickname,
-        id: user.id,
-        admin: user.admin,
-        googleId: user.googleId,
-        country: user.country,
-        email: user.email,
-      },
+      user: userWithoutPassword,
       session,
     });
   } catch (e) {
@@ -211,6 +212,158 @@ export async function createGoogleAccount(accountData: {
     }
     return actionError(message);
   }
+}
+
+export async function editNativeLanguage(
+  langId: string,
+): Promise<ActionResult<User, string>> {
+  try {
+    const cookieStore = await cookies();
+
+    const sessionId = cookieStore.get('sessionToken')?.value;
+
+    if (!sessionId) {
+      return actionError('notSignedIn');
+    }
+
+    const res = await fetch(`${baseUrl}/api/user/nativelang`, {
+      method: 'put',
+      body: JSON.stringify({
+        nativeLang: langId,
+      }),
+      cache: 'no-cache',
+      headers: {
+        Authorization: `Bearer ${sessionId}`,
+      },
+    });
+
+    const body = await res.json();
+
+    if (!res.ok) {
+      return actionError(body.message);
+    }
+
+    const locale = await getLocale();
+
+    revalidatePath(`/${locale}/account`);
+    return actionSuccess(body.updated);
+  } catch (e) {
+    console.error(e);
+    let message = 'unknown';
+    if (e instanceof Error) {
+      message = e.message;
+    }
+    return actionError(message);
+  }
+}
+
+export async function editFluentLanguages(
+  langIds: string[],
+): Promise<ActionResult<User, string>> {
+  try {
+    const cookieStore = await cookies();
+
+    const sessionId = cookieStore.get('sessionToken')?.value;
+
+    if (!sessionId) {
+      return actionError('notSignedIn');
+    }
+
+    const res = await fetch(`${baseUrl}/api/user/fluent`, {
+      method: 'put',
+      body: JSON.stringify({
+        fluent: langIds,
+      }),
+      cache: 'no-cache',
+      headers: {
+        Authorization: `Bearer ${sessionId}`,
+      },
+    });
+
+    const body = await res.json();
+
+    if (!res.ok) {
+      return actionError(body.message);
+    }
+
+    const locale = await getLocale();
+
+    revalidatePath(`/${locale}/account`);
+    return actionSuccess(body.updated);
+  } catch (e) {
+    console.error(e);
+    let message = 'unknown';
+    if (e instanceof Error) {
+      message = e.message;
+    }
+    return actionError(message);
+  }
+}
+
+export async function addGameHistory(historyData: GuessHistoryReq) {
+  try {
+    const cookieStore = await cookies();
+
+    const sessionId = cookieStore.get('sessionToken')?.value;
+
+    if (!sessionId) {
+      return actionError('notSignedIn');
+    }
+
+    const res = await fetch(`${baseUrl}/api/guess/history`, {
+      method: 'put',
+      body: JSON.stringify(historyData),
+      cache: 'no-cache',
+      headers: {
+        Authorization: `Bearer ${sessionId}`,
+      },
+    });
+
+    const body = await res.json();
+
+    if (!res.ok) {
+      return actionError(body.message);
+    }
+
+    const locale = await getLocale();
+
+    revalidatePath(`/${locale}/account`);
+    return actionSuccess(body.updated);
+  } catch (e) {
+    console.error(e);
+    let message = 'unknown';
+    if (e instanceof Error) {
+      message = e.message;
+    }
+    return actionError(message);
+  }
+}
+
+export async function getGameHistory(): Promise<
+  ActionResult<GameHistory[], string>
+> {
+  const cookieStore = await cookies();
+
+  const sessionId = cookieStore.get('sessionToken')?.value;
+
+  if (!sessionId) {
+    return actionError('notSignedIn');
+  }
+
+  const res = await fetch(`${baseUrl}/api/guess/history`, {
+    cache: 'no-cache',
+    headers: {
+      Authorization: `Bearer ${sessionId}`,
+    },
+  });
+
+  const body = await res.json();
+
+  if (!res.ok) {
+    return actionError(body.message);
+  }
+
+  return actionSuccess(body);
 }
 
 export const auth = cache(async (): Promise<SessionValidationResult> => {

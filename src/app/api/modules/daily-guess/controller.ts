@@ -1,13 +1,58 @@
 import { Hono } from 'hono';
 import type { Language } from '@/core/lib/types';
+import { authMiddleware } from '../../middleware/auth';
 import dailyRepository from '../../repositories/dailylang';
 import langRepository from '../../repositories/langs';
+import { addGuessesHistory, getGuessesHistory } from './action';
+import { guessHistoryReqSchema } from './schemas';
 
 const dailyGuessRouter = new Hono();
 
 dailyGuessRouter.get('/daily', async c => {
   const dailylang = await dailyRepository.getDailyLang();
   return c.json(dailylang);
+});
+
+dailyGuessRouter.put('/history', authMiddleware, async c => {
+  const body = await c.req.json();
+
+  const result = guessHistoryReqSchema.safeParse(body);
+
+  if (!result.success) {
+    return c.json(result.error.flatten(), 400);
+  }
+
+  const historyData = result.data;
+
+  const historyResult = await addGuessesHistory(c.get('user').id, historyData);
+
+  if (!historyData) {
+    return c.json(
+      {
+        message: 'unknown error',
+      },
+      500,
+    );
+  }
+
+  return c.json(historyResult);
+});
+
+dailyGuessRouter.get('/history', authMiddleware, async c => {
+  const userId = c.get('user').id;
+
+  const history = await getGuessesHistory(userId);
+
+  if (!history) {
+    return c.json(
+      {
+        message: 'unknown error',
+      },
+      500,
+    );
+  }
+
+  return c.json(history);
 });
 
 dailyGuessRouter.get('/:id', async c => {

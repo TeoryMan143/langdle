@@ -2,7 +2,7 @@
 
 import clsx, { ClassValue } from 'clsx';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function LangImage({
   code,
@@ -13,8 +13,12 @@ function LangImage({
 }) {
   const [imageUrl, setImageUrl] = useState(`/flags/${code}.webp`);
 
+  useEffect(() => {
+    setImageUrl(`/flags/${code}.webp`);
+  }, [code]);
+
   return (
-    <Image
+    <img
       src={imageUrl}
       width={455}
       height={304}

@@ -38,7 +38,7 @@ export default async function RootLayout({
           <NextIntlClientProvider>
             <Toaster />
             <Header />
-            <div className='flex-1 py-3'>{children}</div>
+            <div className='flex-1 py-3 h-full'>{children}</div>
           </NextIntlClientProvider>
         </Providers>
       </body>

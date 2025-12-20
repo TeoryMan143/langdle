@@ -10,6 +10,8 @@ import { db } from '@/core/database/relational/config';
 import { sessionTable, userTable } from '@/core/database/relational/tables';
 import type { Session, SessionValidationResult } from './types';
 
+const { password: _, ...userTableWithoutPassword } = userTable;
+
 export function generateSessionToken(): string {
   const bytes = new Uint8Array(20);
   crypto.getRandomValues(bytes);
@@ -37,14 +39,7 @@ export async function validateSessionToken(
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
   const result = await db
     .select({
-      user: {
-        id: userTable.id,
-        nickname: userTable.nickname,
-        admin: userTable.admin,
-        country: userTable.country,
-        googleId: userTable.googleId,
-        email: userTable.email,
-      },
+      user: userTableWithoutPassword,
       session: sessionTable,
     })
     .from(sessionTable)

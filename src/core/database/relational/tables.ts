@@ -1,5 +1,7 @@
 import {
   boolean,
+  date,
+  integer,
   pgTable,
   primaryKey,
   text,
@@ -15,6 +17,20 @@ export const userTable = pgTable('user', {
   googleId: text(),
   country: text().notNull(),
   admin: boolean('admin').notNull().default(false),
+  nativeLanguage: text('native_language'),
+  fluent: text('fluent'),
+});
+
+export const gameHistoryTable = pgTable('game_history', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => userTable.id, { onDelete: 'cascade' }),
+  date: date('date').notNull().defaultNow(),
+  type: text('type').$type<'daily' | 'random'>().notNull(),
+  targetLang: text('target_lang').notNull(),
+  guesses: integer().notNull(),
+  guessed: boolean().notNull(),
 });
 
 export const sessionTable = pgTable('session', {

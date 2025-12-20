@@ -21,6 +21,7 @@ import {
 import { useLang } from '@/core/hooks/use-lang';
 import { Language } from '@/core/lib/types';
 import { getUTCDateString } from '@/core/lib/utils';
+import { addGameHistory } from '@/modules/auth/actions';
 import { useAuth } from '@/modules/auth/context';
 import { checkGuess } from '../actions';
 import { LanguageGuess } from '../types';
@@ -153,6 +154,12 @@ export const GameProvider = ({
         dailyLang: targetLang,
       });
       setHasGuessed(true);
+      await addGameHistory({
+        guessed: true,
+        guesses: guesses.length + 1,
+        targetLang: targetLang.id,
+        type,
+      });
       return;
     }
 
@@ -172,6 +179,15 @@ export const GameProvider = ({
       });
       setHasGuessed(true);
       return;
+    }
+
+    if (guesses.length === MAX_ATTEMPTS - 1) {
+      await addGameHistory({
+        guessed: false,
+        guesses: guesses.length + 1,
+        targetLang: targetLang.id,
+        type,
+      });
     }
 
     setGuesses(prev => [...prev, { ...selectedLang, matching }]);

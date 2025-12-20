@@ -1,15 +1,21 @@
 import { UserDTO } from '../types';
+import FluentLangs from './fluent-langs';
+import NativeLang from './native-lang';
 
 function AccountData({ user }: { user: UserDTO }) {
   return (
-    <div className='my-5'>
+    <div className='p-5 bg-background border-2 rounded-base space-y-3 flex-1'>
       <div className='flex justify-center items-center gap-2'>
         <img
-          className='h-4 rounded-sm'
+          className='h-8 rounded-sm aspect-video'
           alt={`${user.country}-flag`}
           src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${user.country}.svg`}
         />
-        <p className='text-center'>{user.nickname}</p>
+        <h4 className='text-center text-2xl'>{user.nickname}</h4>
+      </div>
+      <div className='space-y-2 min-w-96'>
+        <NativeLang langId={user.nativeLanguage} />
+        <FluentLangs fluent={user.fluent} />
       </div>
     </div>
   );

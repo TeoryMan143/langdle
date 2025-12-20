@@ -11,8 +11,6 @@ export async function GET(): Promise<Response> {
     'email',
   ]);
 
-  console.log(url);
-
   const cookieStore = await cookies();
   cookieStore.set('google_oauth_state', state, {
     path: '/',
