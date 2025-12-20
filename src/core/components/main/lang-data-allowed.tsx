@@ -21,7 +21,6 @@ function LangDataAllowed({ children }: { children: React.ReactNode }) {
       const permissions = await getLangPermissions(user.id);
 
       if (!permissions.success) {
-        console.error(permissions.error);
         return [];
       }
 
