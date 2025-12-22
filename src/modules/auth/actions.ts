@@ -242,7 +242,6 @@ export async function editNativeLanguage(
       return actionError(body.message);
     }
 
-    revalidatePath('/account');
     return actionSuccess(body.updated);
   } catch (e) {
     console.error(e);
@@ -283,7 +282,6 @@ export async function editFluentLanguages(
       return actionError(body.message);
     }
 
-    revalidatePath('/account');
     return actionSuccess(body.updated);
   } catch (e) {
     console.error(e);

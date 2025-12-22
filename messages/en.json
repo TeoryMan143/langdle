@@ -223,14 +223,29 @@
     "phonology": "Phonology",
     "wordOrder": "Word order",
     "writingSystem": "Writing System",
-    "morphosyntax": "Morpho-Syntax"
+    "morphosyntax": "Morpho-Syntax",
+    "status": "Status"
   },
   "AccountPage": {
     "title": "Account",
     "signOut": "Sign out",
     "signingOut": "Signing out",
     "successSignOut": "Signed out successfully",
-    "noSession": "No session"
+    "noSession": "No session",
+    "nativeLang": "Native language",
+    "fluentLang": "Fluent languages",
+    "addNativeLang": "add native language",
+    "addFluentLang": "add fluent language",
+    "gameHistory": "Game History",
+    "gameType": "Game type",
+    "target": "Target",
+    "guessed": "Guessed",
+    "guesses": "Guesses",
+    "updating": "Updating",
+    "selectLang": "Select a language",
+    "unknownError": "Unknown server error",
+    "newNative": "New native language set",
+    "newFluent": "New fluent language added"
   },
   "Game": {
     "selectToGuess": "Select a language to guess!",

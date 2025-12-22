@@ -1,6 +1,7 @@
 'use client';
 
 import { Delete } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import Check from '@/core/components/icons/check';
@@ -9,6 +10,7 @@ import Xcancel from '@/core/components/icons/x';
 import { Button } from '@/core/components/ui/button';
 import { useLang } from '@/core/hooks/use-lang';
 import { Language } from '@/core/lib/types';
+import { useRouter } from '@/i18n/navigation';
 import LangImage from '@/modules/lang-data/components/lang-image';
 import LangSelector from '@/modules/lang-data/components/lang-selector';
 import { editFluentLanguages } from '../actions';
@@ -41,6 +43,7 @@ function FluentData({
   });
 
   const [loading, setLoading] = useState(false);
+  const t = useTranslations('AccountPage');
 
   return (
     <div className='flex flex-col gap-1'>
@@ -58,7 +61,7 @@ function FluentData({
                 ) : (
                   `${language?.name} ${language?.exonym ? `(${language.exonym})` : ''}`
                 )}
-                {error && 'Unknown error'}
+                {error && t('unknownError')}
               </span>
               <Button
                 onClick={async () => {
@@ -97,12 +100,14 @@ function Adder({
 }) {
   const [selectedLang, setSelectedLang] = useState<Language | null>(null);
   const [loading, setLoading] = useState(false);
+  const t = useTranslations('AccountPage');
+  const router = useRouter();
 
   const handleConfirm = useCallback(async () => {
-    const toastId = toast.loading('Updating...');
+    const toastId = toast.loading(`${t('updating')}...`);
 
     if (!selectedLang) {
-      return toast.error('Select a language', { id: toastId });
+      return toast.error(t('selectLang'), { id: toastId });
     }
 
     const newFluents = [...currentFluents, selectedLang.id];
@@ -112,13 +117,14 @@ function Adder({
     setCurrentFluents(newFluents);
 
     if (!updatedRes.success) {
-      return toast.error('Unknown server error', { id: toastId });
+      return toast.error(t('unknownError'), { id: toastId });
     }
 
-    toast.success('New fluent language set', {
+    toast.success(t('newFluent'), {
       id: toastId,
     });
-  }, [selectedLang, currentFluents, setCurrentFluents]);
+    router.refresh();
+  }, [selectedLang, currentFluents, setCurrentFluents, t, router]);
 
   return (
     <div className='flex gap-2'>
@@ -154,6 +160,7 @@ function AddFluent({
   setCurrentFluents: Dispatch<SetStateAction<string[]>>;
 }) {
   const [adding, setAdding] = useState(false);
+  const t = useTranslations('AccountPage');
 
   return (
     <>
@@ -165,7 +172,7 @@ function AddFluent({
         />
       )}
       <Button onClick={() => setAdding(true)} variant='neutral'>
-        + add fluent language
+        + {t('addFluentLang')}
       </Button>
     </>
   );
