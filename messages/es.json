@@ -164,6 +164,7 @@
     "signUp": "Registrarse",
     "nickname": "Nombre de usuario",
     "password": "Contraseña",
+    "email": "Correo electrónico",
     "confirmPassword": "Confirmar contraseña",
     "noAccount": "¿No tienes una cuenta?",
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
@@ -245,7 +246,9 @@
     "selectLang": "Selecciona un idioma",
     "unknownError": "Error del servidor",
     "newNative": "Idioma nativo guardado",
-    "newFluent": "Nuevo idioma fluido guardado"
+    "newFluent": "Nuevo idioma fluido guardado",
+    "yes": "sí",
+    "no": "no"
   },
   "Game": {
     "selectToGuess": "¡Selecciona un idioma para adivinar!",

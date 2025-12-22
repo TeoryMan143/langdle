@@ -48,7 +48,7 @@ function FluentData({
   return (
     <div className='flex flex-col gap-1'>
       <div className='flex flex-col gap-1.5 mb-1'>
-        <strong>Fluent languages: </strong>
+        <strong>{t('fluentLang')}: </strong>
         {isLoading ? (
           <Loading className='text-6xl' />
         ) : (

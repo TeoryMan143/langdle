@@ -12,6 +12,7 @@ async function GameHistory() {
 
   const history = historyRes.result;
 
+  const t = await getTranslations('AccountPage');
   const ex = await getTranslations('Exonyms');
 
   return (
@@ -24,7 +25,7 @@ async function GameHistory() {
             const langRes = await getLanguage(targetLang);
 
             if (!langRes.success) {
-              return <p>error loading language</p>;
+              return <p>{t('unknownError')}</p>;
             }
 
             const lang = langRes.result;
@@ -40,13 +41,13 @@ async function GameHistory() {
                 <div className='grid grid-cols-4 text-center justify-evenly'>
                   <div className='space-y-1'>
                     <p>
-                      <strong>Game type</strong>
+                      <strong>{t('gameType')}</strong>
                     </p>
                     <p>{type}</p>
                   </div>
                   <div className='space-y-1'>
                     <p>
-                      <strong>Target</strong>
+                      <strong>{t('target')}</strong>
                     </p>
                     <div>
                       <LangImage code={targetLang} /> {lang.name} (
@@ -55,19 +56,19 @@ async function GameHistory() {
                   </div>
                   <div className='space-y-1'>
                     <p>
-                      <strong>Guessed</strong>
+                      <strong>{t('guessed')}</strong>
                     </p>
                     <p className='font-bold'>
                       {guessed ? (
-                        <span className='text-green-500'>Yes</span>
+                        <span className='text-green-500'>{t('yes')}</span>
                       ) : (
-                        <span className='text-red-500'>No</span>
+                        <span className='text-red-500'>{t('no')}</span>
                       )}
                     </p>
                   </div>
                   <div className='space-y-1'>
                     <p>
-                      <strong>Guesses</strong>
+                      <strong>{t('guesses')}</strong>
                     </p>
                     <p>{guesses}</p>
                   </div>

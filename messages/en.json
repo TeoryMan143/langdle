@@ -164,6 +164,7 @@
     "signUp": "Sign up",
     "nickname": "Nickname",
     "password": "Password",
+    "email": "Email",
     "confirmPassword": "Confirm password",
     "noAccount": "Don't have an account?",
     "alreadyHaveAccount": "Already have an account?",
@@ -245,7 +246,9 @@
     "selectLang": "Select a language",
     "unknownError": "Unknown server error",
     "newNative": "New native language set",
-    "newFluent": "New fluent language added"
+    "newFluent": "New fluent language added",
+    "yes": "yes",
+    "no": "no"
   },
   "Game": {
     "selectToGuess": "Select a language to guess!",
