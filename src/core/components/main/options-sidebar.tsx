@@ -13,6 +13,7 @@ import {
   DrawerTrigger,
 } from '../ui/drawer';
 import LangDataAllowed from './lang-data-allowed';
+import LocaleSelector from './locale-selector';
 
 function OptionsSidebar() {
   const { session } = useAuth();
@@ -40,6 +41,7 @@ function OptionsSidebar() {
             </SidebarLink>
           </LangDataAllowed>
         </ul>
+        <LocaleSelector className='absolute bottom-2 right-1.5 max-w-[90%]' />
       </DrawerContent>
     </Drawer>
   );

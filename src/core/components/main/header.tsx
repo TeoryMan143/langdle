@@ -7,6 +7,7 @@ import Admin from '../icons/admin';
 import User from '../icons/user';
 import { Button } from '../ui/button';
 import LangDataAllowed from './lang-data-allowed';
+import LocaleSelector from './locale-selector';
 import OptionsSidebar from './options-sidebar';
 
 function Header() {
@@ -14,6 +15,7 @@ function Header() {
 
   return (
     <header className='bg-main relative border-b-2 border-black'>
+      <LocaleSelector className='absolute top-1/2 -translate-y-1/2 left-3 z-20 w-[200px] truncate' />
       <h1
         className={`${dongle.className} text-left ml-3 text-6xl lg:text-8xl lg:ml-0 text-white md:text-center relative top-1 md:top-2 overflow-clip`}
       >

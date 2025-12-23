@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { notFound } from 'next/navigation';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
+import { getLocale } from 'next-intl/server';
 import { Toaster } from 'sonner';
 import Header from '@/core/components/main/header';
 import Providers from '@/core/components/main/providers';
@@ -16,12 +17,10 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  params,
 }: Readonly<{
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
 }>) {
-  const { locale } = await params;
+  const locale = await getLocale();
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }

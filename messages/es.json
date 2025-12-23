@@ -164,6 +164,7 @@
     "signUp": "Registrarse",
     "nickname": "Nombre de usuario",
     "password": "Contraseña",
+    "email": "Correo electrónico",
     "confirmPassword": "Confirmar contraseña",
     "noAccount": "¿No tienes una cuenta?",
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
@@ -223,14 +224,31 @@
     "phonology": "Fonología",
     "wordOrder": "Orden de palabra",
     "writingSystem": "Sistema de estritura",
-    "morphosyntax": "Morfo-Sintaxis"
+    "morphosyntax": "Morfo-Sintaxis",
+    "status": "Estatus"
   },
   "AccountPage": {
     "title": "Cuenta",
     "signOut": "Cerrar sesión",
     "signingOut": "Cerrando sesión...",
     "successSignOut": "Sesión cerrada exitosamente",
-    "noSession": "Sin sesión"
+    "noSession": "Sin sesión",
+    "nativeLang": "Idioma nativo",
+    "fluentLang": "Fluido/a en",
+    "addNativeLang": "añadir idioma nativo",
+    "addFluentLang": "añadir idioma fluido",
+    "gameHistory": "Historial de juego",
+    "gameType": "Tipo de juego",
+    "target": "Objetivo",
+    "guessed": "Adivinado",
+    "guesses": "Intentos",
+    "updating": "Actualizando",
+    "selectLang": "Selecciona un idioma",
+    "unknownError": "Error del servidor",
+    "newNative": "Idioma nativo guardado",
+    "newFluent": "Nuevo idioma fluido guardado",
+    "yes": "sí",
+    "no": "no"
   },
   "Game": {
     "selectToGuess": "¡Selecciona un idioma para adivinar!",

@@ -29,7 +29,7 @@ function StatusSwitch({ defStatus }: { defStatus: boolean }) {
 
   return (
     <div className='flex justify-center items-center gap-3 relative'>
-      <Label htmlFor={id}>Status: </Label>
+      <Label htmlFor={id}>{t('status')}: </Label>
       <Switch
         onCheckedChange={async val => {
           setLoading(true);

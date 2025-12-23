@@ -45,7 +45,7 @@ function GuessesTable() {
         {guesses.length === 0 && (
           <TableRow>
             <TableCell> </TableCell>
-            <TableCell className='text-center'>Do your first guess!</TableCell>
+            <TableCell className='text-center'>{t('firstGuess')}</TableCell>
           </TableRow>
         )}
         {guesses.map(({ id, name, matching, exonym }) => (

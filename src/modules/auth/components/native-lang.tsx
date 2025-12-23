@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import Check from '@/core/components/icons/check';
@@ -9,6 +10,7 @@ import Xcancel from '@/core/components/icons/x';
 import { Button } from '@/core/components/ui/button';
 import { useLang } from '@/core/hooks/use-lang';
 import { Language } from '@/core/lib/types';
+import { useRouter } from '@/i18n/navigation';
 import LangImage from '@/modules/lang-data/components/lang-image';
 import LangSelector from '@/modules/lang-data/components/lang-selector';
 import { editNativeLanguage } from '../actions';
@@ -29,11 +31,13 @@ function NativeLangData({ langId }: { langId: string }) {
 
   const [editing, setEditing] = useState(false);
 
+  const t = useTranslations('AccountPage');
+
   return editing ? (
     <Editor setEditing={setEditing} />
   ) : (
     <div className='flex gap-1 items-center'>
-      <strong>Native language: </strong>
+      <strong>{t('nativeLang')}: </strong>
       <LangImage code={langId} />
       <span>
         {isLoading && !language ? (
@@ -56,6 +60,7 @@ function NativeLangData({ langId }: { langId: string }) {
 
 function UnknownLang() {
   const [editing, setEditing] = useState(false);
+  const t = useTranslations('AccountPage');
 
   return (
     <div className='relative'>
@@ -63,7 +68,7 @@ function UnknownLang() {
         <Editor setEditing={setEditing} />
       ) : (
         <Button onClick={() => setEditing(true)} variant='neutral'>
-          + add native language
+          + {t('addNativeLang')}
         </Button>
       )}
     </div>
@@ -77,25 +82,28 @@ function Editor({
 }) {
   const [selectedLang, setSelectedLang] = useState<Language | null>(null);
   const [loading, setLoading] = useState(false);
+  const t = useTranslations('AccountPage');
+  const router = useRouter();
 
   const handleConfirm = useCallback(async () => {
-    const toastId = toast.loading('Updating...');
+    const toastId = toast.loading(`${t('updating')}...`);
 
     if (!selectedLang) {
-      return toast.error('Select a language', { id: toastId });
+      return toast.error(t('selectLang'), { id: toastId });
     }
 
     const updatedRes = await editNativeLanguage(selectedLang.id);
 
     if (!updatedRes.success) {
-      return toast.error('Unknown server error', { id: toastId });
+      return toast.error(t('unknownError'), { id: toastId });
     }
 
     setEditing(false);
-    toast.success('New native language set', {
+    toast.success(t('newNative'), {
       id: toastId,
     });
-  }, [selectedLang, setEditing]);
+    router.refresh();
+  }, [selectedLang, setEditing, t, router]);
 
   return (
     <div className='flex gap-2'>

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import { ActionResult, actionError, actionSuccess } from '@/core/actions/utils';
 import type { Language, LanguageData } from '@/core/lib/types';
 
@@ -165,9 +165,7 @@ export async function setLanguageData(
       return actionError(error.key);
     }
 
-    const locale = await getLocale();
-
-    revalidatePath(`/${locale}/data/${code}`);
+    revalidatePath(`/data/${code}`);
 
     return actionSuccess('Language data updated successfully');
   } catch (e) {

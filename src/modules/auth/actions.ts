@@ -5,7 +5,6 @@ import argon2 from 'argon2';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
-import { getLocale } from 'next-intl/server';
 import { cache } from 'react';
 import { type typeToFlattenedError } from 'zod';
 import { GuessHistoryReq } from '@/app/api/modules/daily-guess/schemas';
@@ -243,9 +242,6 @@ export async function editNativeLanguage(
       return actionError(body.message);
     }
 
-    const locale = await getLocale();
-
-    revalidatePath(`/${locale}/account`);
     return actionSuccess(body.updated);
   } catch (e) {
     console.error(e);
@@ -286,9 +282,6 @@ export async function editFluentLanguages(
       return actionError(body.message);
     }
 
-    const locale = await getLocale();
-
-    revalidatePath(`/${locale}/account`);
     return actionSuccess(body.updated);
   } catch (e) {
     console.error(e);
@@ -325,9 +318,7 @@ export async function addGameHistory(historyData: GuessHistoryReq) {
       return actionError(body.message);
     }
 
-    const locale = await getLocale();
-
-    revalidatePath(`/${locale}/account`);
+    revalidatePath('/account');
     return actionSuccess(body.updated);
   } catch (e) {
     console.error(e);
