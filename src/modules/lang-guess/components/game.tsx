@@ -29,6 +29,7 @@ function Game() {
     inputRef,
     handleGuess,
     hasGuessed,
+    type,
   } = useGame();
 
   return (
@@ -92,7 +93,7 @@ function Game() {
       <div className='text-gray-600 flex justify-center items-center gap-2'>
         {MAX_ATTEMPTS - guesses.length === 0 || hasGuessed ? (
           <>
-            <p>{t('dailyLang')}:</p>
+            <p>{type === 'daily' ? t('dailyLang') : t('randomLang')}:</p>
             <LangImage code={targetLang.id} />
             <p>
               {targetLang.name} {targetLang.exonym && `(${targetLang.exonym})`}

@@ -266,7 +266,8 @@
     "nextOne": "Mejor suerte en la próxima",
     "theLangWas": "El idioma del día era {lang}",
     "langTried": "¡Ya intentaste con este idioma!",
-    "guessRandom": "Adivina un idioma aleatorio"
+    "guessRandom": "Adivina un idioma aleatorio",
+    "randomLang": "Idioma aleatorio"
   },
   "Exonyms": {
     "ar": "árabe",
