@@ -45,6 +45,7 @@ type UseGameProps = {
   selectedLang: Language | null;
   inputRef: RefObject<HTMLInputElement | null>;
   hasGuessed: boolean;
+  type: 'daily' | 'random';
 };
 
 const GameContext = createContext<UseGameProps | null>(null);
@@ -210,6 +211,7 @@ export const GameProvider = ({
     selectedLang,
     inputRef,
     hasGuessed,
+    type,
   };
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;

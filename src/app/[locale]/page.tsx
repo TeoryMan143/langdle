@@ -1,5 +1,7 @@
-import { getTranslations } from 'next-intl/server';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
+import { getTranslations } from 'next-intl/server';
 import { dongle } from '@/core/lib/fonts';
 import { getDailyLanguage } from '@/modules/lang-guess/actions';
 import Game from '@/modules/lang-guess/components/game';
