@@ -1,7 +1,8 @@
-import { client } from './config';
+import { getClient } from './config';
 
 export async function getObjectByKey(group: string, id: string) {
   try {
+    const client = await getClient();
     const lang = await client.json.get(`${group}:${id}`);
     return lang as object;
   } catch (error) {
@@ -17,6 +18,7 @@ export async function setObjectToKey(
   obj: Record<string, any>,
 ) {
   try {
+    const client = await getClient();
     const lang = await client.json.set(`${group}:${id}`, '$', obj);
     return lang;
   } catch (error) {
@@ -27,6 +29,7 @@ export async function setObjectToKey(
 
 export async function setStringToKey(key: string, value: string) {
   try {
+    const client = await getClient();
     await client.set(key, value);
     return true;
   } catch (error) {
@@ -37,6 +40,7 @@ export async function setStringToKey(key: string, value: string) {
 
 export async function getStringByKey(key: string) {
   try {
+    const client = await getClient();
     return client.get(key);
   } catch (error) {
     console.error('Redis error', error);

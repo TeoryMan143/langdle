@@ -124,6 +124,7 @@ export function useLang(
         const { success, error, result: langs } = await getAllActiveLanguages();
 
         if (!success) {
+          console.log(error);
           throw new Error(error);
         }
 

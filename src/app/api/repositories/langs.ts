@@ -1,4 +1,4 @@
-import { client } from '@/core/database/redis/config';
+import { getClient } from '@/core/database/redis/config';
 import {
   getObjectByKey,
   setObjectToKey,
@@ -36,6 +36,7 @@ async function getById(id: string) {
 }
 
 async function getAll(onlyActives = false) {
+  const client = await getClient();
   const results = await client.ft.search(
     'idx:langs',
     onlyActives ? '@active:{true}' : '*',
@@ -68,11 +69,13 @@ async function set(id: string, data: LanguageData) {
 }
 
 async function setStatus(id: string, value: boolean) {
+  const client = await getClient();
   const res = await client.json.set(`lang:${id}`, '$.active', value);
   return res === 'OK';
 }
 
 async function getByIds(ids: string[]): Promise<Language[]> {
+  const client = await getClient();
   const langsData = (await Promise.all(
     ids.map(id => client.json.get(`lang:${id}`)),
   )) as LanguageData[];
