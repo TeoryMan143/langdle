@@ -39,7 +39,7 @@
     "jose": "^6.0.11",
     "just-compare": "^2.3.0",
     "lucide-react": "^0.487.0",
-    "next": "16.1.0",
+    "next": "16.3.0-preview.0",
     "next-intl": "^4.6.1",
     "node-cron": "^4.1.0",
     "react": "^19.1.0",
