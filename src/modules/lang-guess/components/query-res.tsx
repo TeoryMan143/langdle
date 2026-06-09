@@ -18,6 +18,8 @@ function QueryRes({ onSelect }: Props) {
     langSearchData: { data: langs, error, isLoading: loading },
   } = useGame();
 
+  console.log(error);
+
   return (
     <ul className='hidden absolute top-[calc(100%+0.3rem)] w-full rounded-lg h-40 overflow-y-scroll bg-white z-10 border-2 group-focus-within/langs:block'>
       {!error && langs?.length === 0 && (
