@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { getTranslations } from 'next-intl/server';
+import langRepository from '@/app/api/repositories/langs';
 import { ActionResult, actionError, actionSuccess } from '@/core/actions/utils';
 import type { Language, LanguageData } from '@/core/lib/types';
 
@@ -35,28 +36,14 @@ export async function getAllActiveLanguages(): Promise<
   ActionResult<Language[]>
 > {
   try {
-    const res = await fetch(`${baseUrl}/api/lang?oactive=1`);
-
-    if (!res.ok) {
-      const error = await res.json();
-      console.error(error);
-      return actionError(error.key);
-    }
-
-    const langs = (await res.json()) as Language[];
-
+    const langs = await langRepository.getAll(true);
     const t = await getTranslations('Exonyms');
-
     return actionSuccess(
       langs.map(l => ({ ...l, searchParams: [...l.searchParams, t(l.id)] })),
     );
   } catch (e) {
-    let message = 'unknown error';
-    if (e instanceof Error) {
-      console.error(e);
-      message = e.message;
-    }
-    return actionError(message);
+    console.error('getAllActiveLanguages error:', e);
+    return actionError(e instanceof Error ? e.message : 'unknown error');
   }
 }
 
