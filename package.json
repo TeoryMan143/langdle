@@ -43,7 +43,7 @@
     "just-compare": "^2.3.0",
     "lucide-react": "^0.487.0",
     "next": "16.2.7",
-    "next-intl": "^4.6.1",
+    "next-intl": "^4.13.0",
     "node-cron": "^4.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

@@ -1,31 +1,37 @@
-import { type NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
 
-export default async function middleware(request: NextRequest) {
-  const [, base] = request.nextUrl.pathname.split('/');
+const intlMiddleware = createMiddleware(routing);
 
-  const response = NextResponse.next();
+export default function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
 
-  if (request.method === 'GET') {
-    const token = request.cookies.get('session')?.value ?? null;
-    if (token !== null) {
-      response.cookies.set('session', token, {
-        path: '/',
-        maxAge: 60 * 60 * 24 * 30,
-        sameSite: 'lax',
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-      });
+  const isApi = pathname.startsWith('/api');
+  const isServerAction = request.headers.has('next-action');
+
+  // Run next-intl for pages AND server actions
+  if (!isApi && (request.method === 'GET' || isServerAction)) {
+    const response = intlMiddleware(request);
+
+    if (request.method === 'GET') {
+      const token = request.cookies.get('session')?.value;
+
+      if (token) {
+        response.cookies.set('session', token, {
+          path: '/',
+          maxAge: 60 * 60 * 24 * 30,
+          sameSite: 'lax',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+        });
+      }
     }
+
+    return response;
   }
 
-  if (request.method === 'GET' && base !== 'api') {
-    const handleI18Routing = createMiddleware(routing);
-    return handleI18Routing(request);
-  }
-
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {
