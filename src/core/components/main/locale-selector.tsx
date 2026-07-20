@@ -26,7 +26,7 @@ function LocaleSelector({ className }: { className?: ClassValue }) {
 
   return (
     <Select onValueChange={handleSelect} defaultValue={locale}>
-      <SelectTrigger className={cn('w-[250px]', className)}>
+      <SelectTrigger className={cn('w-62.5', className)}>
         <Language /> <SelectValue placeholder='Select a language' />
       </SelectTrigger>
       <SelectContent>

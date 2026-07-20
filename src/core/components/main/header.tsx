@@ -4,6 +4,7 @@ import { dongle } from '@/core/lib/fonts';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/modules/auth/context';
 import Admin from '../icons/admin';
+import Home from '../icons/home';
 import User from '../icons/user';
 import { Button } from '../ui/button';
 import LangDataAllowed from './lang-data-allowed';
@@ -15,7 +16,7 @@ function Header() {
 
   return (
     <header className='bg-main relative border-b-2 border-black'>
-      <LocaleSelector className='absolute top-1/2 -translate-y-1/2 left-3 z-20 w-[200px] truncate' />
+      <LocaleSelector className='absolute top-1/2 -translate-y-1/2 left-3 z-20 w-50 truncate' />
       <h1
         className={`${dongle.className} text-left ml-3 text-6xl lg:text-8xl lg:ml-0 text-white md:text-center relative top-1 md:top-2 overflow-clip`}
       >
@@ -26,6 +27,24 @@ function Header() {
           <OptionsSidebar />
         </div>
         <div className='hidden gap-3 md:flex'>
+          <Button
+            className='bg-white hover:bg-background'
+            variant='noShadow'
+            size='icon'
+            asChild
+          >
+            <Link href='/'>
+              <Home />
+            </Link>
+          </Button>
+          <Button
+            className='bg-white hover:bg-background'
+            variant='noShadow'
+            size='icon'
+            asChild
+          >
+            <Link href='/howtoplay'>?</Link>
+          </Button>
           <Button
             className='bg-white hover:bg-background'
             variant='noShadow'

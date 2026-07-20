@@ -3,6 +3,79 @@
   "Home": {
     "title": "Adivina el idioma del día"
   },
+  "Nav": {
+    "options": "Opciones",
+    "howToPlay": "Cómo jugar",
+    "account": "Cuenta",
+    "signUp": "Registrarse",
+    "data": "Datos",
+    "home": "Inicio"
+  },
+  "HowToPlayPage": {
+    "eyebrow": "Guía rápida",
+    "title": "Cómo jugar Langdle",
+    "intro": "Cada ronda oculta un idioma objetivo. Haces intentos y el juego compara cada rasgo lingüístico con el objetivo para decirte qué tan cerca estás.",
+    "ctaDaily": "Jugar el idioma diario",
+    "ctaRandom": "Jugar un idioma aleatorio",
+    "quickStat": {
+      "dailyLabel": "Modo diario",
+      "dailyValue": "Un objetivo compartido",
+      "guessesLabel": "Límite de intentos",
+      "guessesValue": "Seis intentos",
+      "modesLabel": "Versiones del juego",
+      "modesValue": "Diario y aleatorio"
+    },
+    "example": {
+      "eyebrow": "Una ronda en práctica",
+      "title": "Cómo se ve un intento",
+      "copy": "Cada intento se divide rasgo por rasgo. El tablero muestra si coincidiste exactamente, si fue una coincidencia parcial o si no aparece.",
+      "attempt": "Intento 1 de 6",
+      "note": "El mismo patrón de respuesta aparece tanto en el modo diario como en el modo aleatorio."
+    },
+    "status": {
+      "present": {
+        "label": "Presente",
+        "copy": "Tu intento y el objetivo comparten este rasgo."
+      },
+      "partial": {
+        "label": "Parcial",
+        "copy": "El objetivo tiene una versión relacionada o más débil del rasgo."
+      },
+      "absent": {
+        "label": "No presente",
+        "copy": "El idioma objetivo no tiene este rasgo."
+      }
+    },
+    "modes": {
+      "eyebrow": "Dos formas de jugar",
+      "title": "Diario o aleatorio",
+      "copy": "El modo diario da a todo el mundo el mismo idioma generado para el día. El modo aleatorio empieza una partida nueva al instante cuando quieras otra ronda.",
+      "daily": {
+        "eyebrow": "Diario",
+        "title": "El idioma del día",
+        "copy": "Resuelve el objetivo compartido y compara tu camino con el de otras personas.",
+        "cta": "Abrir el reto de hoy"
+      },
+      "random": {
+        "eyebrow": "Aleatorio",
+        "title": "Idioma nuevo, cuando quieras",
+        "copy": "Entra en una ronda nueva siempre que quieras seguir practicando.",
+        "cta": "Empezar una ronda aleatoria"
+      }
+    },
+    "features": {
+      "eyebrow": "Qué se compara",
+      "title": "Grupos de rasgos que usa el juego",
+      "copy": "Langdle compara rasgos tipológicos dentro de las mismas categorías amplias, así que cada intento se juzga por su estructura y no por vocabulario.",
+      "list": {
+        "wordOrder": "Orden de palabras",
+        "morphology": "Morfología",
+        "phonology": "Fonología",
+        "writingSystem": "Sistema de escritura"
+      }
+    },
+    "footer": "Lee la huella, acota el objetivo y sigue intentando hasta que el patrón encaje."
+  },
   "Features": {
     "description": {
       "nasalization": "Rasgo fonético donde parte del aire del sonido pasa por la nariz",

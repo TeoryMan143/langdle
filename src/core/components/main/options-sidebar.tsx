@@ -1,8 +1,10 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/modules/auth/context';
 import Admin from '../icons/admin';
+import Home from '../icons/home';
 import SolidBars from '../icons/solid-bars';
 import User from '../icons/user';
 import { Button } from '../ui/button';
@@ -17,6 +19,7 @@ import LocaleSelector from './locale-selector';
 
 function OptionsSidebar() {
   const { session } = useAuth();
+  const t = useTranslations('Nav');
 
   return (
     <Drawer direction='right'>
@@ -30,14 +33,18 @@ function OptionsSidebar() {
         </Button>
       </DrawerTrigger>
       <DrawerContent className='p-5'>
-        <DrawerTitle className='text-xl'>Options</DrawerTitle>
+        <DrawerTitle className='text-xl'>{t('options')}</DrawerTitle>
         <ul className='flex flex-col gap-3 p-3'>
+          <SidebarLink href='/'>
+            <Home /> {t('home')}
+          </SidebarLink>
+          <SidebarLink href='/howtoplay'>{`? ${t('howToPlay')}`}</SidebarLink>
           <SidebarLink href={session ? '/account' : '/signup'}>
-            <User /> {session ? 'Account' : 'Sign Up'}
+            <User /> {session ? t('account') : t('signUp')}
           </SidebarLink>
           <LangDataAllowed>
             <SidebarLink href='/data'>
-              <Admin /> Data
+              <Admin /> {t('data')}
             </SidebarLink>
           </LangDataAllowed>
         </ul>

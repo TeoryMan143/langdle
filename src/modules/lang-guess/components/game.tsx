@@ -48,7 +48,7 @@ function Game() {
                 ease: 'easeInOut',
               }}
               className={cn(
-                'hidden w-[90%] md:w-auto text-xs md:text-base absolute text-red-600 rounded-lg shadow-xl show-animation md:px-4 h-[80%] place-items-center left-1/2 -translate-x-1/2 z-[5] border-2 bg-white',
+                'hidden w-[90%] md:w-auto text-xs md:text-base absolute text-red-600 rounded-lg shadow-xl show-animation md:px-4 h-[80%] place-items-center left-1/2 -translate-x-1/2 z-5 border-2 bg-white',
                 { grid: !!queryError },
               )}
             >
