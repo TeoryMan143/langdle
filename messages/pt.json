@@ -3,6 +3,80 @@
   "Home": {
     "title": "Advinhe a linguagem do dia"
   },
+  "Nav": {
+    "options": "Opções",
+    "howToPlay": "Como jogar",
+    "publicData": "Atlas público",
+    "account": "Conta",
+    "signUp": "Registrar-se",
+    "data": "Dados",
+    "home": "Início"
+  },
+  "HowToPlayPage": {
+    "eyebrow": "Guia rápido",
+    "title": "Como jogar Langdle",
+    "intro": "Cada rodada esconde um idioma alvo. Você faz palpites e o jogo compara cada traço linguístico com o alvo para mostrar o quão perto você está.",
+    "ctaDaily": "Jogar o idioma do dia",
+    "ctaRandom": "Jogar um idioma aleatório",
+    "quickStat": {
+      "dailyLabel": "Modo diário",
+      "dailyValue": "Um alvo compartilhado",
+      "guessesLabel": "Limite de tentativas",
+      "guessesValue": "Seis tentativas",
+      "modesLabel": "Versões do jogo",
+      "modesValue": "Diário e aleatório"
+    },
+    "example": {
+      "eyebrow": "Uma rodada em prática",
+      "title": "Como um palpite aparece",
+      "copy": "Cada palpite é dividido traço por traço. O painel mostra se você coincidiu exatamente, se foi uma correspondência parcial ou se o traço não aparece.",
+      "attempt": "Palpite 1 de 6",
+      "note": "O mesmo padrão de retorno aparece tanto no modo diário quanto no modo aleatório."
+    },
+    "status": {
+      "present": {
+        "label": "Presente",
+        "copy": "Seu palpite e o alvo compartilham este traço."
+      },
+      "partial": {
+        "label": "Parcial",
+        "copy": "O alvo tem uma versão relacionada ou mais fraca do traço."
+      },
+      "absent": {
+        "label": "Não presente",
+        "copy": "A linguagem alvo não tem este traço."
+      }
+    },
+    "modes": {
+      "eyebrow": "Duas formas de jogar",
+      "title": "Diário ou aleatório",
+      "copy": "O modo diário dá a todos a mesma linguagem gerada para o dia. O modo aleatório inicia uma partida nova imediatamente quando você quiser outra rodada.",
+      "daily": {
+        "eyebrow": "Diário",
+        "title": "A linguagem do dia",
+        "copy": "Resolva o alvo compartilhado e compare seu caminho com o de outras pessoas.",
+        "cta": "Abrir o desafio de hoje"
+      },
+      "random": {
+        "eyebrow": "Aleatório",
+        "title": "Nova linguagem, a qualquer hora",
+        "copy": "Entre em uma nova rodada sempre que quiser continuar praticando.",
+        "cta": "Começar uma rodada aleatória"
+      }
+    },
+    "features": {
+      "eyebrow": "O que é comparado",
+      "title": "Grupos de traços usados no jogo",
+      "copy": "Langdle compara traços tipológicos nas mesmas categorias amplas, então cada palpite é julgado pela estrutura e não pelo vocabulário.",
+      "list": {
+        "wordOrder": "Ordem das palavras",
+        "morphology": "Morfologia",
+        "phonology": "Fonologia",
+        "writingSystem": "Sistema de escrita"
+      }
+    },
+    "footer": "Leia a impressão digital, reduza o alvo e continue tentando até o padrão fazer sentido."
+  },
   "Features": {
     "description": {
       "nasalization": "Traço fonético no qual parte do fluxo de ar é redirecionado pelo nariz durante a articulação",
@@ -208,7 +282,36 @@
     }
   },
   "ListPage": {
-    "langList": "Lista de Idiomas"
+    "langList": "Lista de idiomas",
+    "publicOverview": "Abrir atlas público de recursos"
+  },
+  "PublicDataPage": {
+    "eyebrow": "Atlas público",
+    "title": "Visão geral dos recursos dos idiomas",
+    "intro": "Navegue por todos os idiomas do banco de dados e confira os recursos marcados em cada um. Esta visão é pública e não pode ser editada.",
+    "loadError": "Não foi possível carregar a visão pública agora.",
+    "backToList": "Voltar para a lista de idiomas",
+    "search": {
+      "label": "Buscar idiomas",
+      "placeholder": "Digite o nome ou o código de um idioma"
+    },
+    "summary": {
+      "languages": "Idiomas",
+      "activeLanguages": "Idiomas ativos",
+      "activeFeatures": "Recursos ativos",
+      "partialFeatures": "Recursos parciais"
+    },
+    "status": {
+      "active": "Público",
+      "inactive": "Oculto"
+    },
+    "groups": {
+      "phonology": "Fonologia",
+      "wordOrder": "Ordem das palavras",
+      "writingSystem": "Sistema de escrita",
+      "morphosyntax": "Morfossintaxe"
+    },
+    "empty": "Nenhum idioma corresponde à sua busca no momento."
   },
   "LangData": {
     "loading": "Atualizando características",

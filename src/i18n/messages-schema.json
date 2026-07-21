@@ -12,6 +12,246 @@
       },
       "required": ["title"]
     },
+    "Nav": {
+      "type": "object",
+      "properties": {
+        "options": {
+          "type": "string"
+        },
+        "howToPlay": {
+          "type": "string"
+        },
+        "account": {
+          "type": "string"
+        },
+        "signUp": {
+          "type": "string"
+        },
+        "data": {
+          "type": "string"
+        }
+      },
+      "required": ["options", "howToPlay", "account", "signUp", "data"]
+    },
+    "HowToPlayPage": {
+      "type": "object",
+      "properties": {
+        "eyebrow": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "intro": {
+          "type": "string"
+        },
+        "ctaDaily": {
+          "type": "string"
+        },
+        "ctaRandom": {
+          "type": "string"
+        },
+        "quickStat": {
+          "type": "object",
+          "properties": {
+            "dailyLabel": {
+              "type": "string"
+            },
+            "dailyValue": {
+              "type": "string"
+            },
+            "guessesLabel": {
+              "type": "string"
+            },
+            "guessesValue": {
+              "type": "string"
+            },
+            "modesLabel": {
+              "type": "string"
+            },
+            "modesValue": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "dailyLabel",
+            "dailyValue",
+            "guessesLabel",
+            "guessesValue",
+            "modesLabel",
+            "modesValue"
+          ]
+        },
+        "example": {
+          "type": "object",
+          "properties": {
+            "eyebrow": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "copy": {
+              "type": "string"
+            },
+            "attempt": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "required": ["eyebrow", "title", "copy", "attempt", "note"]
+        },
+        "status": {
+          "type": "object",
+          "properties": {
+            "present": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "copy": {
+                  "type": "string"
+                }
+              },
+              "required": ["label", "copy"]
+            },
+            "partial": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "copy": {
+                  "type": "string"
+                }
+              },
+              "required": ["label", "copy"]
+            },
+            "absent": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "copy": {
+                  "type": "string"
+                }
+              },
+              "required": ["label", "copy"]
+            }
+          },
+          "required": ["present", "partial", "absent"]
+        },
+        "modes": {
+          "type": "object",
+          "properties": {
+            "eyebrow": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "copy": {
+              "type": "string"
+            },
+            "daily": {
+              "type": "object",
+              "properties": {
+                "eyebrow": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "copy": {
+                  "type": "string"
+                },
+                "cta": {
+                  "type": "string"
+                }
+              },
+              "required": ["eyebrow", "title", "copy", "cta"]
+            },
+            "random": {
+              "type": "object",
+              "properties": {
+                "eyebrow": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "copy": {
+                  "type": "string"
+                },
+                "cta": {
+                  "type": "string"
+                }
+              },
+              "required": ["eyebrow", "title", "copy", "cta"]
+            }
+          },
+          "required": ["eyebrow", "title", "copy", "daily", "random"]
+        },
+        "features": {
+          "type": "object",
+          "properties": {
+            "eyebrow": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "copy": {
+              "type": "string"
+            },
+            "list": {
+              "type": "object",
+              "properties": {
+                "wordOrder": {
+                  "type": "string"
+                },
+                "morphology": {
+                  "type": "string"
+                },
+                "phonology": {
+                  "type": "string"
+                },
+                "writingSystem": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "wordOrder",
+                "morphology",
+                "phonology",
+                "writingSystem"
+              ]
+            }
+          },
+          "required": ["eyebrow", "title", "copy", "list"]
+        },
+        "footer": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eyebrow",
+        "title",
+        "intro",
+        "ctaDaily",
+        "ctaRandom",
+        "quickStat",
+        "example",
+        "status",
+        "modes",
+        "features",
+        "footer"
+      ]
+    },
     "Features": {
       "type": "object",
       "properties": {
@@ -1198,6 +1438,8 @@
   },
   "required": [
     "Home",
+    "Nav",
+    "HowToPlayPage",
     "Features",
     "AuthPage",
     "AddPermissionPage",

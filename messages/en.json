@@ -3,6 +3,80 @@
   "Home": {
     "title": "Guess the language of the day"
   },
+  "Nav": {
+    "options": "Options",
+    "howToPlay": "How to play",
+    "publicData": "Public atlas",
+    "account": "Account",
+    "signUp": "Sign up",
+    "data": "Data",
+    "home": "Home"
+  },
+  "HowToPlayPage": {
+    "eyebrow": "Field guide",
+    "title": "How to play Langdle",
+    "intro": "Every round hides one target language. You make guesses, and the game compares each language feature against the target to tell you how close you are.",
+    "ctaDaily": "Play the daily language",
+    "ctaRandom": "Play a random language",
+    "quickStat": {
+      "dailyLabel": "Daily mode",
+      "dailyValue": "One shared target",
+      "guessesLabel": "Guess limit",
+      "guessesValue": "Six attempts",
+      "modesLabel": "Game versions",
+      "modesValue": "Daily and random"
+    },
+    "example": {
+      "eyebrow": "A round in practice",
+      "title": "What a guess looks like",
+      "copy": "Each guess is broken down feature by feature. The board shows whether you matched the target exactly, got a partial match, or missed it.",
+      "attempt": "Guess 1 of 6",
+      "note": "The same feedback pattern appears in both the daily game and the random game."
+    },
+    "status": {
+      "present": {
+        "label": "Present",
+        "copy": "Your guess and the target both have this feature."
+      },
+      "partial": {
+        "label": "Partial",
+        "copy": "The target has a related or weaker version of the feature."
+      },
+      "absent": {
+        "label": "Not present",
+        "copy": "The target language does not have this feature."
+      }
+    },
+    "modes": {
+      "eyebrow": "Two ways to play",
+      "title": "Daily or random",
+      "copy": "The daily mode gives everyone the same generated language for the day. The random mode instantly starts a fresh puzzle whenever you want another round.",
+      "daily": {
+        "eyebrow": "Daily",
+        "title": "Language of the day",
+        "copy": "Solve the shared target and compare your path with other players.",
+        "cta": "Open today's puzzle"
+      },
+      "random": {
+        "eyebrow": "Random",
+        "title": "Fresh language, anytime",
+        "copy": "Jump into a new round whenever you want to keep practicing.",
+        "cta": "Start a random round"
+      }
+    },
+    "features": {
+      "eyebrow": "What gets compared",
+      "title": "Feature groups used by the game",
+      "copy": "Langdle compares typological features across the same broad categories, so every guess is judged by structure rather than vocabulary.",
+      "list": {
+        "wordOrder": "Word order",
+        "morphology": "Morphology",
+        "phonology": "Phonology",
+        "writingSystem": "Writing system"
+      }
+    },
+    "footer": "Read the fingerprint, narrow the target, and keep guessing until the pattern clicks."
+  },
   "Features": {
     "description": {
       "nasalization": "Phonetic feature where some of the sound's air goes through the nose",
@@ -208,7 +282,36 @@
     }
   },
   "ListPage": {
-    "langList": "Languages list"
+    "langList": "Languages list",
+    "publicOverview": "Open public feature atlas"
+  },
+  "PublicDataPage": {
+    "eyebrow": "Public atlas",
+    "title": "Language features overview",
+    "intro": "Browse every language in the database and inspect the features currently marked for each one. This view is public and cannot be edited.",
+    "loadError": "We could not load the public overview right now.",
+    "backToList": "Back to languages list",
+    "search": {
+      "label": "Search languages",
+      "placeholder": "Type a language name or code"
+    },
+    "summary": {
+      "languages": "Languages",
+      "activeLanguages": "Active languages",
+      "activeFeatures": "Active features",
+      "partialFeatures": "Partial features"
+    },
+    "status": {
+      "active": "Public",
+      "inactive": "Hidden"
+    },
+    "groups": {
+      "phonology": "Phonology",
+      "wordOrder": "Word order",
+      "writingSystem": "Writing system",
+      "morphosyntax": "Morpho-syntax"
+    },
+    "empty": "No languages match your search right now."
   },
   "LangData": {
     "loading": "Updating features",
