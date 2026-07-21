@@ -33,7 +33,7 @@ function LocaleSelector({ className }: { className?: ClassValue }) {
         <SelectGroup>
           {routing.locales.map(loc => (
             <SelectItem key={loc} value={loc}>
-              {localeNames[loc]} ({ex(loc)})
+              {localeNames[loc]} {locale !== loc && `(${ex(loc)})`}
             </SelectItem>
           ))}
         </SelectGroup>

@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/modules/auth/context';
 import Admin from '../icons/admin';
 import Home from '../icons/home';
+import Language from '../icons/language';
 import SolidBars from '../icons/solid-bars';
 import User from '../icons/user';
 import { Button } from '../ui/button';
@@ -39,6 +40,9 @@ function OptionsSidebar() {
             <Home /> {t('home')}
           </SidebarLink>
           <SidebarLink href='/howtoplay'>{`? ${t('howToPlay')}`}</SidebarLink>
+          <SidebarLink href='/data/public'>
+            <Language /> {t('publicData')}
+          </SidebarLink>
           <SidebarLink href={session ? '/account' : '/signup'}>
             <User /> {session ? t('account') : t('signUp')}
           </SidebarLink>

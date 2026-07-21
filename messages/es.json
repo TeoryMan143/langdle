@@ -6,6 +6,7 @@
   "Nav": {
     "options": "Opciones",
     "howToPlay": "Cómo jugar",
+    "publicData": "Atlas público",
     "account": "Cuenta",
     "signUp": "Registrarse",
     "data": "Datos",
@@ -281,7 +282,36 @@
     }
   },
   "ListPage": {
-    "langList": "Lista de idiomas"
+    "langList": "Lista de idiomas",
+    "publicOverview": "Abrir atlas público de rasgos"
+  },
+  "PublicDataPage": {
+    "eyebrow": "Atlas público",
+    "title": "Resumen de rasgos de idiomas",
+    "intro": "Explora todos los idiomas de la base de datos y revisa los rasgos que tiene marcado cada uno. Esta vista es pública y no se puede editar.",
+    "loadError": "No pudimos cargar el resumen público en este momento.",
+    "backToList": "Volver a la lista de idiomas",
+    "search": {
+      "label": "Buscar idiomas",
+      "placeholder": "Escribe un nombre o código de idioma"
+    },
+    "summary": {
+      "languages": "Idiomas",
+      "activeLanguages": "Idiomas activos",
+      "activeFeatures": "Rasgos activos",
+      "partialFeatures": "Rasgos parciales"
+    },
+    "status": {
+      "active": "Público",
+      "inactive": "Oculto"
+    },
+    "groups": {
+      "phonology": "Fonología",
+      "wordOrder": "Orden de palabras",
+      "writingSystem": "Sistema de escritura",
+      "morphosyntax": "Morfosintaxis"
+    },
+    "empty": "No hay idiomas que coincidan con tu búsqueda."
   },
   "LangData": {
     "loading": "Actualizando características",

@@ -6,6 +6,7 @@
   "Nav": {
     "options": "Options",
     "howToPlay": "How to play",
+    "publicData": "Public atlas",
     "account": "Account",
     "signUp": "Sign up",
     "data": "Data",
@@ -281,7 +282,36 @@
     }
   },
   "ListPage": {
-    "langList": "Languages list"
+    "langList": "Languages list",
+    "publicOverview": "Open public feature atlas"
+  },
+  "PublicDataPage": {
+    "eyebrow": "Public atlas",
+    "title": "Language features overview",
+    "intro": "Browse every language in the database and inspect the features currently marked for each one. This view is public and cannot be edited.",
+    "loadError": "We could not load the public overview right now.",
+    "backToList": "Back to languages list",
+    "search": {
+      "label": "Search languages",
+      "placeholder": "Type a language name or code"
+    },
+    "summary": {
+      "languages": "Languages",
+      "activeLanguages": "Active languages",
+      "activeFeatures": "Active features",
+      "partialFeatures": "Partial features"
+    },
+    "status": {
+      "active": "Public",
+      "inactive": "Hidden"
+    },
+    "groups": {
+      "phonology": "Phonology",
+      "wordOrder": "Word order",
+      "writingSystem": "Writing system",
+      "morphosyntax": "Morpho-syntax"
+    },
+    "empty": "No languages match your search right now."
   },
   "LangData": {
     "loading": "Updating features",

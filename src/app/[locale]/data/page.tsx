@@ -1,6 +1,8 @@
 import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { Button } from '@/core/components/ui/button';
 import { dongle } from '@/core/lib/fonts';
+import { Link } from '@/i18n/navigation';
 import { auth } from '@/modules/auth/actions';
 import { getLangPermissions } from '@/modules/lang-data/actions';
 import LangsList from '@/modules/lang-data/components/langs-list';
@@ -32,6 +34,12 @@ async function DataPage() {
       <h2 className={`${dongle.className} text-6xl mb-5 text-center`}>
         {t('langList')}
       </h2>
+
+      <div className='flex justify-center mb-6'>
+        <Button asChild variant='neutral'>
+          <Link href='/data/public'>{t('publicOverview')}</Link>
+        </Button>
+      </div>
 
       <div className='flex justify-center'>
         <LangsList allowedLangs={user.admin ? undefined : permissions} />
