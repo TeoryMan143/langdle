@@ -2,12 +2,14 @@ import {
   boolean,
   date,
   integer,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
+import { langFeatures } from '@/core/lib/utils';
 
 export const userTable = pgTable('user', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -65,4 +67,22 @@ export const langTokenTable = pgTable('lang_token', {
   })
     .notNull()
     .default(new Date(Date.now() + 1000 * 60 * 10)),
+});
+
+export const featuresEnum = pgEnum('features', langFeatures);
+export const statusEnum = pgEnum('feature_status', [
+  'present',
+  'absent',
+  'partial',
+]);
+
+export const changeRequestTable = pgTable('change_request', {
+  id: uuid().defaultRandom().primaryKey(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => userTable.id),
+  lang: text().notNull(),
+  feature: featuresEnum().notNull(),
+  status: statusEnum().notNull(),
+  description: text().notNull(),
 });

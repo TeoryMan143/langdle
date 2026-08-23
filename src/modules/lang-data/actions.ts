@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { ActionResult, actionError, actionSuccess } from '@/core/actions/utils';
+import { ChangeRequestFormValues } from '../lang-guess/shemas';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -133,6 +134,41 @@ export async function setLangStatus(langId: string, status: boolean) {
     }
 
     return actionSuccess(body.lang);
+  } catch (e) {
+    console.error(e);
+    let message = 'unknown';
+    if (e instanceof Error) {
+      message = e.message;
+    }
+    return actionError(message);
+  }
+}
+
+export async function uploadChangeRequest(change: ChangeRequestFormValues) {
+  try {
+    const cookieStore = await cookies();
+
+    const sessionId = cookieStore.get('sessionToken')?.value;
+
+    if (!sessionId) {
+      return actionError('notSignedIn');
+    }
+
+    const res = await fetch(`${baseUrl}/api/lang/featchange/`, {
+      method: 'post',
+      cache: 'no-cache',
+      headers: {
+        Authorization: `Bearer ${sessionId}`,
+      },
+      body: JSON.stringify(change),
+    });
+    const body = await res.json();
+
+    if (!res.ok) {
+      return actionError(body.key);
+    }
+
+    return actionSuccess(body);
   } catch (e) {
     console.error(e);
     let message = 'unknown';

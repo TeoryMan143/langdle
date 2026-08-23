@@ -9,6 +9,7 @@ import {
   getLanguagesByIds,
   setLanguageData,
 } from './action';
+import { featureChangeRouter } from './change/feature/controller';
 import { getUserLangPermissions } from './permissions/action';
 import langPermissions from './permissions/controller';
 
@@ -180,5 +181,6 @@ langFeaturesRouter.put('/:id/status', authMiddleware, async c => {
 });
 
 langFeaturesRouter.route('/permissions', langPermissions);
+langFeaturesRouter.route('/featchange', featureChangeRouter);
 
 export default langFeaturesRouter;

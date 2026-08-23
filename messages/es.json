@@ -78,6 +78,21 @@
     "footer": "Lee la huella, acota el objetivo y sigue intentando hasta que el patrón encaje."
   },
   "Features": {
+    "changeRequest": {
+      "title": "Solicitud de cambio",
+      "description": "Solicita un cambio si encuentras que algún rasgo es inexacto o falta.",
+      "requestedStatus": "Estado solicitado",
+      "statusPlaceholder": "Elige un estado",
+      "statusPresent": "Presente",
+      "statusPartial": "Parcial",
+      "statusNotPresent": "No presente",
+      "descriptionLabel": "Descripción",
+      "descriptionPlaceholder": "Explica por qué este rasgo debería corregirse o añadirse.",
+      "descriptionRequired": "La descripción es obligatoria",
+      "cancel": "Cancelar",
+      "submit": "Enviar solicitud",
+      "submitting": "Enviando..."
+    },
     "description": {
       "nasalization": "Rasgo fonético donde parte del aire del sonido pasa por la nariz",
       "clickConsonants": "Sonidos fuertes producidos al expulsar una bolsa de aire encerrada",

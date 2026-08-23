@@ -78,6 +78,21 @@
     "footer": "Read the fingerprint, narrow the target, and keep guessing until the pattern clicks."
   },
   "Features": {
+    "changeRequest": {
+      "title": "Change request",
+      "description": "Request a change if you find some feature inaccurate or missing.",
+      "requestedStatus": "Requested status",
+      "statusPlaceholder": "Choose a status",
+      "statusPresent": "Present",
+      "statusPartial": "Partial",
+      "statusNotPresent": "Not present",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Explain why this feature should be corrected or added.",
+      "descriptionRequired": "Description is required",
+      "cancel": "Cancel",
+      "submit": "Send request",
+      "submitting": "Sending..."
+    },
     "description": {
       "nasalization": "Phonetic feature where some of the sound's air goes through the nose",
       "clickConsonants": "Strong sounds produced by expelling an enclosed pocket of air",
