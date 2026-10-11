@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl';
 import React, { useMemo } from 'react';
-import type { LangFeatures } from '@/core/lib/types';
+import type { LangFeatures } from '@/core/types';
 import {
   Tooltip,
   TooltipContent,

@@ -11,8 +11,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/core/components/ui/popover';
-import { useLang } from '@/core/hooks/use-lang';
-import type { Language } from '@/core/lib/types';
+import type { Language } from '@/core/types';
+import { useLang } from '@/modules/lang-data/hooks/use-lang';
 import LangImage from './lang-image';
 
 export default function LangSelector({

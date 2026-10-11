@@ -6,7 +6,7 @@ import {
   DialogContent,
   DialogTitle,
 } from '@/core/components/ui/dialog';
-import { Language } from '@/core/lib/types';
+import { Language } from '@/core/types';
 import LangImage from '@/modules/lang-data/components/lang-image';
 
 function WinDialog({ lang }: { lang: Language }) {

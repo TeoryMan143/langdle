@@ -4,7 +4,7 @@ import Ball from '@/core/components/icons/ball';
 import Check from '@/core/components/icons/check';
 import Xcancel from '@/core/components/icons/x';
 import { Button } from '@/core/components/ui/button';
-import type { LangFeatures } from '@/core/lib/types';
+import type { LangFeatures } from '@/core/types';
 import { Link } from '@/i18n/navigation';
 import Feature from '@/modules/lang-guess/components/feature';
 

@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { Button } from '@/core/components/ui/button';
 import { useRouter } from '@/i18n/navigation';
 import { signOutUser } from '../actions';
-import { useAuth } from '../context';
+import { useAuth } from '../hooks/use-auth';
 import { SignOutError, signOutErrors } from '../types';
 
 function SignOutButton() {

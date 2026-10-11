@@ -4,16 +4,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { COUNTRIES } from '@/core/lib/countries';
-import { SelectMenuOption } from '@/core/lib/types';
-
-export interface CountrySelectorProps {
-  id: string;
-  open: boolean;
-  disabled?: boolean;
-  onToggle: () => void;
-  onChange: (value: SelectMenuOption['value']) => void;
-  selectedValue: SelectMenuOption;
-}
+import type { CountrySelectorProps } from '../types';
 
 export default function CountrySelector({
   id,

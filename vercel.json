@@ -2,11 +2,11 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "crons": [
     {
-      "path": "/api/job/removetk",
+      "path": "/api/lang/jobs/cleanup-tokens",
       "schedule": "0 0 * * *"
     },
     {
-      "path": "/api/job/setdailylang",
+      "path": "/api/guess/jobs/daily",
       "schedule": "0 0 * * *"
     }
   ]

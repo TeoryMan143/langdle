@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
-import { getRandomLanguage } from '@/core/actions/langs';
 import { dongle } from '@/core/lib/fonts';
+import { getRandomLanguage } from '@/modules/lang-data/actions';
 import Game from '@/modules/lang-guess/components/game';
 import RandomLink from '@/modules/lang-guess/components/random-link';
 import { GameProvider } from '@/modules/lang-guess/hooks/use-game';

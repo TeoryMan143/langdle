@@ -23,13 +23,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/core/components/ui/select';
-import type { LangFeatures } from '@/core/lib/types';
 import { cn } from '@/core/lib/utils';
+import type { LangFeatures } from '@/core/types';
 import { uploadChangeRequest } from '@/modules/lang-data/actions';
-import {
-  ChangeRequestFormValues,
-  createChangeRequestSchema,
-} from '../../lang-guess/shemas';
+import { createChangeRequestSchema } from '../schemas/change-request';
+import type { ChangeRequestFormValues } from '../types';
 
 function ChangeRequestDialog({
   lang,

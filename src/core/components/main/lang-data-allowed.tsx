@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { toast } from 'sonner';
-import { useAuth } from '@/modules/auth/context';
+import { useAuth } from '@/modules/auth/hooks/use-auth';
 import { getLangPermissions } from '@/modules/lang-data/actions';
 
 function LangDataAllowed({ children }: { children: React.ReactNode }) {

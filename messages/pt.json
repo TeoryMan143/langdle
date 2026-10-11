@@ -272,7 +272,11 @@
       "nicknameAlreadyExists": "Nome de usuário já existe",
       "failedCreateUser": "Falha ao criar o usuário",
       "noSession": "Sem sessão",
-      "dataValidation": "Erro de validação de dados"
+      "dataValidation": "Erro de validação de dados",
+      "unknown": "Erro desconhecido",
+      "notSignedIn": "Você precisa entrar",
+      "invalidData": "Erro de validação de dados",
+      "invalidToken": "O link de cadastro não é mais válido"
     }
   },
   "AddPermissionPage": {

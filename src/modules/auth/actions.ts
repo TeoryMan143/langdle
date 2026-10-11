@@ -1,374 +1,111 @@
 'use server';
 
-import { NeonDbError } from '@neondatabase/serverless';
-import argon2 from 'argon2';
-import { eq } from 'drizzle-orm';
-import { revalidatePath } from 'next/cache';
-import { cookies } from 'next/headers';
 import { cache } from 'react';
-import { type typeToFlattenedError } from 'zod';
-import { GuessHistoryReq } from '@/app/api/modules/daily-guess/schemas';
-import { ActionResult, actionError, actionSuccess } from '@/core/actions/utils';
-import { db } from '@/core/database/relational/config';
-import { userTable } from '@/core/database/relational/tables';
-import { GameHistory } from '../lang-guess/types';
+import type { typeToFlattenedError } from 'zod';
+import { actionError, actionSuccess } from '@/core/lib/action';
+import { apiRequest } from '@/core/lib/api-client';
 import {
-  createSession,
-  deleteSessionTokenCookie,
-  generateSessionToken,
-  invalidateSession,
-  setSessionTokenCookie,
-  validateSessionToken,
-} from './manager';
-import {
-  GoogleDataActionSchema,
-  googleDataActionSchema,
-} from './schemas/googledata';
-import { signInSchema } from './schemas/signin';
-import { SignUpSchema, signUpSchema } from './schemas/signup';
+  clearSessionCookie,
+  getSessionToken,
+  setSessionCookie,
+} from '@/core/lib/session';
+import type { ActionResult } from '@/core/types';
+import { validateSessionToken } from './service';
 import type {
-  Session,
+  AuthPayload,
+  GoogleSignUpSchema,
   SessionValidationResult,
-  SignInError,
-  SignUpError,
-  User,
+  SignInSchema,
+  SignUpSchema,
   UserDTO,
 } from './types';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+type AuthActionResult<S> = ActionResult<
+  UserDTO,
+  typeToFlattenedError<S> | string
+>;
+
+/**
+ * Opens the session returned by the API in the browser. Setting the cookie is
+ * the only part of the flow that cannot live in the controller.
+ */
+async function startSession(payload: AuthPayload) {
+  await setSessionCookie(payload.token, new Date(payload.expiresAt));
+  return actionSuccess(payload.user);
+}
 
 export async function signUpUser(
-  data: object,
-): Promise<
-  ActionResult<User, typeToFlattenedError<SignUpSchema> | SignUpError | string>
-> {
-  const validation = signUpSchema.safeParse(data);
+  data: unknown,
+): Promise<AuthActionResult<SignUpSchema>> {
+  const res = await apiRequest<AuthPayload, typeToFlattenedError<SignUpSchema>>(
+    '/auth/signup',
+    { method: 'post', body: data },
+  );
 
-  if (!validation.success) {
-    return actionError(validation.error.flatten());
+  if (!res.success) {
+    return actionError(res.error.errors ?? res.error.key);
   }
 
-  const userData = validation.data;
-
-  userData.password = await argon2.hash(userData.password);
-
-  try {
-    const [newUser] = await db.insert(userTable).values(userData).returning();
-
-    if (!newUser) {
-      return actionError('failedCreateUser');
-    }
-
-    const token = generateSessionToken();
-
-    await createSession(token, newUser.id);
-    await setSessionTokenCookie(
-      token,
-      new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
-    );
-
-    return actionSuccess(newUser);
-  } catch (e) {
-    console.error(e);
-    let message = 'unknownSu';
-    if (e instanceof NeonDbError) {
-      if (e.constraint === 'user_nickname_unique') {
-        message = 'nicknameAlreadyExists';
-      }
-    } else if (e instanceof Error) {
-      message = e.message;
-    }
-    return actionError(message);
-  }
+  return startSession(res.result);
 }
 
 export async function signInUser(
-  data: object,
-): Promise<
-  ActionResult<
-    { user: UserDTO; session: Session },
-    typeToFlattenedError<SignUpSchema> | SignInError | string
-  >
-> {
-  const validation = signInSchema.safeParse(data);
+  data: unknown,
+): Promise<AuthActionResult<SignInSchema>> {
+  const res = await apiRequest<AuthPayload, typeToFlattenedError<SignInSchema>>(
+    '/auth/signin',
+    { method: 'post', body: data },
+  );
 
-  if (!validation.success) {
-    return actionError(validation.error.flatten());
+  if (!res.success) {
+    return actionError(res.error.errors ?? res.error.key);
   }
 
-  const userData = validation.data;
+  return startSession(res.result);
+}
 
-  try {
-    const [user] = await db
-      .select()
-      .from(userTable)
-      .where(eq(userTable.nickname, userData.nickname))
-      .limit(1);
+export async function createGoogleAccount(
+  data: GoogleSignUpSchema,
+): Promise<AuthActionResult<GoogleSignUpSchema>> {
+  const res = await apiRequest<
+    AuthPayload,
+    typeToFlattenedError<GoogleSignUpSchema>
+  >('/auth/google/signup', { method: 'post', body: data });
 
-    if (!user) {
-      return actionError('invalidUserPassword');
-    }
-
-    if (!user.password) {
-      return actionError('invalidUserPassword');
-    }
-
-    const isValidPassword = await argon2.verify(
-      user.password,
-      userData.password,
-    );
-
-    if (!isValidPassword) {
-      return actionError('invalidUserPassword');
-    }
-
-    const token = generateSessionToken();
-
-    const session = await createSession(token, user.id);
-    await setSessionTokenCookie(
-      token,
-      new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
-    );
-
-    const { password: _, ...userWithoutPassword } = user;
-
-    return actionSuccess({
-      user: userWithoutPassword,
-      session,
-    });
-  } catch (e) {
-    console.error(e);
-    let message = 'unknownSi';
-    if (e instanceof Error) {
-      message = e.message;
-    }
-    return actionError(message);
+  if (!res.success) {
+    return actionError(res.error.errors ?? res.error.key);
   }
+
+  return startSession(res.result);
 }
 
 export async function signOutUser(): Promise<ActionResult<undefined>> {
-  try {
-    const { session } = await auth();
-
-    if (!session) {
-      return actionError('noSession');
-    }
-
-    await invalidateSession(session.id);
-    await deleteSessionTokenCookie();
-    return actionSuccess(undefined);
-  } catch (e) {
-    console.error(e);
-    let message = 'unknown';
-    if (e instanceof Error) {
-      message = e.message;
-    }
-    return actionError(message);
-  }
-}
-
-export async function createGoogleAccount(accountData: {
-  nickname: string;
-  googleId: string;
-  country: string;
-  email: string;
-}): Promise<
-  ActionResult<UserDTO, string | typeToFlattenedError<GoogleDataActionSchema>>
-> {
-  const validation = googleDataActionSchema.safeParse(accountData);
-
-  if (!validation.success) {
-    return actionError(validation.error.flatten());
-  }
-
-  const userData = validation.data;
-
-  try {
-    const [newUser] = await db.insert(userTable).values(userData).returning();
-
-    if (!newUser) {
-      return actionError('failedCreateUser');
-    }
-
-    const token = generateSessionToken();
-
-    await createSession(token, newUser.id);
-    await setSessionTokenCookie(
-      token,
-      new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
-    );
-
-    return actionSuccess(newUser);
-  } catch (e) {
-    console.error(e);
-    let message = 'unknownSu';
-    if (e instanceof NeonDbError) {
-      if (e.constraint === 'user_nickname_unique') {
-        message = 'nicknameAlreadyExists';
-      }
-    } else if (e instanceof Error) {
-      message = e.message;
-    }
-    return actionError(message);
-  }
-}
-
-export async function editNativeLanguage(
-  langId: string,
-): Promise<ActionResult<User, string>> {
-  try {
-    const cookieStore = await cookies();
-
-    const sessionId = cookieStore.get('sessionToken')?.value;
-
-    if (!sessionId) {
-      return actionError('notSignedIn');
-    }
-
-    const res = await fetch(`${baseUrl}/api/user/nativelang`, {
-      method: 'put',
-      body: JSON.stringify({
-        nativeLang: langId,
-      }),
-      cache: 'no-cache',
-      headers: {
-        Authorization: `Bearer ${sessionId}`,
-      },
-    });
-
-    const body = await res.json();
-
-    if (!res.ok) {
-      return actionError(body.message);
-    }
-
-    return actionSuccess(body.updated);
-  } catch (e) {
-    console.error(e);
-    let message = 'unknown';
-    if (e instanceof Error) {
-      message = e.message;
-    }
-    return actionError(message);
-  }
-}
-
-export async function editFluentLanguages(
-  langIds: string[],
-): Promise<ActionResult<User, string>> {
-  try {
-    const cookieStore = await cookies();
-
-    const sessionId = cookieStore.get('sessionToken')?.value;
-
-    if (!sessionId) {
-      return actionError('notSignedIn');
-    }
-
-    const res = await fetch(`${baseUrl}/api/user/fluent`, {
-      method: 'put',
-      body: JSON.stringify({
-        fluent: langIds,
-      }),
-      cache: 'no-cache',
-      headers: {
-        Authorization: `Bearer ${sessionId}`,
-      },
-    });
-
-    const body = await res.json();
-
-    if (!res.ok) {
-      return actionError(body.message);
-    }
-
-    return actionSuccess(body.updated);
-  } catch (e) {
-    console.error(e);
-    let message = 'unknown';
-    if (e instanceof Error) {
-      message = e.message;
-    }
-    return actionError(message);
-  }
-}
-
-export async function addGameHistory(historyData: GuessHistoryReq) {
-  try {
-    const cookieStore = await cookies();
-
-    const sessionId = cookieStore.get('sessionToken')?.value;
-
-    if (!sessionId) {
-      return actionError('notSignedIn');
-    }
-
-    const res = await fetch(`${baseUrl}/api/guess/history`, {
-      method: 'put',
-      body: JSON.stringify(historyData),
-      cache: 'no-cache',
-      headers: {
-        Authorization: `Bearer ${sessionId}`,
-      },
-    });
-
-    const body = await res.json();
-
-    if (!res.ok) {
-      return actionError(body.message);
-    }
-
-    revalidatePath('/account');
-    return actionSuccess(body.updated);
-  } catch (e) {
-    console.error(e);
-    let message = 'unknown';
-    if (e instanceof Error) {
-      message = e.message;
-    }
-    return actionError(message);
-  }
-}
-
-export async function getGameHistory(): Promise<
-  ActionResult<GameHistory[], string>
-> {
-  const cookieStore = await cookies();
-
-  const sessionId = cookieStore.get('sessionToken')?.value;
-
-  if (!sessionId) {
-    return actionError('notSignedIn');
-  }
-
-  const res = await fetch(`${baseUrl}/api/guess/history`, {
-    cache: 'no-cache',
-    headers: {
-      Authorization: `Bearer ${sessionId}`,
-    },
+  const res = await apiRequest<{ success: boolean }>('/auth/signout', {
+    method: 'post',
+    auth: true,
   });
 
-  const body = await res.json();
-
-  if (!res.ok) {
-    return actionError(body.message);
+  if (!res.success) {
+    return actionError(
+      res.error.key === 'notSignedIn' ? 'noSession' : res.error.key,
+    );
   }
 
-  return actionSuccess(body);
+  await clearSessionCookie();
+
+  return actionSuccess(undefined);
 }
 
+/**
+ * Session of the current request. Server components and other actions use it
+ * instead of calling the API, so it stays a single cached database read.
+ */
 export const auth = cache(async (): Promise<SessionValidationResult> => {
-  const cookieStore = await cookies();
+  const sessionToken = await getSessionToken();
 
-  const sessionId = cookieStore.get('sessionToken')?.value;
-
-  if (!sessionId) {
-    return {
-      user: null,
-      session: null,
-    };
+  if (!sessionToken) {
+    return { user: null, session: null };
   }
 
-  const result = await validateSessionToken(sessionId);
-  return result;
+  return validateSessionToken(sessionToken);
 });

@@ -18,12 +18,11 @@ import {
   useDebounceValue,
   useLocalStorage,
 } from 'usehooks-ts';
-import { useLang } from '@/core/hooks/use-lang';
-import { Language } from '@/core/lib/types';
 import { getUTCDateString } from '@/core/lib/utils';
-import { addGameHistory } from '@/modules/auth/actions';
-import { useAuth } from '@/modules/auth/context';
-import { checkGuess } from '../actions';
+import { Language } from '@/core/types';
+import { useAuth } from '@/modules/auth/hooks/use-auth';
+import { useLang } from '@/modules/lang-data/hooks/use-lang';
+import { addGameHistory, checkGuess } from '../actions';
 import { LanguageGuess } from '../types';
 
 type SavedGuesses = {

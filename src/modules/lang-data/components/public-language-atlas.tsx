@@ -4,8 +4,8 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import FeatureToolTip from '@/core/components/main/feature-tooltip';
 import { Input } from '@/core/components/ui/input';
-import type { LangFeatures, Language } from '@/core/lib/types';
-import { groupedLangFeatures } from '@/core/lib/utils';
+import { groupedLangFeatures } from '@/core/lib/features';
+import type { LangFeatures, Language } from '@/core/types';
 import ChangeRequestDialog from '@/modules/lang-data/components/change-request-dialog';
 import LangImage from './lang-image';
 

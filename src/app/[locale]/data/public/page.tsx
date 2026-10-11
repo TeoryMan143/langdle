@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { getAllLanguages } from '@/core/actions/langs';
+import { getAllLanguages } from '@/modules/lang-data/actions';
 import PublicLanguageAtlas from '@/modules/lang-data/components/public-language-atlas';
 
 async function PublicDataPage() {

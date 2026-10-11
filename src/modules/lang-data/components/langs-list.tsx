@@ -1,5 +1,8 @@
-import { getAllLanguages, getLanguagesByIds } from '@/core/actions/langs';
 import { Link } from '@/i18n/navigation';
+import {
+  getAllLanguages,
+  getLanguagesByIds,
+} from '@/modules/lang-data/actions';
 import LangImage from './lang-image';
 
 async function LangsList({ allowedLangs }: { allowedLangs?: string[] }) {

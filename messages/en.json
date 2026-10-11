@@ -272,7 +272,11 @@
       "nicknameAlreadyExists": "Nickname already exists",
       "failedCreateUser": "Failed to create user",
       "noSession": "No session",
-      "dataValidation": "Data validation error"
+      "dataValidation": "Data validation error",
+      "unknown": "Unknown error",
+      "notSignedIn": "You must be signed in",
+      "invalidData": "Data validation error",
+      "invalidToken": "The sign up link is no longer valid"
     }
   },
   "AddPermissionPage": {

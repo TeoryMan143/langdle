@@ -9,11 +9,12 @@ import { toast } from 'sonner';
 import Google from '@/core/components/icons/google';
 import { Button } from '@/core/components/ui/button';
 import { COUNTRIES } from '@/core/lib/countries';
-import { SelectMenuOption } from '@/core/lib/types';
 import { cn } from '@/core/lib/utils';
+import { SelectMenuOption } from '@/core/types';
 import { Link, useRouter } from '@/i18n/navigation';
 import { signUpUser } from '../actions';
-import { type SignUpSchema, signUpSchema } from '../schemas/signup';
+import { signUpSchema } from '../schemas/signup';
+import type { SignUpSchema } from '../types';
 import CountrySelector from './country-selector';
 import FormInput from './form-input';
 import FormPasswordInput from './form-password-input';
@@ -133,7 +134,7 @@ function SignUpForm() {
           {isLoading ? t('creatingAccount') : t('createAccount')}{' '}
         </Button>
         <Button className='bg-white' asChild>
-          <a href='/api/login/google'>
+          <a href='/api/auth/google'>
             <Google />
           </a>
         </Button>

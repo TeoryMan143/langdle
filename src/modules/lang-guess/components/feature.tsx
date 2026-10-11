@@ -6,7 +6,7 @@ import Ball from '@/core/components/icons/ball';
 import Check from '@/core/components/icons/check';
 import Xcancel from '@/core/components/icons/x';
 import FeatureTooltip from '@/core/components/main/feature-tooltip';
-import { LangFeatures } from '@/core/lib/types';
+import { LangFeatures } from '@/core/types';
 
 type Props = {
   id: LangFeatures;

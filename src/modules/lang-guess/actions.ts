@@ -1,57 +1,53 @@
-import {
-  type ActionResult,
-  actionError,
-  actionSuccess,
-} from '@/core/actions/utils';
-import { Language, LanguageMatching } from '@/core/lib/types';
+'use server';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+import { revalidatePath } from 'next/cache';
+import { actionError, actionSuccess } from '@/core/lib/action';
+import { apiRequest } from '@/core/lib/api-client';
+import type { ActionResult, Language } from '@/core/types';
+import type { GameHistory, GuessHistoryReq, GuessResult } from './types';
 
 export async function checkGuess(
   guessId: string,
   targetId: string,
-): Promise<ActionResult<{ guessed: Language } | LanguageMatching>> {
-  try {
-    const res = await fetch(
-      `${baseUrl}/api/guess/${guessId}?target=${targetId}`,
-    );
+): Promise<ActionResult<GuessResult>> {
+  const res = await apiRequest<GuessResult>(`/guess/${guessId}`, {
+    searchParams: { target: targetId },
+  });
 
-    if (!res.ok) {
-      const error = await res.json();
-      return actionError(error.key);
-    }
-
-    const matching = await res.json();
-
-    return actionSuccess(matching);
-  } catch (e) {
-    console.error(e);
-    let message = 'unknown';
-    if (e instanceof Error) {
-      message = e.message;
-    }
-    return actionError(message);
-  }
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
 }
 
 export async function getDailyLanguage(): Promise<ActionResult<Language>> {
-  try {
-    const res = await fetch(`${baseUrl}/api/guess/daily`);
+  const res = await apiRequest<Language>('/guess/daily');
 
-    if (!res.ok) {
-      const error = await res.json();
-      return actionError(error.key);
-    }
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
+}
 
-    const correct = await res.json();
+export async function addGameHistory(
+  historyData: GuessHistoryReq,
+): Promise<ActionResult<GameHistory>> {
+  const res = await apiRequest<GameHistory>('/guess/history', {
+    method: 'put',
+    auth: true,
+    body: historyData,
+  });
 
-    return actionSuccess(correct);
-  } catch (e) {
-    console.error(e);
-    let message = 'unknown';
-    if (e instanceof Error) {
-      message = e.message;
-    }
-    return actionError(message);
+  if (!res.success) {
+    return actionError(res.error.key);
   }
+
+  revalidatePath('/account');
+
+  return actionSuccess(res.result);
+}
+
+export async function getGameHistory(): Promise<
+  ActionResult<GameHistory[], string>
+> {
+  const res = await apiRequest<GameHistory[]>('/guess/history', {
+    auth: true,
+    cache: 'no-store',
+  });
+
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
 }

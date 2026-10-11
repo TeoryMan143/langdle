@@ -9,7 +9,7 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { langFeatures } from '@/core/lib/utils';
+import { langFeatures } from '@/core/lib/features';
 
 export const userTable = pgTable('user', {
   id: uuid('id').primaryKey().defaultRandom(),
