@@ -1,0 +1,1 @@
+ALTER TABLE "lang_token" ALTER COLUMN "expires_at" SET DEFAULT now() + interval '10 minutes';

@@ -59,6 +59,7 @@ export type SignInError = (typeof signInErrorsList)[number];
 
 const signUpErrorsList = [
   'nicknameAlreadyExists',
+  'emailAlreadyExists',
   'failedCreateUser',
   'unknown',
 ] as const;

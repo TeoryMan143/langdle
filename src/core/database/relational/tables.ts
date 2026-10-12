@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
   boolean,
   date,
@@ -66,7 +67,7 @@ export const langTokenTable = pgTable('lang_token', {
     mode: 'date',
   })
     .notNull()
-    .default(new Date(Date.now() + 1000 * 60 * 10)),
+    .default(sql`now() + interval '10 minutes'`),
 });
 
 export const featuresEnum = pgEnum('features', langFeatures);

@@ -270,6 +270,7 @@
       "unknownSi": "Erro desconhecido, não foi possível entrar",
       "invalidUserPassword": "Nome de usuário ou senha inválidos",
       "nicknameAlreadyExists": "Nome de usuário já existe",
+      "emailAlreadyExists": "E-mail já cadastrado",
       "failedCreateUser": "Falha ao criar o usuário",
       "noSession": "Sem sessão",
       "dataValidation": "Erro de validação de dados",

@@ -139,10 +139,46 @@ error `toast.error(t('errors.' + res.error), { id })`, on an object error map
 
 ## Tests
 
-Vitest, files in `tests/<module>/<subject>.test.ts`, imports through the `@/`
-alias. Pure domain logic is the priority target (`getMatching`). Importing a
-service pulls in the database clients, so anything a test needs from the
-environment is defaulted in `vitest.setup.ts`.
+Vitest, imports through the `@/` alias, two projects (`vitest.config.ts`):
+
+- **`unit`** — `tests/<module>/<subject>.test.ts(x)`. Pure logic (`getMatching`,
+  `applyFeatureStatus`, email templates). No database, no Docker. Importing a
+  service pulls in the database clients, so anything a test needs from the
+  environment is defaulted in `vitest.setup.ts`.
+- **`api`** — `tests/<module>/<subject>.api.test.ts`. They call the real REST
+  API (`api('PUT', '/lang/x', { token, body })` from `tests/support/api.ts`,
+  which goes through the same `route.ts` handlers Next mounts), so controllers,
+  middlewares, services, drizzle and Redis are all exercised.
+
+### The isolated databases
+
+The `api` project never touches a real database. Before the run,
+`tests/support/global-setup.ts` starts two containers with Testcontainers —
+`postgres` and `redis/redis-stack-server` (RedisJSON + RediSearch) — and applies
+the real `drizzle/` migrations to the empty Postgres, so a migration that does
+not build the schema of `tables.ts` fails the suite. Before every test
+`tests/support/setup.ts` truncates every table and flushes Redis, so tests are
+independent and may run in any order. Files run one after the other because
+they share the containers.
+
+`tests/support/setup.ts` replaces every external dependency, whatever `.env`
+says: the databases point at the containers (and it refuses to run against a
+non-local host), the secrets are made up and `sendEmail` is a mock. The
+production client is `neon-http`, which cannot talk to plain Postgres, so
+`tests/support/neon-shim.ts` answers the driver's own HTTP calls with a real
+query against the container; that keeps the real driver (and `NeonDbError`) in
+the loop.
+
+Writing one: arrange with the factories in `tests/support/factories.ts`
+(`createTestUser` / `createTestAdmin` give a user and a live session token,
+`seedLanguage` stores a language in Redis), act through `api(...)`, assert on
+the response and, when the point is persistence, on the database through `db`.
+Expected `console.error` / `console.log` output is muted; run with `TEST_LOGS=1`
+to see it. A known bug is pinned with `test.fails` and a `KNOWN BUG` comment
+saying how to fix it, so the test turns red the day it is fixed.
+
+The RediSearch index (`idx:langs`) is defined in `tests/support/redis.ts` and
+must be kept in line with the one in the real Redis.
 
 ## Commits
 

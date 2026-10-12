@@ -938,6 +938,9 @@
             "nicknameAlreadyExists": {
               "type": "string"
             },
+            "emailAlreadyExists": {
+              "type": "string"
+            },
             "failedCreateUser": {
               "type": "string"
             },
@@ -953,6 +956,7 @@
             "unknownSi",
             "invalidUserPassword",
             "nicknameAlreadyExists",
+            "emailAlreadyExists",
             "failedCreateUser",
             "noSession",
             "dataValidation"

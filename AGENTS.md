@@ -28,7 +28,9 @@ database behind the API's back except the services the API itself uses.
 ```bash
 pnpm dev            # next dev --turbo
 pnpm build          # production build (also typechecks)
-pnpm test           # vitest
+pnpm test           # every test: unit + api (the api ones need Docker running)
+pnpm test:unit      # pure logic only, no Docker
+pnpm test:api       # REST API against throwaway Postgres + Redis containers
 npx biome check --write src tests   # format + lint fixes
 npx tsc --noEmit    # typecheck only
 ```

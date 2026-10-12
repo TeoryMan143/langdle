@@ -248,30 +248,28 @@ export async function setUserPermission(
 
     const encoded = hashPermissionCode(payload.code);
 
-    const langToken = await db.query.langTokenTable.findFirst({
-      where: eq(langTokenTable.code, encoded),
-    });
+    // Deleting is what claims the token: a single statement, so of two users
+    // redeeming it at once only one gets the row back.
+    const [langToken] = await db
+      .delete(langTokenTable)
+      .where(eq(langTokenTable.code, encoded))
+      .returning({ lang: langTokenTable.lang });
 
     if (!langToken) {
       return { success: false, key: 'tokenNotFound' };
     }
 
-    const lang = langToken.lang;
+    const { lang } = langToken;
 
-    const permission = await db.query.langPermissionTable.findFirst({
-      where: and(
-        eq(langPermissionTable.lang, lang),
-        eq(langPermissionTable.userId, userId),
-      ),
-    });
+    const granted = await db
+      .insert(langPermissionTable)
+      .values({ userId, lang })
+      .onConflictDoNothing()
+      .returning();
 
-    await db.delete(langTokenTable).where(eq(langTokenTable.code, encoded));
-
-    if (permission) {
+    if (granted.length === 0) {
       return { success: false, key: 'userHasPermission' };
     }
-
-    await db.insert(langPermissionTable).values({ userId, lang });
 
     return { success: true, lang };
   } catch (error) {

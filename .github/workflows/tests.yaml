@@ -25,10 +25,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       
+      # The api tests start their own Postgres and Redis Stack containers
+      # (the runner ships with Docker), so no database secret is needed.
       - name: Run tests
         run: pnpm test
-        env: 
-          REDIS_USER: ${{secrets.REDIS_USER}}
-          REDIS_PASSWORD: ${{secrets.REDIS_PASSWORD}}
-          REDIS_HOST: ${{secrets.REDIS_HOST}}
-          REDIS_PORT: 19097
