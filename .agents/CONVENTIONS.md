@@ -124,6 +124,10 @@ error `toast.error(t('errors.' + res.error), { id })`, on an object error map
 - All user-facing text comes from `messages/<locale>.json`; `en`, `es` and `pt`
   stay in sync, keys grouped per page or feature (`AuthPage`, `AccountPage`,
   `Features`, `Exonyms`).
+- Every new key must also be declared in `src/i18n/messages-schema.json`: add
+  it to the `properties` of its group and to that group's `required` list, next
+  to its neighbours in the message files. A key present in `messages/` but
+  missing from the schema is incomplete.
 - Navigate with `Link` / `useRouter` / `redirect` from `@/i18n/navigation`, not
   from `next/*`, so the locale prefix survives.
 - `useTranslations` in client components, `await getTranslations` in server
