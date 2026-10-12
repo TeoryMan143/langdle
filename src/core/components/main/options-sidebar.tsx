@@ -23,15 +23,17 @@ function OptionsSidebar() {
   const t = useTranslations('Nav');
 
   return (
-    <Drawer direction='right'>
-      <DrawerTrigger asChild>
-        <Button
-          className='bg-white hover:bg-background'
-          variant='noShadow'
-          size='icon'
-        >
-          <SolidBars />
-        </Button>
+    <Drawer swipeDirection='right'>
+      <DrawerTrigger
+        render={
+          <Button
+            className='bg-white hover:bg-background'
+            variant='noShadow'
+            size='icon'
+          />
+        }
+      >
+        <SolidBars />
       </DrawerTrigger>
       <DrawerContent className='p-5'>
         <DrawerTitle className='text-xl'>{t('options')}</DrawerTitle>

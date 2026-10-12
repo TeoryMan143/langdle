@@ -270,6 +270,7 @@
       "unknownSi": "Error desconocido, no se pudo iniciar sesión",
       "invalidUserPassword": "Nombre de usuario o contraseña inválidos",
       "nicknameAlreadyExists": "El nombre ya existe",
+      "emailAlreadyExists": "El correo ya está registrado",
       "failedCreateUser": "No se pudo crear el usuario",
       "noSession": "Sin sesión",
       "dataValidation": "Error de validación de datos",
@@ -302,7 +303,8 @@
   },
   "ListPage": {
     "langList": "Lista de idiomas",
-    "publicOverview": "Abrir atlas público de rasgos"
+    "publicOverview": "Abrir atlas público de rasgos",
+    "changeRequests": "Revisar solicitudes de cambio"
   },
   "PublicDataPage": {
     "eyebrow": "Atlas público",
@@ -371,6 +373,55 @@
     "newFluent": "Nuevo idioma fluido guardado",
     "yes": "sí",
     "no": "no"
+  },
+  "ChangeRequests": {
+    "myTitle": "Mis solicitudes de cambio",
+    "myEmpty": "Todavía no has enviado ninguna solicitud de cambio.",
+    "adminTitle": "Solicitudes de cambio",
+    "pendingTitle": "Pendientes",
+    "pendingEmpty": "No hay solicitudes pendientes.",
+    "reviewedTitle": "Revisadas",
+    "reviewedEmpty": "Todavía no se ha revisado ninguna solicitud.",
+    "rejectionReason": "Motivo del rechazo",
+    "requestedBy": "Solicitado por {nickname}",
+    "sentOn": "Enviada el {date}",
+    "reviewedOn": "Revisada el {date}",
+    "accept": "Aceptar",
+    "reject": "Rechazar",
+    "accepting": "Aceptando solicitud...",
+    "rejecting": "Rechazando solicitud...",
+    "accepted": "Solicitud aceptada e idioma actualizado",
+    "rejected": "Solicitud rechazada",
+    "acceptedNoEmail": "Solicitud aceptada e idioma actualizado, pero no se pudo enviar el correo",
+    "rejectedNoEmail": "Solicitud rechazada, pero no se pudo enviar el correo",
+    "rejectTitle": "Rechazar solicitud",
+    "rejectDescription": "Explica a {nickname} por qué se rechaza esta solicitud. Lo verá en su cuenta y lo recibirá por correo.",
+    "reasonLabel": "Motivo",
+    "reasonPlaceholder": "Explica por qué el idioma debe quedarse como está.",
+    "reasonRequired": "El motivo es obligatorio",
+    "state": {
+      "pending": "Pendiente",
+      "accepted": "Aceptada",
+      "rejected": "Rechazada"
+    },
+    "errors": {
+      "unknown": "Error desconocido del servidor",
+      "notSignedIn": "Debes iniciar sesión",
+      "noAdmin": "Necesitas ser administrador",
+      "requestNotFound": "La solicitud ya no existe",
+      "requestAlreadyReviewed": "Otro administrador ya revisó esta solicitud",
+      "langNotFound": "El idioma ya no existe",
+      "invalidData": "Datos inválidos"
+    }
+  },
+  "Emails": {
+    "changeRequest": {
+      "acceptedSubject": "Tu solicitud de cambio para {language} fue aceptada",
+      "acceptedBody": "Hola {nickname}, tu solicitud para cambiar \"{feature}\" a \"{status}\" en {language} fue aceptada y los datos del idioma ya están actualizados. ¡Gracias por ayudar a Langdle!",
+      "rejectedSubject": "Tu solicitud de cambio para {language} fue rechazada",
+      "rejectedBody": "Hola {nickname}, tu solicitud para cambiar \"{feature}\" a \"{status}\" en {language} fue rechazada.",
+      "viewRequests": "Ver todas tus solicitudes"
+    }
   },
   "Game": {
     "selectToGuess": "¡Selecciona un idioma para adivinar!",

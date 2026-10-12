@@ -44,22 +44,23 @@ export default function LangSelector({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant='noShadow'
-          // biome-ignore lint/a11y/useSemanticElements: custom component
-          role='combobox'
-          aria-expanded={open}
-          className='w-56 justify-between md:max-w-[200px]'
-          disabled={loading}
-        >
-          {langs
-            ? langs.find(lang => lang.id === value?.id)?.name
-            : 'Select language...'}
-          <ChevronsUpDown />
-        </Button>
+      <PopoverTrigger
+        render={
+          <Button
+            variant='noShadow'
+            role='combobox'
+            aria-expanded={open}
+            className='w-56 justify-between md:max-w-50'
+            disabled={loading}
+          />
+        }
+      >
+        {langs
+          ? langs.find(lang => lang.id === value?.id)?.name
+          : 'Select language...'}
+        <ChevronsUpDown />
       </PopoverTrigger>
-      <PopoverContent className='w-(--radix-popover-trigger-width) border-0 p-0'>
+      <PopoverContent className='w-(--anchor-width) gap-0 border-0 bg-transparent p-0'>
         <Input onChange={e => setQuery(e.target.value)} />
         <ul className='top-[calc(100%+0.3rem)] w-full rounded-lg h-40 overflow-y-scroll bg-white z-10 border-2 p-2'>
           {!error && langs?.length === 0 && (

@@ -1,6 +1,6 @@
 import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { Button } from '@/core/components/ui/button';
+import { buttonVariants } from '@/core/components/ui/button';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/modules/auth/actions';
 import { getLanguage, setLangPermission } from '@/modules/lang-data/actions';
@@ -71,11 +71,9 @@ async function Base({
     <div className='flex flex-col items-center justify-center gap-4 mt-5'>
       <div>{children}</div>
       <div>
-        <Button asChild>
-          <Link href={success ? '/data' : '/'}>
-            {success ? t('goLangList') : t('goHome')}
-          </Link>
-        </Button>
+        <Link className={buttonVariants()} href={success ? '/data' : '/'}>
+          {success ? t('goLangList') : t('goHome')}
+        </Link>
       </div>
     </div>
   );

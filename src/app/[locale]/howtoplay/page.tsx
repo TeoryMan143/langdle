@@ -3,7 +3,8 @@ import { getTranslations } from 'next-intl/server';
 import Ball from '@/core/components/icons/ball';
 import Check from '@/core/components/icons/check';
 import Xcancel from '@/core/components/icons/x';
-import { Button } from '@/core/components/ui/button';
+import { buttonVariants } from '@/core/components/ui/button';
+import { cn } from '@/core/lib/utils';
 import type { LangFeatures } from '@/core/types';
 import { Link } from '@/i18n/navigation';
 import Feature from '@/modules/lang-guess/components/feature';
@@ -123,12 +124,18 @@ export default async function HowToPlayPage() {
           </p>
 
           <div className='mt-6 flex flex-wrap gap-3'>
-            <Button asChild className='bg-white hover:bg-white/90'>
-              <Link href='/'>{t('ctaDaily')}</Link>
-            </Button>
-            <Button asChild variant='neutral'>
-              <Link href='/random'>{t('ctaRandom')}</Link>
-            </Button>
+            <Link
+              className={cn(buttonVariants(), 'bg-white hover:bg-white/90')}
+              href='/'
+            >
+              {t('ctaDaily')}
+            </Link>
+            <Link
+              className={buttonVariants({ variant: 'neutral' })}
+              href='/random'
+            >
+              {t('ctaRandom')}
+            </Link>
           </div>
 
           <div className='mt-8 grid gap-4 sm:grid-cols-3'>

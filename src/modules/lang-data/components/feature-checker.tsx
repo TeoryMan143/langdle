@@ -1,9 +1,9 @@
 'use client';
 
-import { Label } from '@radix-ui/react-label';
 import { useTranslations } from 'next-intl';
 import React, { useCallback, useMemo } from 'react';
 import FeatureToolTip from '@/core/components/main/feature-tooltip';
+import { Label } from '@/core/components/ui/label';
 import { cn } from '@/core/lib/utils';
 import { LangFeatures } from '@/core/types';
 
@@ -44,7 +44,7 @@ function FeatureChecker({ feat, state, onChange: _onChange }: Props) {
               onClick={() => onChange('notPresent')}
               id={`notPresentBtn-${feat}`}
             />
-            <Label htmlFor='notPresentBtn'>Not present</Label>
+            <Label htmlFor={`notPresentBtn-${feat}`}>Not present</Label>
           </div>
           <div className='flex flex-col items-center gap-1'>
             <CheckButton
@@ -54,7 +54,7 @@ function FeatureChecker({ feat, state, onChange: _onChange }: Props) {
               onClick={() => onChange('partial')}
               id={`partialBtn-${feat}`}
             />
-            <Label htmlFor='partialBtn'>Partial</Label>
+            <Label htmlFor={`partialBtn-${feat}`}>Partial</Label>
           </div>
           <div className='flex flex-col items-center gap-1'>
             <CheckButton
@@ -64,7 +64,7 @@ function FeatureChecker({ feat, state, onChange: _onChange }: Props) {
               onClick={() => onChange('present')}
               id={`presentBtn-${feat}`}
             />
-            <Label htmlFor='presentBtn'>Present</Label>
+            <Label htmlFor={`presentBtn-${feat}`}>Present</Label>
           </div>
         </div>
       </div>

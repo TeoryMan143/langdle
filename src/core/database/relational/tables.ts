@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
   boolean,
   date,
@@ -66,7 +67,7 @@ export const langTokenTable = pgTable('lang_token', {
     mode: 'date',
   })
     .notNull()
-    .default(new Date(Date.now() + 1000 * 60 * 10)),
+    .default(sql`now() + interval '10 minutes'`),
 });
 
 export const featuresEnum = pgEnum('features', langFeatures);
@@ -74,6 +75,12 @@ export const statusEnum = pgEnum('feature_status', [
   'present',
   'absent',
   'partial',
+]);
+
+export const changeRequestStateEnum = pgEnum('change_request_state', [
+  'pending',
+  'accepted',
+  'rejected',
 ]);
 
 export const changeRequestTable = pgTable('change_request', {
@@ -85,4 +92,13 @@ export const changeRequestTable = pgTable('change_request', {
   feature: featuresEnum().notNull(),
   status: statusEnum().notNull(),
   description: text().notNull(),
+  state: changeRequestStateEnum().notNull().default('pending'),
+  rejectionReason: text('rejection_reason'),
+  /** Language of the requester, so the resolution email speaks it. */
+  locale: text().notNull().default('en'),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
+    .notNull()
+    .defaultNow(),
+  reviewedAt: timestamp('reviewed_at', { withTimezone: true, mode: 'date' }),
+  reviewedBy: uuid('reviewed_by').references(() => userTable.id),
 });

@@ -2,16 +2,22 @@
 
 import { useTranslations } from 'next-intl';
 import { dongle } from '@/core/lib/fonts';
+import { cn } from '@/core/lib/utils';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
 import Admin from '../icons/admin';
 import Home from '../icons/home';
 import Language from '../icons/language';
 import User from '../icons/user';
-import { Button } from '../ui/button';
+import { buttonVariants } from '../ui/button';
 import LangDataAllowed from './lang-data-allowed';
 import LocaleSelector from './locale-selector';
 import OptionsSidebar from './options-sidebar';
+
+const navButtonClass = cn(
+  buttonVariants({ variant: 'noShadow', size: 'icon' }),
+  'bg-white hover:bg-background',
+);
 
 function Header() {
   const { session } = useAuth();
@@ -30,55 +36,29 @@ function Header() {
           <OptionsSidebar />
         </div>
         <div className='hidden gap-3 md:flex'>
-          <Button
-            className='bg-white hover:bg-background'
-            variant='noShadow'
-            size='icon'
-            asChild
+          <Link className={navButtonClass} href='/'>
+            <Home />
+          </Link>
+          <Link className={navButtonClass} href='/howtoplay'>
+            ?
+          </Link>
+          <Link
+            className={navButtonClass}
+            href='/data/public'
+            aria-label={t('publicData')}
           >
-            <Link href='/'>
-              <Home />
-            </Link>
-          </Button>
-          <Button
-            className='bg-white hover:bg-background'
-            variant='noShadow'
-            size='icon'
-            asChild
+            <Language />
+          </Link>
+          <Link
+            className={navButtonClass}
+            href={session ? '/account' : '/signup'}
           >
-            <Link href='/howtoplay'>?</Link>
-          </Button>
-          <Button
-            className='bg-white hover:bg-background'
-            variant='noShadow'
-            size='icon'
-            asChild
-          >
-            <Link href='/data/public' aria-label={t('publicData')}>
-              <Language />
-            </Link>
-          </Button>
-          <Button
-            className='bg-white hover:bg-background'
-            variant='noShadow'
-            size='icon'
-            asChild
-          >
-            <Link href={session ? '/account' : '/signup'}>
-              <User />
-            </Link>
-          </Button>
+            <User />
+          </Link>
           <LangDataAllowed>
-            <Button
-              className='bg-white hover:bg-background'
-              variant='noShadow'
-              size='icon'
-              asChild
-            >
-              <Link href='/data'>
-                <Admin />
-              </Link>
-            </Button>
+            <Link className={navButtonClass} href='/data'>
+              <Admin />
+            </Link>
           </LangDataAllowed>
         </div>
       </div>

@@ -28,7 +28,9 @@ database behind the API's back except the services the API itself uses.
 ```bash
 pnpm dev            # next dev --turbo
 pnpm build          # production build (also typechecks)
-pnpm test           # vitest
+pnpm test           # every test: unit + api (the api ones need Docker running)
+pnpm test:unit      # pure logic only, no Docker
+pnpm test:api       # REST API against throwaway Postgres + Redis containers
 npx biome check --write src tests   # format + lint fixes
 npx tsc --noEmit    # typecheck only
 ```
@@ -42,6 +44,10 @@ npx tsc --noEmit    # typecheck only
 - [`.agents/CONVENTIONS.md`](.agents/CONVENTIONS.md) — naming, formatting, error
   handling, i18n, forms, data fetching and the small patterns this project
   repeats on purpose.
+- [`.agents/DESIGN_SYSTEM.md`](.agents/DESIGN_SYSTEM.md) — every component
+  follows the neobrutalism.dev design: which kit to use, how to add missing
+  components from its registry, the tokens (borders, shadows, colours, radius)
+  and how to use the Base UI primitives underneath.
 
-Both documents are normative: when the code and these documents disagree, the
-documents win and the code gets fixed.
+All three documents are normative: when the code and these documents disagree,
+the documents win and the code gets fixed.

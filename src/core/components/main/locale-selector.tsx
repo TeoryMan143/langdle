@@ -20,20 +20,29 @@ function LocaleSelector({ className }: { className?: ClassValue }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleSelect = (newLocale: string) => {
+  const items = routing.locales.map(loc => ({
+    value: loc,
+    label: `${localeNames[loc]}${locale !== loc ? ` (${ex(loc)})` : ''}`,
+  }));
+
+  const handleSelect = (newLocale: string | null) => {
+    if (!newLocale) {
+      return;
+    }
+
     router.replace({ pathname }, { locale: newLocale });
   };
 
   return (
-    <Select onValueChange={handleSelect} defaultValue={locale}>
+    <Select items={items} onValueChange={handleSelect} defaultValue={locale}>
       <SelectTrigger className={cn('w-62.5', className)}>
         <Language /> <SelectValue placeholder='Select a language' />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {routing.locales.map(loc => (
-            <SelectItem key={loc} value={loc}>
-              {localeNames[loc]} {locale !== loc && `(${ex(loc)})`}
+          {items.map(({ value, label }) => (
+            <SelectItem key={value} value={value}>
+              {label}
             </SelectItem>
           ))}
         </SelectGroup>

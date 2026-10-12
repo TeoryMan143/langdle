@@ -22,20 +22,22 @@ function RandomLink() {
         <TooltipContent>
           <p className='text-lg'>{t('guessRandom')}</p>
         </TooltipContent>
-        <TooltipTrigger asChild>
-          <Button
-            onClick={() => {
-              if (path !== '/random') {
-                router.push('/random');
-              } else {
-                window.location.reload();
-              }
-            }}
-            variant='noShadow'
-            className='text-xs md:text-base'
-          >
-            <Random />
-          </Button>
+        <TooltipTrigger
+          render={
+            <Button
+              onClick={() => {
+                if (path !== '/random') {
+                  router.push('/random');
+                } else {
+                  window.location.reload();
+                }
+              }}
+              variant='noShadow'
+              className='text-xs md:text-base'
+            />
+          }
+        >
+          <Random />
         </TooltipTrigger>
       </Tooltip>
     </TooltipProvider>

@@ -20,7 +20,7 @@ function FeatureToolTip({ feature, children }: Props) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        <TooltipTrigger render={<div />}>{children}</TooltipTrigger>
         <TooltipContent className='bg-white'>{description}</TooltipContent>
       </Tooltip>
     </TooltipProvider>

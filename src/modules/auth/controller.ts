@@ -1,6 +1,6 @@
 import { NeonDbError } from '@neondatabase/serverless';
 import { decodeIdToken, type OAuth2Tokens } from 'arctic';
-import { Hono } from 'hono';
+import { type Context, Hono } from 'hono';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { apiError, parseJsonBody, unknownError } from '@/core/lib/http';
 import {
@@ -35,6 +35,28 @@ const OAUTH_COOKIE_OPTIONS = {
   maxAge: 60 * 10,
   sameSite: 'Lax',
 } as const;
+
+/** The unique constraints a signup can break, and what the client is told. */
+const SIGNUP_CONFLICTS: Record<string, { key: string; message: string }> = {
+  user_nickname_unique: {
+    key: 'nicknameAlreadyExists',
+    message: 'That nickname is already taken',
+  },
+  user_email_unique: {
+    key: 'emailAlreadyExists',
+    message: 'That email is already registered',
+  },
+};
+
+/** The `409` for a taken nickname or email, `null` for any other failure. */
+function signupConflict(c: Context, error: unknown) {
+  const conflict =
+    error instanceof NeonDbError && error.constraint
+      ? SIGNUP_CONFLICTS[error.constraint]
+      : undefined;
+
+  return conflict ? apiError(c, 409, conflict.key, conflict.message) : null;
+}
 
 async function openSession(user: User): Promise<AuthPayload> {
   const token = generateSessionToken();
@@ -72,16 +94,10 @@ authRouter.post('/signup', async c => {
   } catch (e) {
     console.error(e);
 
-    if (e instanceof NeonDbError && e.constraint === 'user_nickname_unique') {
-      return apiError(
-        c,
-        409,
-        'nicknameAlreadyExists',
-        'That nickname is already taken',
-      );
-    }
-
-    return apiError(c, 500, 'unknownSu', 'The user could not be created');
+    return (
+      signupConflict(c, e) ??
+      apiError(c, 500, 'unknownSu', 'The user could not be created')
+    );
   }
 });
 
@@ -231,16 +247,10 @@ authRouter.post('/google/signup', async c => {
   } catch (e) {
     console.error(e);
 
-    if (e instanceof NeonDbError && e.constraint === 'user_nickname_unique') {
-      return apiError(
-        c,
-        409,
-        'nicknameAlreadyExists',
-        'That nickname is already taken',
-      );
-    }
-
-    return apiError(c, 500, 'unknownSu', 'The user could not be created');
+    return (
+      signupConflict(c, e) ??
+      apiError(c, 500, 'unknownSu', 'The user could not be created')
+    );
   }
 });
 
