@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
+import {
+  SESSION_COOKIE,
+  sessionCookieOptions,
+} from './core/lib/session-config';
 import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
@@ -14,17 +18,14 @@ export default function middleware(request: NextRequest) {
   if (!isApi && (request.method === 'GET' || isServerAction)) {
     const response = intlMiddleware(request);
 
+    // Slide the cookie forward on every page view, so a user who keeps
+    // playing is never signed out by an expiring cookie while the session
+    // itself is still being renewed in the database.
     if (request.method === 'GET') {
-      const token = request.cookies.get('session')?.value;
+      const token = request.cookies.get(SESSION_COOKIE)?.value;
 
       if (token) {
-        response.cookies.set('session', token, {
-          path: '/',
-          maxAge: 60 * 60 * 24 * 30,
-          sameSite: 'lax',
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-        });
+        response.cookies.set(SESSION_COOKIE, token, sessionCookieOptions());
       }
     }
 

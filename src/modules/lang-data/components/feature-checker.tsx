@@ -4,8 +4,8 @@ import { Label } from '@radix-ui/react-label';
 import { useTranslations } from 'next-intl';
 import React, { useCallback, useMemo } from 'react';
 import FeatureToolTip from '@/core/components/main/feature-tooltip';
-import { LangFeatures } from '@/core/lib/types';
 import { cn } from '@/core/lib/utils';
+import { LangFeatures } from '@/core/types';
 
 type Props = {
   feat: LangFeatures;

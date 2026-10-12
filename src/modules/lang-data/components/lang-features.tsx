@@ -3,10 +3,10 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { setLanguageData } from '@/core/actions/langs';
 import { Button } from '@/core/components/ui/button';
-import type { LangFeatures, LanguageData } from '@/core/lib/types';
-import { groupedLangFeatures, langFeatures } from '@/core/lib/utils';
+import { groupedLangFeatures, langFeatures } from '@/core/lib/features';
+import type { LangFeatures, LanguageData } from '@/core/types';
+import { setLanguageData } from '@/modules/lang-data/actions';
 import FeatureChecker from './feature-checker';
 
 type Props = {

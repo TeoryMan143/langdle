@@ -1,144 +1,165 @@
 'use server';
 
-import { cookies } from 'next/headers';
-import { ActionResult, actionError, actionSuccess } from '@/core/actions/utils';
+import { revalidatePath } from 'next/cache';
+import { getTranslations } from 'next-intl/server';
+import { actionError, actionSuccess } from '@/core/lib/action';
+import { apiRequest } from '@/core/lib/api-client';
+import type { ActionResult, Language, LanguageData } from '@/core/types';
+import type { ChangeRequestFormValues } from './types';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
+/* -------------------------------------------------------------------------- */
+/*                                  Languages                                 */
+/* -------------------------------------------------------------------------- */
+
+export async function getAllLanguages(): Promise<ActionResult<Language[]>> {
+  const res = await apiRequest<Language[]>('/lang');
+
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
+}
+
+/**
+ * Only the languages playable today, with the localized exonym added to the
+ * search params so the selector can match what the user actually reads.
+ */
+export async function getAllActiveLanguages(): Promise<
+  ActionResult<Language[]>
+> {
+  const res = await apiRequest<Language[]>('/lang', {
+    searchParams: { oactive: '1' },
+  });
+
+  if (!res.success) {
+    return actionError(res.error.key);
+  }
+
+  const t = await getTranslations('Exonyms');
+
+  return actionSuccess(
+    res.result.map(lang => ({
+      ...lang,
+      searchParams: [...lang.searchParams, t(lang.id)],
+    })),
+  );
+}
+
+export async function getLanguagesByIds(
+  ids: string[],
+): Promise<ActionResult<Language[]>> {
+  const res = await apiRequest<Language[]>('/lang', {
+    searchParams: { id: ids },
+  });
+
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
+}
+
+export async function getLanguage(
+  code: string,
+): Promise<ActionResult<Language>> {
+  const res = await apiRequest<Language>(`/lang/${code}`);
+
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
+}
+
+export async function getRandomLanguage(): Promise<ActionResult<Language>> {
+  const res = await apiRequest<Language>('/lang/random', {
+    cache: 'no-store',
+  });
+
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
+}
+
+export async function setLanguageData(
+  code: string,
+  data: LanguageData,
+): Promise<ActionResult<string>> {
+  const res = await apiRequest(`/lang/${code}`, {
+    method: 'put',
+    body: data,
+    auth: true,
+  });
+
+  if (!res.success) {
+    return actionError(res.error.key);
+  }
+
+  revalidatePath(`/data/${code}`);
+
+  return actionSuccess('Language data updated successfully');
+}
+
+export async function setLangStatus(
+  langId: string,
+  status: boolean,
+): Promise<ActionResult<string>> {
+  const res = await apiRequest<{ lang: string }>(`/lang/${langId}/status`, {
+    method: 'put',
+    auth: true,
+    searchParams: { active: status },
+  });
+
+  if (!res.success) {
+    return actionError(res.error.key);
+  }
+
+  revalidatePath(`/data/${langId}`);
+
+  return actionSuccess(res.result.lang);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                             Editing permissions                            */
+/* -------------------------------------------------------------------------- */
 
 export async function getLangPermissions(
   userId: string,
 ): Promise<ActionResult<string[]>> {
-  try {
-    const res = await fetch(`${baseUrl}/api/lang/permissions/${userId}`);
+  const res = await apiRequest<string[]>(`/lang/permissions/${userId}`);
 
-    const body = await res.json();
-
-    if (!res.ok) {
-      return actionError(body.message);
-    }
-
-    return actionSuccess(body);
-  } catch (e) {
-    console.error(e);
-    let message = 'unknown';
-    if (e instanceof Error) {
-      message = e.message;
-    }
-    return actionError(message);
-  }
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
 }
 
 export async function getLangPermissionUrl(
   langCode: string,
 ): Promise<ActionResult<string>> {
-  try {
-    const cookieStore = await cookies();
+  const res = await apiRequest<{ token: string }>(
+    `/lang/permissions/tokens/${langCode}`,
+    { method: 'post', auth: true },
+  );
 
-    const sessionId = cookieStore.get('sessionToken')?.value;
-
-    if (!sessionId) {
-      return actionError('notSignedIn');
-    }
-
-    const res = await fetch(
-      `${baseUrl}/api/lang/permissions/generatetoken/${langCode}`,
-      {
-        cache: 'no-cache',
-        headers: {
-          Authorization: `Bearer ${sessionId}`,
-        },
-      },
-    );
-
-    const body = await res.json();
-
-    if (!res.ok) {
-      return actionError(body.message);
-    }
-
-    return actionSuccess(
-      `${baseUrl}/addpermission?token=${body.token as string}`,
-    );
-  } catch (e) {
-    console.error(e);
-    let message = 'unknown';
-    if (e instanceof Error) {
-      message = e.message;
-    }
-    return actionError(message);
+  if (!res.success) {
+    return actionError(res.error.key);
   }
+
+  return actionSuccess(`${baseUrl}/addpermission?token=${res.result.token}`);
 }
 
 export async function setLangPermission(
   token: string,
 ): Promise<ActionResult<string>> {
-  try {
-    const cookieStore = await cookies();
+  const res = await apiRequest<{ lang: string }>(
+    `/lang/permissions/claim/${token}`,
+    { method: 'put', auth: true },
+  );
 
-    const sessionId = cookieStore.get('sessionToken')?.value;
-
-    if (!sessionId) {
-      return actionError('notSignedIn');
-    }
-
-    const res = await fetch(`${baseUrl}/api/lang/permissions/set/${token}`, {
-      method: 'put',
-      cache: 'no-cache',
-      headers: {
-        Authorization: `Bearer ${sessionId}`,
-      },
-    });
-
-    const body = await res.json();
-
-    if (!res.ok) {
-      return actionError(body.key);
-    }
-
-    return actionSuccess(body.lang);
-  } catch (e) {
-    console.error(e);
-    let message = 'unknown';
-    if (e instanceof Error) {
-      message = e.message;
-    }
-    return actionError(message);
-  }
+  return res.success
+    ? actionSuccess(res.result.lang)
+    : actionError(res.error.key);
 }
 
-export async function setLangStatus(langId: string, status: boolean) {
-  try {
-    const cookieStore = await cookies();
+/* -------------------------------------------------------------------------- */
+/*                               Change requests                              */
+/* -------------------------------------------------------------------------- */
 
-    const sessionId = cookieStore.get('sessionToken')?.value;
+export async function uploadChangeRequest(
+  change: ChangeRequestFormValues,
+): Promise<ActionResult<{ result: boolean }>> {
+  const res = await apiRequest<{ result: boolean }>('/lang/change-requests', {
+    method: 'post',
+    auth: true,
+    body: change,
+  });
 
-    if (!sessionId) {
-      return actionError('notSignedIn');
-    }
-
-    const res = await fetch(
-      `${baseUrl}/api/lang/${langId}/status?active=${status}`,
-      {
-        method: 'put',
-        cache: 'no-cache',
-        headers: {
-          Authorization: `Bearer ${sessionId}`,
-        },
-      },
-    );
-    const body = await res.json();
-
-    if (!res.ok) {
-      return actionError(body.key);
-    }
-
-    return actionSuccess(body.lang);
-  } catch (e) {
-    console.error(e);
-    let message = 'unknown';
-    if (e instanceof Error) {
-      message = e.message;
-    }
-    return actionError(message);
-  }
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
 }

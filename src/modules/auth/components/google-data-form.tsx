@@ -7,18 +7,21 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Button } from '@/core/components/ui/button';
 import { COUNTRIES } from '@/core/lib/countries';
-import { SelectMenuOption } from '@/core/lib/types';
 import { cn } from '@/core/lib/utils';
+import { SelectMenuOption } from '@/core/types';
 import { useRouter } from '@/i18n/navigation';
 import { createGoogleAccount } from '../actions';
-import { type GoogleDataSchema, googleDataSchema } from '../schemas/googledata';
+import { googleDataSchema } from '../schemas/google-data';
+import type { GoogleDataSchema, GoogleSignupPayload } from '../types';
 import CountrySelector from './country-selector';
 import FormInput from './form-input';
 
 function GoogleDataForm({
   accountData,
+  dataToken,
 }: {
-  accountData: { nickname: string; googleId: string; email: string };
+  accountData: GoogleSignupPayload;
+  dataToken: string;
 }) {
   const {
     register,
@@ -38,11 +41,10 @@ function GoogleDataForm({
     const toastId = toast.loading(t('signingUp'));
 
     const res = await createGoogleAccount({
+      dataToken,
       nickname:
         formData.nickname.length > 0 ? formData.nickname : accountData.nickname,
-      googleId: accountData.googleId,
       country: formData.country,
-      email: accountData.email,
     });
 
     if (res.error && typeof res.error === 'string') {

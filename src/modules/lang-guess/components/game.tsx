@@ -10,6 +10,7 @@ import { Input } from '@/core/components/ui/input';
 import { cn } from '@/core/lib/utils';
 import LangImage from '@/modules/lang-data/components/lang-image';
 import { useGame } from '../hooks/use-game';
+import DailyTimer from './daily-timer';
 import FailDialog from './fail-dialog';
 import GuessesTable from './guesses-table';
 import QueryRes from './query-res';
@@ -105,6 +106,7 @@ function Game() {
           </p>
         )}
       </div>
+      {type === 'daily' && <DailyTimer />}
       <GuessesTable />
     </div>
   );

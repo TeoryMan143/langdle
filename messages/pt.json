@@ -78,6 +78,21 @@
     "footer": "Leia a impressão digital, reduza o alvo e continue tentando até o padrão fazer sentido."
   },
   "Features": {
+    "changeRequest": {
+      "title": "Pedido de alteração",
+      "description": "Solicite uma alteração se achar que algum traço está incorreto ou faltando.",
+      "requestedStatus": "Status solicitado",
+      "statusPlaceholder": "Escolha um status",
+      "statusPresent": "Presente",
+      "statusPartial": "Parcial",
+      "statusNotPresent": "Não presente",
+      "descriptionLabel": "Descrição",
+      "descriptionPlaceholder": "Explique por que este traço deve ser corrigido ou adicionado.",
+      "descriptionRequired": "A descrição é obrigatória",
+      "cancel": "Cancelar",
+      "submit": "Enviar solicitação",
+      "submitting": "Enviando..."
+    },
     "description": {
       "nasalization": "Traço fonético no qual parte do fluxo de ar é redirecionado pelo nariz durante a articulação",
       "clickConsonants": "Consoantes produzidas pela criação e liberação repentina de uma bolsa de ar dentro da cavidade oral",
@@ -257,7 +272,11 @@
       "nicknameAlreadyExists": "Nome de usuário já existe",
       "failedCreateUser": "Falha ao criar o usuário",
       "noSession": "Sem sessão",
-      "dataValidation": "Erro de validação de dados"
+      "dataValidation": "Erro de validação de dados",
+      "unknown": "Erro desconhecido",
+      "notSignedIn": "Você precisa entrar",
+      "invalidData": "Erro de validação de dados",
+      "invalidToken": "O link de cadastro não é mais válido"
     }
   },
   "AddPermissionPage": {
@@ -360,6 +379,7 @@
     "langNotFound": "Idioma não encontrado",
     "unkError": "Erro desconhecido",
     "dailyLang": "Idioma do dia",
+    "nextLang": "Próximo idioma em",
     "attLeft": "Tentativas restantes",
     "lang": "Idioma",
     "features": "Características",

@@ -10,7 +10,8 @@ import { Button } from '@/core/components/ui/button';
 import { cn } from '@/core/lib/utils';
 import { Link, useRouter } from '@/i18n/navigation';
 import { signInUser } from '../actions';
-import { type SignInSchema, signInSchema } from '../schemas/signin';
+import { signInSchema } from '../schemas/signin';
+import type { SignInSchema } from '../types';
 import FormInput from './form-input';
 import FormPasswordInput from './form-password-input';
 
@@ -80,7 +81,7 @@ function SignInForm() {
           {isLoading ? t('signingIn') : t('signIn')}
         </Button>
         <Button className='bg-white' asChild>
-          <a href='/api/login/google'>
+          <a href='/api/auth/google'>
             <Google />
           </a>
         </Button>

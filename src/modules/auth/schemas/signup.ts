@@ -3,7 +3,15 @@ import { z } from 'zod';
 import { userTable } from '@/core/database/relational/tables';
 
 export const signUpSchema = createInsertSchema(userTable)
-  .omit({ id: true })
+  // never let a client decide these: they are set by the server or by the
+  // profile endpoints.
+  .omit({
+    id: true,
+    admin: true,
+    googleId: true,
+    nativeLanguage: true,
+    fluent: true,
+  })
   .extend({
     nickname: z
       .string()
@@ -13,8 +21,8 @@ export const signUpSchema = createInsertSchema(userTable)
     email: z
       .string()
       .email({ message: 'It must be a valid email' })
-      .min(3, { message: 'Nickname must be at least 3 characters long' })
-      .max(20, { message: 'Nickname must be at most 20 characters long' })
+      .min(3, { message: 'Email must be at least 3 characters long' })
+      .max(254, { message: 'Email must be at most 254 characters long' })
       .trim(),
     password: z
       .string()
@@ -32,4 +40,3 @@ export const signUpSchema = createInsertSchema(userTable)
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   });
-export type SignUpSchema = z.infer<typeof signUpSchema>;

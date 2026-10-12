@@ -1,9 +1,9 @@
 import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { auth } from '@/modules/auth/actions';
-import AccountData from '@/modules/auth/components/account-data';
-import GameHistory from '@/modules/auth/components/game-history';
 import SignOutButton from '@/modules/auth/components/signout-button';
+import GameHistory from '@/modules/lang-guess/components/game-history';
+import AccountData from '@/modules/user-profile/components/account-data';
 
 async function AccountPage() {
   const { user, session } = await auth();

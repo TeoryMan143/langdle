@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import Loading from '@/core/components/icons/loading';
-import { Language } from '@/core/lib/types';
+import { Language } from '@/core/types';
 import LangImage from '@/modules/lang-data/components/lang-image';
 import { useGame } from '../hooks/use-game';
 

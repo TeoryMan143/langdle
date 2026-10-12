@@ -1,7 +1,7 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider } from '@/modules/auth/context';
+import { AuthProvider } from '@/modules/auth/hooks/use-auth';
 import { SessionValidationResult } from '@/modules/auth/types';
 
 type Props = {

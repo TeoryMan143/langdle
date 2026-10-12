@@ -4,8 +4,9 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import FeatureToolTip from '@/core/components/main/feature-tooltip';
 import { Input } from '@/core/components/ui/input';
-import type { LangFeatures, Language } from '@/core/lib/types';
-import { cn, groupedLangFeatures } from '@/core/lib/utils';
+import { groupedLangFeatures } from '@/core/lib/features';
+import type { LangFeatures, Language } from '@/core/types';
+import ChangeRequestDialog from '@/modules/lang-data/components/change-request-dialog';
 import LangImage from './lang-image';
 
 type Props = {
@@ -17,31 +18,17 @@ const groupedEntries = Object.entries(groupedLangFeatures) as Array<
 >;
 
 function FeatureChip({
+  lang,
   feature,
   tone,
 }: {
+  lang: string;
   feature: LangFeatures;
   tone: 'present' | 'partial' | 'absent';
 }) {
-  const t = useTranslations('Features.name');
-
   return (
     <FeatureToolTip feature={feature}>
-      <button
-        type='button'
-        data-feature={feature}
-        data-state={tone}
-        className={cn(
-          'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors cursor-pointer',
-          tone === 'present' &&
-            'border-emerald-600 bg-emerald-100 text-emerald-950',
-          tone === 'partial' && 'border-amber-500 bg-amber-100 text-amber-950',
-          tone === 'absent' &&
-            'border-border bg-secondary-background text-foreground/65 opacity-80',
-        )}
-      >
-        {t(feature)}
-      </button>
+      <ChangeRequestDialog lang={lang} feature={feature} status={tone} />
     </FeatureToolTip>
   );
 }
@@ -107,13 +94,28 @@ function LanguageCard({ language }: { language: Language }) {
               </h3>
               <div className='mt-3 flex flex-wrap gap-2'>
                 {present.map(feature => (
-                  <FeatureChip key={feature} feature={feature} tone='present' />
+                  <FeatureChip
+                    key={feature}
+                    feature={feature}
+                    tone='present'
+                    lang={language.id}
+                  />
                 ))}
                 {partial.map(feature => (
-                  <FeatureChip key={feature} feature={feature} tone='partial' />
+                  <FeatureChip
+                    key={feature}
+                    feature={feature}
+                    tone='partial'
+                    lang={language.id}
+                  />
                 ))}
                 {absent.map(feature => (
-                  <FeatureChip key={feature} feature={feature} tone='absent' />
+                  <FeatureChip
+                    key={feature}
+                    feature={feature}
+                    tone='absent'
+                    lang={language.id}
+                  />
                 ))}
               </div>
             </section>

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { useAuth } from '@/modules/auth/context';
+import { useAuth } from '@/modules/auth/hooks/use-auth';
 import Admin from '../icons/admin';
 import Home from '../icons/home';
 import Language from '../icons/language';

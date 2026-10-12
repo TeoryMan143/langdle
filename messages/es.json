@@ -78,6 +78,21 @@
     "footer": "Lee la huella, acota el objetivo y sigue intentando hasta que el patrón encaje."
   },
   "Features": {
+    "changeRequest": {
+      "title": "Solicitud de cambio",
+      "description": "Solicita un cambio si encuentras que algún rasgo es inexacto o falta.",
+      "requestedStatus": "Estado solicitado",
+      "statusPlaceholder": "Elige un estado",
+      "statusPresent": "Presente",
+      "statusPartial": "Parcial",
+      "statusNotPresent": "No presente",
+      "descriptionLabel": "Descripción",
+      "descriptionPlaceholder": "Explica por qué este rasgo debería corregirse o añadirse.",
+      "descriptionRequired": "La descripción es obligatoria",
+      "cancel": "Cancelar",
+      "submit": "Enviar solicitud",
+      "submitting": "Enviando..."
+    },
     "description": {
       "nasalization": "Rasgo fonético donde parte del aire del sonido pasa por la nariz",
       "clickConsonants": "Sonidos fuertes producidos al expulsar una bolsa de aire encerrada",
@@ -257,7 +272,11 @@
       "nicknameAlreadyExists": "El nombre ya existe",
       "failedCreateUser": "No se pudo crear el usuario",
       "noSession": "Sin sesión",
-      "dataValidation": "Error de validación de datos"
+      "dataValidation": "Error de validación de datos",
+      "unknown": "Error desconocido",
+      "notSignedIn": "Debes iniciar sesión",
+      "invalidData": "Error de validación de datos",
+      "invalidToken": "El enlace de registro ya no es válido"
     }
   },
   "AddPermissionPage": {
@@ -360,6 +379,7 @@
     "langNotFound": "Idioma no encontrado",
     "unkError": "Error desconocido",
     "dailyLang": "Idioma del día",
+    "nextLang": "Próximo idioma en",
     "attLeft": "Intentos restantes",
     "lang": "Idioma",
     "features": "Características",
