@@ -1067,9 +1067,12 @@
       "properties": {
         "langList": {
           "type": "string"
+        },
+        "changeRequests": {
+          "type": "string"
         }
       },
-      "required": ["langList"]
+      "required": ["langList", "changeRequests"]
     },
     "LangData": {
       "type": "object",
@@ -1228,6 +1231,194 @@
         "yes",
         "no"
       ]
+    },
+    "ChangeRequests": {
+      "type": "object",
+      "properties": {
+        "myTitle": {
+          "type": "string"
+        },
+        "myEmpty": {
+          "type": "string"
+        },
+        "adminTitle": {
+          "type": "string"
+        },
+        "pendingTitle": {
+          "type": "string"
+        },
+        "pendingEmpty": {
+          "type": "string"
+        },
+        "reviewedTitle": {
+          "type": "string"
+        },
+        "reviewedEmpty": {
+          "type": "string"
+        },
+        "rejectionReason": {
+          "type": "string"
+        },
+        "requestedBy": {
+          "type": "string"
+        },
+        "sentOn": {
+          "type": "string"
+        },
+        "reviewedOn": {
+          "type": "string"
+        },
+        "accept": {
+          "type": "string"
+        },
+        "reject": {
+          "type": "string"
+        },
+        "accepting": {
+          "type": "string"
+        },
+        "rejecting": {
+          "type": "string"
+        },
+        "accepted": {
+          "type": "string"
+        },
+        "rejected": {
+          "type": "string"
+        },
+        "acceptedNoEmail": {
+          "type": "string"
+        },
+        "rejectedNoEmail": {
+          "type": "string"
+        },
+        "rejectTitle": {
+          "type": "string"
+        },
+        "rejectDescription": {
+          "type": "string"
+        },
+        "reasonLabel": {
+          "type": "string"
+        },
+        "reasonPlaceholder": {
+          "type": "string"
+        },
+        "reasonRequired": {
+          "type": "string"
+        },
+        "state": {
+          "type": "object",
+          "properties": {
+            "pending": {
+              "type": "string"
+            },
+            "accepted": {
+              "type": "string"
+            },
+            "rejected": {
+              "type": "string"
+            }
+          },
+          "required": ["pending", "accepted", "rejected"]
+        },
+        "errors": {
+          "type": "object",
+          "properties": {
+            "unknown": {
+              "type": "string"
+            },
+            "notSignedIn": {
+              "type": "string"
+            },
+            "noAdmin": {
+              "type": "string"
+            },
+            "requestNotFound": {
+              "type": "string"
+            },
+            "requestAlreadyReviewed": {
+              "type": "string"
+            },
+            "langNotFound": {
+              "type": "string"
+            },
+            "invalidData": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "unknown",
+            "notSignedIn",
+            "noAdmin",
+            "requestNotFound",
+            "requestAlreadyReviewed",
+            "langNotFound",
+            "invalidData"
+          ]
+        }
+      },
+      "required": [
+        "myTitle",
+        "myEmpty",
+        "adminTitle",
+        "pendingTitle",
+        "pendingEmpty",
+        "reviewedTitle",
+        "reviewedEmpty",
+        "rejectionReason",
+        "requestedBy",
+        "sentOn",
+        "reviewedOn",
+        "accept",
+        "reject",
+        "accepting",
+        "rejecting",
+        "accepted",
+        "rejected",
+        "acceptedNoEmail",
+        "rejectedNoEmail",
+        "rejectTitle",
+        "rejectDescription",
+        "reasonLabel",
+        "reasonPlaceholder",
+        "reasonRequired",
+        "state",
+        "errors"
+      ]
+    },
+    "Emails": {
+      "type": "object",
+      "properties": {
+        "changeRequest": {
+          "type": "object",
+          "properties": {
+            "acceptedSubject": {
+              "type": "string"
+            },
+            "acceptedBody": {
+              "type": "string"
+            },
+            "rejectedSubject": {
+              "type": "string"
+            },
+            "rejectedBody": {
+              "type": "string"
+            },
+            "viewRequests": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "acceptedSubject",
+            "acceptedBody",
+            "rejectedSubject",
+            "rejectedBody",
+            "viewRequests"
+          ]
+        }
+      },
+      "required": ["changeRequest"]
     },
     "Game": {
       "type": "object",
@@ -1450,6 +1641,8 @@
     "ListPage",
     "LangData",
     "AccountPage",
+    "ChangeRequests",
+    "Emails",
     "Game",
     "Exonyms"
   ]

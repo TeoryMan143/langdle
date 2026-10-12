@@ -302,7 +302,8 @@
   },
   "ListPage": {
     "langList": "Lista de idiomas",
-    "publicOverview": "Abrir atlas público de recursos"
+    "publicOverview": "Abrir atlas público de recursos",
+    "changeRequests": "Revisar pedidos de alteração"
   },
   "PublicDataPage": {
     "eyebrow": "Atlas público",
@@ -371,6 +372,55 @@
     "newFluent": "Novo idioma fluente salvo",
     "yes": "sim",
     "no": "não"
+  },
+  "ChangeRequests": {
+    "myTitle": "Meus pedidos de alteração",
+    "myEmpty": "Você ainda não enviou nenhum pedido de alteração.",
+    "adminTitle": "Pedidos de alteração",
+    "pendingTitle": "Pendentes",
+    "pendingEmpty": "Não há pedidos pendentes.",
+    "reviewedTitle": "Revisados",
+    "reviewedEmpty": "Nenhum pedido foi revisado ainda.",
+    "rejectionReason": "Motivo da rejeição",
+    "requestedBy": "Solicitado por {nickname}",
+    "sentOn": "Enviado em {date}",
+    "reviewedOn": "Revisado em {date}",
+    "accept": "Aceitar",
+    "reject": "Rejeitar",
+    "accepting": "Aceitando pedido...",
+    "rejecting": "Rejeitando pedido...",
+    "accepted": "Pedido aceito e idioma atualizado",
+    "rejected": "Pedido rejeitado",
+    "acceptedNoEmail": "Pedido aceito e idioma atualizado, mas o e-mail não pôde ser enviado",
+    "rejectedNoEmail": "Pedido rejeitado, mas o e-mail não pôde ser enviado",
+    "rejectTitle": "Rejeitar pedido",
+    "rejectDescription": "Explique a {nickname} por que este pedido foi rejeitado. A pessoa verá na conta e receberá por e-mail.",
+    "reasonLabel": "Motivo",
+    "reasonPlaceholder": "Explique por que o idioma deve ficar como está.",
+    "reasonRequired": "O motivo é obrigatório",
+    "state": {
+      "pending": "Pendente",
+      "accepted": "Aceito",
+      "rejected": "Rejeitado"
+    },
+    "errors": {
+      "unknown": "Erro desconhecido do servidor",
+      "notSignedIn": "Você precisa entrar na conta",
+      "noAdmin": "Você precisa ser administrador",
+      "requestNotFound": "O pedido não existe mais",
+      "requestAlreadyReviewed": "Outro administrador já revisou este pedido",
+      "langNotFound": "O idioma não existe mais",
+      "invalidData": "Dados inválidos"
+    }
+  },
+  "Emails": {
+    "changeRequest": {
+      "acceptedSubject": "Seu pedido de alteração para {language} foi aceito",
+      "acceptedBody": "Olá {nickname}, seu pedido para alterar \"{feature}\" para \"{status}\" em {language} foi aceito e os dados do idioma já estão atualizados. Obrigado por ajudar o Langdle!",
+      "rejectedSubject": "Seu pedido de alteração para {language} foi rejeitado",
+      "rejectedBody": "Olá {nickname}, seu pedido para alterar \"{feature}\" para \"{status}\" em {language} foi rejeitado.",
+      "viewRequests": "Ver todos os seus pedidos"
+    }
   },
   "Game": {
     "selectToGuess": "Selecione um idioma para adivinhar!",

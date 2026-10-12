@@ -2,6 +2,7 @@ import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { auth } from '@/modules/auth/actions';
 import SignOutButton from '@/modules/auth/components/signout-button';
+import MyChangeRequests from '@/modules/lang-data/components/my-change-requests';
 import GameHistory from '@/modules/lang-guess/components/game-history';
 import AccountData from '@/modules/user-profile/components/account-data';
 
@@ -22,6 +23,7 @@ async function AccountPage() {
           <AccountData user={user} />
           <GameHistory />
         </div>
+        <MyChangeRequests />
         <div className='flex justify-center'>
           <SignOutButton />
         </div>

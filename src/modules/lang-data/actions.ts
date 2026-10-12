@@ -1,11 +1,15 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { actionError, actionSuccess } from '@/core/lib/action';
 import { apiRequest } from '@/core/lib/api-client';
 import type { ActionResult, Language, LanguageData } from '@/core/types';
-import type { ChangeRequestFormValues } from './types';
+import type {
+  AdminChangeRequestDTO,
+  ChangeRequestDTO,
+  ChangeRequestFormValues,
+} from './types';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -158,8 +162,83 @@ export async function uploadChangeRequest(
   const res = await apiRequest<{ result: boolean }>('/lang/change-requests', {
     method: 'post',
     auth: true,
-    body: change,
+    body: { ...change, locale: await getLocale() },
   });
 
+  if (!res.success) {
+    return actionError(res.error.key);
+  }
+
+  revalidatePath('/account');
+
+  return actionSuccess(res.result);
+}
+
+export async function getMyChangeRequests(): Promise<
+  ActionResult<ChangeRequestDTO[]>
+> {
+  const res = await apiRequest<ChangeRequestDTO[]>(
+    '/lang/change-requests/mine',
+    {
+      auth: true,
+      cache: 'no-store',
+    },
+  );
+
   return res.success ? actionSuccess(res.result) : actionError(res.error.key);
+}
+
+export async function getChangeRequests(): Promise<
+  ActionResult<AdminChangeRequestDTO[]>
+> {
+  const res = await apiRequest<AdminChangeRequestDTO[]>(
+    '/lang/change-requests',
+    {
+      auth: true,
+      cache: 'no-store',
+    },
+  );
+
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
+}
+
+type ReviewPayload = { request: ChangeRequestDTO; emailSent: boolean };
+
+export async function acceptChangeRequest(
+  id: string,
+): Promise<ActionResult<ReviewPayload>> {
+  const res = await apiRequest<ReviewPayload>(
+    `/lang/change-requests/${id}/accept`,
+    { method: 'put', auth: true },
+  );
+
+  if (!res.success) {
+    return actionError(res.error.key);
+  }
+
+  revalidatePath('/data/requests');
+  revalidatePath('/account');
+  revalidatePath(`/data/${res.result.request.lang}`);
+  revalidatePath('/data/public');
+
+  return actionSuccess(res.result);
+}
+
+export async function rejectChangeRequest(
+  id: string,
+  reason: string,
+): Promise<ActionResult<ReviewPayload>> {
+  const res = await apiRequest<ReviewPayload>(
+    `/lang/change-requests/${id}/reject`,
+    { method: 'put', auth: true, body: { reason } },
+  );
+
+  if (!res.success) {
+    return actionError(res.error.key);
+  }
+
+  revalidatePath('/data/requests');
+  revalidatePath('/account');
+
+  return actionSuccess(res.result);
 }

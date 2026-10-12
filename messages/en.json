@@ -302,7 +302,8 @@
   },
   "ListPage": {
     "langList": "Languages list",
-    "publicOverview": "Open public feature atlas"
+    "publicOverview": "Open public feature atlas",
+    "changeRequests": "Review change requests"
   },
   "PublicDataPage": {
     "eyebrow": "Public atlas",
@@ -371,6 +372,55 @@
     "newFluent": "New fluent language added",
     "yes": "yes",
     "no": "no"
+  },
+  "ChangeRequests": {
+    "myTitle": "My change requests",
+    "myEmpty": "You haven't sent any change requests yet.",
+    "adminTitle": "Change requests",
+    "pendingTitle": "Pending",
+    "pendingEmpty": "There are no pending requests.",
+    "reviewedTitle": "Reviewed",
+    "reviewedEmpty": "No request has been reviewed yet.",
+    "rejectionReason": "Rejection reason",
+    "requestedBy": "Requested by {nickname}",
+    "sentOn": "Sent on {date}",
+    "reviewedOn": "Reviewed on {date}",
+    "accept": "Accept",
+    "reject": "Reject",
+    "accepting": "Accepting request...",
+    "rejecting": "Rejecting request...",
+    "accepted": "Request accepted and language updated",
+    "rejected": "Request rejected",
+    "acceptedNoEmail": "Request accepted and language updated, but the email could not be sent",
+    "rejectedNoEmail": "Request rejected, but the email could not be sent",
+    "rejectTitle": "Reject request",
+    "rejectDescription": "Tell {nickname} why this request is rejected. They will see it in their account and receive it by email.",
+    "reasonLabel": "Reason",
+    "reasonPlaceholder": "Explain why the language should stay as it is.",
+    "reasonRequired": "A reason is required",
+    "state": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "rejected": "Rejected"
+    },
+    "errors": {
+      "unknown": "Unknown server error",
+      "notSignedIn": "You must be signed in",
+      "noAdmin": "You need to be an administrator",
+      "requestNotFound": "The request does not exist anymore",
+      "requestAlreadyReviewed": "Another administrator already reviewed this request",
+      "langNotFound": "The language does not exist anymore",
+      "invalidData": "Invalid data"
+    }
+  },
+  "Emails": {
+    "changeRequest": {
+      "acceptedSubject": "Your change request for {language} was accepted",
+      "acceptedBody": "Hi {nickname}, your request to change \"{feature}\" to \"{status}\" in {language} was accepted and the language data is already updated. Thank you for helping Langdle!",
+      "rejectedSubject": "Your change request for {language} was rejected",
+      "rejectedBody": "Hi {nickname}, your request to change \"{feature}\" to \"{status}\" in {language} was rejected.",
+      "viewRequests": "See all your requests"
+    }
   },
   "Game": {
     "selectToGuess": "Select a language to guess!",

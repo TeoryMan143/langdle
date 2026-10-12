@@ -17,6 +17,7 @@
 | Forms | react-hook-form + zod resolver |
 | UI | Tailwind v4, neobrutalism.dev components on Base UI primitives (`@base-ui/react`), `class-variance-authority`, framer-motion, sonner toasts — see [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) |
 | i18n | next-intl, locale prefix in the route (`/[locale]/…`), proxy in `src/proxy.ts` |
+| Email | Resend (`resend`) with React Email templates (`react-email`); templates restyle the neobrutalism tokens inline, since mail clients ignore Tailwind |
 | Tooling | Biome (format + lint), Vitest, pnpm, deployed on Vercel (crons in `vercel.json`) |
 
 ### Runtime shape
@@ -72,6 +73,12 @@ added at the module root without a reason recorded here.
   that have no HTTP equivalent — today that is `auth()` in
   `modules/auth/actions.ts`, which validates the session cookie once per request
   under React `cache`.
+- **`emails.tsx`** — only when a module sends transactional email
+  (`modules/lang-data/emails.tsx`). It builds subject and body from the `Emails`
+  group of `messages/<locale>.json` (read directly, since the API has no
+  request locale: the locale travels with the data that triggers the email),
+  fills a React Email template from the module's `components/` and hands it to
+  `core/lib/email.ts`, which owns the Resend call.
 - **`types.ts`** — **every type of the module**. No `export type` /
   `export interface` anywhere else (the one tolerated exception is a non
   exported prop type used by a single component in its own file). It also holds
@@ -101,6 +108,7 @@ core/
   database/    redis/ (client + key getters)   relational/ (drizzle client + tables)
   lib/         action.ts     actionSuccess / actionError
                api-client.ts apiRequest: the one place actions talk to the API
+               email.ts      sendEmail: the one place that talks to the email provider
                http.ts       apiError / notFound / forbidden / unknownError / parseJsonBody
                session.ts    session cookie read / write / clear
                features.ts   the catalogue of linguistic features
@@ -116,7 +124,7 @@ core/
 | --- | --- | --- |
 | `auth` | users, password hashing, sessions, Google OAuth, hono auth guards | `/api/auth` |
 | `user-profile` | the profile a signed-in user edits: native and fluent languages | `/api/user` |
-| `lang-data` | the language catalogue, feature editing, edit permissions, change requests | `/api/lang` |
+| `lang-data` | the language catalogue, feature editing, edit permissions, change requests and their review | `/api/lang` |
 | `lang-guess` | the game: daily language, guess matching, game history | `/api/guess` |
 
 ## 4. Endpoint inventory
@@ -148,7 +156,11 @@ core/
 | GET | `/permissions/:userId` | — | language ids a user may edit |
 | POST | `/permissions/tokens/:lang` | B + A | mints a share token for that language |
 | PUT | `/permissions/claim/:token` | B | claims the permission the token carries |
-| POST | `/change-requests` | B | suggests a feature change |
+| POST | `/change-requests` | B | suggests a feature change (optional `locale` for the resolution email) |
+| GET | `/change-requests/mine` | B | the caller's requests with state and rejection reason |
+| GET | `/change-requests?state=` | B + A | every request, with author and current status |
+| PUT | `/change-requests/:id/accept` | B + A | applies the change to the language and emails the author |
+| PUT | `/change-requests/:id/reject` | B + A | body `{ reason }`; rejects the request and emails the author |
 | GET | `/jobs/cleanup-tokens` | C | deletes expired permission tokens |
 
 ### `/api/guess`
@@ -173,7 +185,9 @@ core/
 
 Environment: `DATABASE_URL`, `REDIS_USER`, `REDIS_PASSWORD`, `REDIS_HOST`,
 `REDIS_PORT`, `JWT_SECRET` (base64url, 64 bytes), `GOOGLE_CLIENT_ID`,
-`GOOGLE_CLIENT_SECRET`, `CRON_SECRET`, `NEXT_PUBLIC_BASE_URL`.
+`GOOGLE_CLIENT_SECRET`, `CRON_SECRET`, `NEXT_PUBLIC_BASE_URL`, `RESEND_API_KEY`
+and `EMAIL_FROM` (a sender verified in Resend; without them emails are logged
+as failed and skipped, never thrown).
 
 Two external registrations follow the endpoint paths and must be updated with
 them:

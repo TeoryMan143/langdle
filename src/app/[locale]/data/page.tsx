@@ -35,13 +35,21 @@ async function DataPage() {
         {t('langList')}
       </h2>
 
-      <div className='flex justify-center mb-6'>
+      <div className='flex justify-center gap-3 flex-wrap mb-6'>
         <Link
           className={buttonVariants({ variant: 'neutral' })}
           href='/data/public'
         >
           {t('publicOverview')}
         </Link>
+        {user.admin && (
+          <Link
+            className={buttonVariants({ variant: 'neutral' })}
+            href='/data/requests'
+          >
+            {t('changeRequests')}
+          </Link>
+        )}
       </div>
 
       <div className='flex justify-center'>

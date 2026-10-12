@@ -3,7 +3,7 @@ import {
   encodeBase32LowerCaseNoPadding,
   encodeHexLowerCase,
 } from '@oslojs/encoding';
-import { and, eq, lt } from 'drizzle-orm';
+import { and, desc, eq, type InferSelectModel, lt } from 'drizzle-orm';
 import * as jose from 'jose';
 import { JWTExpired } from 'jose/errors';
 import { getClient } from '@/core/database/redis/config';
@@ -19,8 +19,21 @@ import {
   userTable,
 } from '@/core/database/relational/tables';
 import { pickRandom } from '@/core/lib/utils';
-import type { Language, LanguageData } from '@/core/types';
-import type { FeatureChangeRequest, SetPermissionResult } from './types';
+import type {
+  FeatureStatus,
+  LangFeatures,
+  Language,
+  LanguageData,
+} from '@/core/types';
+import { sendChangeRequestResolvedEmail } from './emails';
+import type {
+  AdminChangeRequestDTO,
+  ChangeRequestDTO,
+  ChangeRequestReview,
+  FeatureChangeRequest,
+  ReviewChangeRequestResult,
+  SetPermissionResult,
+} from './types';
 
 /* -------------------------------------------------------------------------- */
 /*                          Languages (redis storage)                         */
@@ -104,6 +117,35 @@ export async function getLanguagesByIds(ids: string[]): Promise<Language[]> {
   )) as LanguageData[];
 
   return langsData.map((data, i) => ({ id: ids[i], ...data }));
+}
+
+export function getFeatureStatus(
+  lang: Pick<LanguageData, 'features' | 'partial'>,
+  feature: LangFeatures,
+): FeatureStatus {
+  if (lang.features.includes(feature)) {
+    return 'present';
+  }
+
+  return lang.partial.includes(feature) ? 'partial' : 'absent';
+}
+
+/** Returns the language data with `feature` moved to the given status. */
+export function applyFeatureStatus(
+  data: LanguageData,
+  feature: LangFeatures,
+  status: FeatureStatus,
+): LanguageData {
+  const features = data.features.filter(f => f !== feature);
+  const partial = data.partial.filter(f => f !== feature);
+
+  if (status === 'present') {
+    features.push(feature);
+  } else if (status === 'partial') {
+    partial.push(feature);
+  }
+
+  return { ...data, features: features.sort(), partial: partial.sort() };
 }
 
 export async function getRandomActiveLanguage() {
@@ -261,5 +303,192 @@ export async function createChangeRequest(change: FeatureChangeRequest) {
   } catch (e) {
     console.error(e);
     return false;
+  }
+}
+
+const changeRequestColumns = {
+  id: changeRequestTable.id,
+  lang: changeRequestTable.lang,
+  feature: changeRequestTable.feature,
+  status: changeRequestTable.status,
+  description: changeRequestTable.description,
+  state: changeRequestTable.state,
+  rejectionReason: changeRequestTable.rejectionReason,
+  createdAt: changeRequestTable.createdAt,
+  reviewedAt: changeRequestTable.reviewedAt,
+};
+
+type ChangeRequestRow = Pick<
+  InferSelectModel<typeof changeRequestTable>,
+  keyof typeof changeRequestColumns
+>;
+
+function toChangeRequestDTO(row: ChangeRequestRow): ChangeRequestDTO {
+  return {
+    ...row,
+    createdAt: row.createdAt.toISOString(),
+    reviewedAt: row.reviewedAt?.toISOString() ?? null,
+  };
+}
+
+/** The requests a user made, newest first. */
+export async function getUserChangeRequests(userId: string) {
+  try {
+    const rows = await db
+      .select(changeRequestColumns)
+      .from(changeRequestTable)
+      .where(eq(changeRequestTable.userId, userId))
+      .orderBy(desc(changeRequestTable.createdAt));
+
+    return rows.map(toChangeRequestDTO);
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
+/**
+ * Every request with its author, newest first. Pending ones carry the status
+ * the feature has right now so the reviewer sees what would change.
+ */
+export async function getChangeRequests(
+  state?: ChangeRequestRow['state'],
+): Promise<AdminChangeRequestDTO[] | null> {
+  try {
+    const rows = await db
+      .select({
+        ...changeRequestColumns,
+        user: { id: userTable.id, nickname: userTable.nickname },
+      })
+      .from(changeRequestTable)
+      .innerJoin(userTable, eq(changeRequestTable.userId, userTable.id))
+      .where(state ? eq(changeRequestTable.state, state) : undefined)
+      .orderBy(desc(changeRequestTable.createdAt))
+      .limit(200);
+
+    const langIds = [
+      ...new Set(
+        rows.filter(row => row.state === 'pending').map(row => row.lang),
+      ),
+    ];
+    const langs = new Map(
+      (await Promise.all(langIds.map(getLanguageById))).map(lang => [
+        lang?.id,
+        lang,
+      ]),
+    );
+
+    return rows.map(({ user, ...row }) => {
+      const lang = langs.get(row.lang);
+
+      return {
+        ...toChangeRequestDTO(row),
+        user,
+        currentStatus: lang ? getFeatureStatus(lang, row.feature) : null,
+      };
+    });
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
+/**
+ * Accepts or rejects a pending request. The request is claimed first, with a
+ * conditional update, so two administrators can never resolve it twice; the
+ * claim is released again if the language could not be updated.
+ */
+export async function reviewChangeRequest(
+  id: string,
+  reviewerId: string,
+  review: ChangeRequestReview,
+): Promise<ReviewChangeRequestResult> {
+  try {
+    const found = await db
+      .select({
+        lang: changeRequestTable.lang,
+        feature: changeRequestTable.feature,
+        status: changeRequestTable.status,
+        locale: changeRequestTable.locale,
+        email: userTable.email,
+        nickname: userTable.nickname,
+      })
+      .from(changeRequestTable)
+      .innerJoin(userTable, eq(changeRequestTable.userId, userTable.id))
+      .where(eq(changeRequestTable.id, id));
+
+    const request = found[0];
+
+    if (!request) {
+      return { success: false, key: 'requestNotFound' };
+    }
+
+    const lang = await getLanguageById(request.lang);
+
+    if (review.decision === 'accept' && !lang) {
+      return { success: false, key: 'langNotFound' };
+    }
+
+    const claimed = await db
+      .update(changeRequestTable)
+      .set({
+        state: review.decision === 'accept' ? 'accepted' : 'rejected',
+        rejectionReason: review.decision === 'reject' ? review.reason : null,
+        reviewedAt: new Date(),
+        reviewedBy: reviewerId,
+      })
+      .where(
+        and(
+          eq(changeRequestTable.id, id),
+          eq(changeRequestTable.state, 'pending'),
+        ),
+      )
+      .returning(changeRequestColumns);
+
+    if (claimed.length === 0) {
+      return { success: false, key: 'requestAlreadyReviewed' };
+    }
+
+    if (review.decision === 'accept' && lang) {
+      const { id: langId, ...data } = lang;
+      const updated = await setLanguageData(
+        langId,
+        applyFeatureStatus(data, request.feature, request.status),
+      );
+
+      if (!updated) {
+        await db
+          .update(changeRequestTable)
+          .set({
+            state: 'pending',
+            rejectionReason: null,
+            reviewedAt: null,
+            reviewedBy: null,
+          })
+          .where(eq(changeRequestTable.id, id));
+
+        return { success: false, key: 'unknown' };
+      }
+    }
+
+    const emailSent = await sendChangeRequestResolvedEmail({
+      to: request.email,
+      nickname: request.nickname,
+      locale: request.locale,
+      langId: request.lang,
+      langName: lang?.name ?? request.lang,
+      feature: request.feature,
+      status: request.status,
+      reason: review.decision === 'reject' ? review.reason : undefined,
+    });
+
+    return {
+      success: true,
+      request: toChangeRequestDTO(claimed[0]),
+      emailSent,
+    };
+  } catch (e) {
+    console.error(e);
+    return { success: false, key: 'unknown' };
   }
 }

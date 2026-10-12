@@ -76,6 +76,12 @@ export const statusEnum = pgEnum('feature_status', [
   'partial',
 ]);
 
+export const changeRequestStateEnum = pgEnum('change_request_state', [
+  'pending',
+  'accepted',
+  'rejected',
+]);
+
 export const changeRequestTable = pgTable('change_request', {
   id: uuid().defaultRandom().primaryKey(),
   userId: uuid('user_id')
@@ -85,4 +91,13 @@ export const changeRequestTable = pgTable('change_request', {
   feature: featuresEnum().notNull(),
   status: statusEnum().notNull(),
   description: text().notNull(),
+  state: changeRequestStateEnum().notNull().default('pending'),
+  rejectionReason: text('rejection_reason'),
+  /** Language of the requester, so the resolution email speaks it. */
+  locale: text().notNull().default('en'),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
+    .notNull()
+    .defaultNow(),
+  reviewedAt: timestamp('reviewed_at', { withTimezone: true, mode: 'date' }),
+  reviewedBy: uuid('reviewed_by').references(() => userTable.id),
 });
