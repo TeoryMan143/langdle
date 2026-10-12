@@ -32,14 +32,16 @@ export default async function RootLayout({
       {/* <head>
         <script src='https://unpkg.com/react-scan/dist/auto.global.js' />
       </head> */}
-      <body className={`${noto.className} antialiased flex flex-col min-h-dvh`}>
-        <Providers sessionData={sessionData}>
-          <NextIntlClientProvider>
-            <Toaster />
-            <Header />
-            <div className='flex-1 py-3 h-full'>{children}</div>
-          </NextIntlClientProvider>
-        </Providers>
+      <body className={`${noto.className} antialiased relative`}>
+        <div className='isolate flex flex-col min-h-dvh'>
+          <Providers sessionData={sessionData}>
+            <NextIntlClientProvider>
+              <Toaster />
+              <Header />
+              <div className='flex-1 py-3 h-full'>{children}</div>
+            </NextIntlClientProvider>
+          </Providers>
+        </div>
       </body>
     </html>
   );

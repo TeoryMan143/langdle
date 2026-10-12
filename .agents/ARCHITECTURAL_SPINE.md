@@ -15,7 +15,7 @@
 | Auth | Own session implementation: argon2 password hashes, opaque session tokens hashed with SHA-256, `arctic` for Google OAuth, `jose` for short-lived encrypted tokens |
 | Client data | TanStack Query for client fetching, server components otherwise |
 | Forms | react-hook-form + zod resolver |
-| UI | Tailwind v4, Radix primitives, `class-variance-authority`, framer-motion, sonner toasts |
+| UI | Tailwind v4, neobrutalism.dev components on Base UI primitives (`@base-ui/react`), `class-variance-authority`, framer-motion, sonner toasts — see [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) |
 | i18n | next-intl, locale prefix in the route (`/[locale]/…`), proxy in `src/proxy.ts` |
 | Tooling | Biome (format + lint), Vitest, pnpm, deployed on Vercel (crons in `vercel.json`) |
 

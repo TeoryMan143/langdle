@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import Google from '@/core/components/icons/google';
-import { Button } from '@/core/components/ui/button';
+import { Button, buttonVariants } from '@/core/components/ui/button';
 import { cn } from '@/core/lib/utils';
 import { Link, useRouter } from '@/i18n/navigation';
 import { signInUser } from '../actions';
@@ -80,11 +80,9 @@ function SignInForm() {
         <Button disabled={isLoading} type='submit'>
           {isLoading ? t('signingIn') : t('signIn')}
         </Button>
-        <Button className='bg-white' asChild>
-          <a href='/api/auth/google'>
-            <Google />
-          </a>
-        </Button>
+        <a className={cn(buttonVariants(), 'bg-white')} href='/api/auth/google'>
+          <Google />
+        </a>
       </div>
       <div>
         <p className='text-center'>

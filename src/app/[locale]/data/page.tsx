@@ -1,6 +1,6 @@
 import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { Button } from '@/core/components/ui/button';
+import { buttonVariants } from '@/core/components/ui/button';
 import { dongle } from '@/core/lib/fonts';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/modules/auth/actions';
@@ -36,9 +36,12 @@ async function DataPage() {
       </h2>
 
       <div className='flex justify-center mb-6'>
-        <Button asChild variant='neutral'>
-          <Link href='/data/public'>{t('publicOverview')}</Link>
-        </Button>
+        <Link
+          className={buttonVariants({ variant: 'neutral' })}
+          href='/data/public'
+        >
+          {t('publicOverview')}
+        </Link>
       </div>
 
       <div className='flex justify-center'>

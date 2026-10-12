@@ -61,6 +61,12 @@ function ChangeRequestDialog({
 
   const [diagOpen, setDiagOpen] = useState(false);
 
+  const statusItems = [
+    { value: 'present', label: formT('statusPresent') },
+    { value: 'partial', label: formT('statusPartial') },
+    { value: 'absent', label: formT('statusNotPresent') },
+  ] as const;
+
   const onSubmit = async (data: ChangeRequestFormValues) => {
     const toastId = toast.loading('Uploading request...');
 
@@ -80,22 +86,24 @@ function ChangeRequestDialog({
 
   return (
     <Dialog open={diagOpen} onOpenChange={open => setDiagOpen(open)}>
-      <DialogTrigger asChild>
-        <button
-          data-feature={feature}
-          data-state={status}
-          className={cn(
-            'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors cursor-pointer',
-            status === 'present' &&
-              'border-emerald-600 bg-emerald-100 text-emerald-950',
-            status === 'partial' &&
-              'border-amber-500 bg-amber-100 text-amber-950',
-            status === 'absent' &&
-              'border-border bg-secondary-background text-foreground/65 opacity-80',
-          )}
-        >
-          {t(feature)}
-        </button>
+      <DialogTrigger
+        render={
+          <button
+            data-feature={feature}
+            data-state={status}
+            className={cn(
+              'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors cursor-pointer',
+              status === 'present' &&
+                'border-emerald-600 bg-emerald-100 text-emerald-950',
+              status === 'partial' &&
+                'border-amber-500 bg-amber-100 text-amber-950',
+              status === 'absent' &&
+                'border-border bg-secondary-background text-foreground/65 opacity-80',
+            )}
+          />
+        }
+      >
+        {t(feature)}
       </DialogTrigger>
       <DialogContent>
         <form className='space-y-5' onSubmit={handleSubmit(onSubmit)}>
@@ -117,23 +125,19 @@ function ChangeRequestDialog({
                 name='status'
                 render={({ field }) => (
                   <Select
-                    defaultValue={field.value}
-                    onValueChange={field.onChange}
+                    items={statusItems}
+                    onValueChange={value => value && field.onChange(value)}
                     value={field.value}
                   >
                     <SelectTrigger id='status'>
                       <SelectValue placeholder={formT('statusPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value='present'>
-                        {formT('statusPresent')}
-                      </SelectItem>
-                      <SelectItem value='partial'>
-                        {formT('statusPartial')}
-                      </SelectItem>
-                      <SelectItem value='absent'>
-                        {formT('statusNotPresent')}
-                      </SelectItem>
+                      {statusItems.map(({ value, label }) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 )}
@@ -163,10 +167,8 @@ function ChangeRequestDialog({
           </div>
 
           <DialogFooter>
-            <DialogClose asChild>
-              <Button type='button' variant='neutral'>
-                {formT('cancel')}
-              </Button>
+            <DialogClose render={<Button type='button' variant='neutral' />}>
+              {formT('cancel')}
             </DialogClose>
             <Button
               disabled={isSubmitting || formStatus === status}

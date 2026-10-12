@@ -109,6 +109,9 @@ already.
 - Shared UI comes from `core/components/ui`, which is shadcn-style: `cva`
   variants, `cn()` for class merging, `React.ComponentProps<'x'>` for props.
   Icons are small components in `core/components/icons`.
+- Everything visual follows the neobrutalism design and the Base UI usage rules
+  in [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md): kit first, missing components
+  from the neobrutalism.dev registry, theme tokens instead of raw values.
 
 ## Forms
 

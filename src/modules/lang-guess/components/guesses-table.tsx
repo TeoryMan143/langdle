@@ -31,7 +31,7 @@ function GuessesTable() {
 
   return (
     <Table>
-      <TableHeader className='md:text-lg md:h-28'>
+      <TableHeader className='bg-main md:text-lg md:h-28'>
         <TableRow>
           <TableHead className='md:w-36 text-center font-semibold relative after:h-[80%] after:w-0.5 after:bg-soft-det after:absolute after:right-0 after:top-1/2 after:-translate-y-1/2'>
             {t('lang')}

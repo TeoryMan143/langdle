@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import Google from '@/core/components/icons/google';
-import { Button } from '@/core/components/ui/button';
+import { Button, buttonVariants } from '@/core/components/ui/button';
 import { COUNTRIES } from '@/core/lib/countries';
 import { cn } from '@/core/lib/utils';
 import { SelectMenuOption } from '@/core/types';
@@ -133,11 +133,9 @@ function SignUpForm() {
         <Button disabled={isLoading} type='submit'>
           {isLoading ? t('creatingAccount') : t('createAccount')}{' '}
         </Button>
-        <Button className='bg-white' asChild>
-          <a href='/api/auth/google'>
-            <Google />
-          </a>
-        </Button>
+        <a className={cn(buttonVariants(), 'bg-white')} href='/api/auth/google'>
+          <Google />
+        </a>
       </div>
       <div>
         <p className='text-center'>

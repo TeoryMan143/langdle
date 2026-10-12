@@ -42,6 +42,10 @@ npx tsc --noEmit    # typecheck only
 - [`.agents/CONVENTIONS.md`](.agents/CONVENTIONS.md) — naming, formatting, error
   handling, i18n, forms, data fetching and the small patterns this project
   repeats on purpose.
+- [`.agents/DESIGN_SYSTEM.md`](.agents/DESIGN_SYSTEM.md) — every component
+  follows the neobrutalism.dev design: which kit to use, how to add missing
+  components from its registry, the tokens (borders, shadows, colours, radius)
+  and how to use the Base UI primitives underneath.
 
-Both documents are normative: when the code and these documents disagree, the
-documents win and the code gets fixed.
+All three documents are normative: when the code and these documents disagree,
+the documents win and the code gets fixed.
