@@ -29,6 +29,7 @@ function FeatureChecker({ feat, state, onChange: _onChange }: Props) {
   const t = useTranslations('Features.name');
   const name = useMemo(() => t(feat), [feat, t]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: don't need it to update
   const onChange = useCallback(_onChange, []);
 
   return (

@@ -237,8 +237,8 @@ export function toUserDTO(user: User) {
 export const GOOGLE_CALLBACK_PATH = '/api/auth/google/callback';
 
 export const google = new Google(
-  process.env.GOOGLE_CLIENT_ID!,
-  process.env.GOOGLE_CLIENT_SECRET!,
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
   `${process.env.NEXT_PUBLIC_BASE_URL}${GOOGLE_CALLBACK_PATH}`,
 );
 
@@ -255,7 +255,7 @@ export function createGoogleAuthorization() {
 }
 
 function getJwtSecret() {
-  return jose.base64url.decode(process.env.JWT_SECRET as string);
+  return jose.base64url.decode(process.env.JWT_SECRET);
 }
 
 /**
