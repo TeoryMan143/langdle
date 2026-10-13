@@ -173,7 +173,7 @@ function hashPermissionCode(code: string) {
 }
 
 function getJwtSecret() {
-  return jose.base64url.decode(process.env.JWT_SECRET as string);
+  return jose.base64url.decode(process.env.JWT_SECRET);
 }
 
 export async function getUserLangPermissions(userId: string) {

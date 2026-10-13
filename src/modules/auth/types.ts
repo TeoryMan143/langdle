@@ -16,8 +16,10 @@ export type User = InferSelectModel<typeof userTable>;
 export type UserDTO = Omit<User, 'password'>;
 
 export type Session = InferSelectModel<typeof sessionTable>;
+/** A valid session with its user, as stored at `session:<sessionId>`. */
+export type CachedSession = { session: Session; user: UserDTO };
 export type SessionValidationResult =
-  | { session: Session; user: UserDTO }
+  | CachedSession
   | { session: null; user: null };
 
 /** Payload returned by every endpoint that opens a session. */

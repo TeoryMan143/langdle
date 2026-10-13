@@ -15,7 +15,7 @@ import {
   seedLanguage,
 } from '../support/factories';
 
-const secret = () => jose.base64url.decode(process.env.JWT_SECRET as string);
+const secret = () => jose.base64url.decode(process.env.JWT_SECRET);
 
 /** What an administrator does to share the edit rights of a language. */
 async function mintToken(lang = 'spanish') {
