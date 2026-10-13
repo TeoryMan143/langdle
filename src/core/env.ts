@@ -14,6 +14,8 @@ const envSchema = z.object({
   GOOGLE_MOBILE_CLIENT_IDS: z.string().optional(),
   /** Comma separated bundle ids / service ids accepted in Apple ID tokens. */
   APPLE_CLIENT_IDS: z.string().optional(),
+  /** Absolute URL of the Android release APK; the install entry stays hidden without it. */
+  NEXT_PUBLIC_ANDROID_APP_URL: z.string().optional(),
   JWT_SECRET: z.string(),
   RESEND_API_KEY: z.string(),
   EMAIL_FROM: z.string(),

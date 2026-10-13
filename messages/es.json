@@ -12,6 +12,14 @@
     "data": "Datos",
     "home": "Inicio"
   },
+  "InstallApp": {
+    "menu": "App para Android",
+    "title": "Consigue Langdle para Android",
+    "body": "Juega el idioma del día desde tu teléfono, con los mismos juegos y tu cuenta.",
+    "allowInstalls": "Android puede pedirte permitir instalaciones desde este navegador la primera vez.",
+    "download": "Descargar la app",
+    "later": "Ahora no"
+  },
   "HowToPlayPage": {
     "eyebrow": "Guía rápida",
     "title": "Cómo jugar Langdle",

@@ -180,6 +180,7 @@ core/
 | `lang-data` | the language catalogue, feature editing, edit permissions, change requests and their review | `/api/lang` |
 | `lang-guess` | the game: daily language, guess matching, game history | `/api/guess` |
 | `meta` | read-only catalogues the clients build forms from (features, countries) | `/api/meta` |
+| `app-install` | the Android install prompt and menu entry (no endpoints: it only links the APK in `NEXT_PUBLIC_ANDROID_APP_URL`) | — |
 
 ## 4. Endpoint inventory
 
@@ -258,7 +259,9 @@ as failed and skipped, never thrown). Optional, for the mobile app:
 `GOOGLE_MOBILE_CLIENT_IDS` (comma separated iOS/Android OAuth client ids
 accepted besides `GOOGLE_CLIENT_ID` as the audience of a Google ID token) and
 `APPLE_CLIENT_IDS` (comma separated bundle/service ids; without it
-`/auth/apple/token` rejects every token).
+`/auth/apple/token` rejects every token). `NEXT_PUBLIC_ANDROID_APP_URL` is the
+absolute URL of the Android release APK, linked from the install prompt; without
+it no install entry is shown.
 
 Two external registrations follow the endpoint paths and must be updated with
 them:

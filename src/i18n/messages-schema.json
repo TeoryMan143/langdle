@@ -33,6 +33,37 @@
       },
       "required": ["options", "howToPlay", "account", "signUp", "data"]
     },
+    "InstallApp": {
+      "type": "object",
+      "properties": {
+        "menu": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "allowInstalls": {
+          "type": "string"
+        },
+        "download": {
+          "type": "string"
+        },
+        "later": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "menu",
+        "title",
+        "body",
+        "allowInstalls",
+        "download",
+        "later"
+      ]
+    },
     "HowToPlayPage": {
       "type": "object",
       "properties": {
@@ -1793,6 +1824,7 @@
   "required": [
     "Home",
     "Nav",
+    "InstallApp",
     "HowToPlayPage",
     "Features",
     "AuthPage",

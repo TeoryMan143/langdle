@@ -8,6 +8,7 @@ import Header from '@/core/components/main/header';
 import Providers from '@/core/components/main/providers';
 import { noto } from '@/core/lib/fonts';
 import { routing } from '@/i18n/routing';
+import InstallAppDialog from '@/modules/app-install/components/install-app-dialog';
 import { auth } from '@/modules/auth/actions';
 
 export const metadata: Metadata = {
@@ -38,6 +39,7 @@ export default async function RootLayout({
             <NextIntlClientProvider>
               <Toaster />
               <Header />
+              <InstallAppDialog />
               <div className='flex-1 py-3 h-full'>{children}</div>
             </NextIntlClientProvider>
           </Providers>

@@ -74,6 +74,7 @@ Create a `.env` file in the project root with these variables:
 | `CRON_SECRET` | Secret that protects the cron job endpoints |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google sign-in credentials |
 | `RESEND_API_KEY`, `EMAIL_FROM` | Transactional email |
+| `NEXT_PUBLIC_ANDROID_APP_URL` | Optional. Absolute URL of the Android release APK; without it the install prompt and menu entry stay hidden |
 
 Environment variables are validated with Zod on startup, so the app reports any
 missing or malformed value instead of failing later.
