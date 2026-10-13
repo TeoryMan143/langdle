@@ -2,6 +2,10 @@
 
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
+import {
+  getAndroidAppUrl,
+  useAndroidPhone,
+} from '@/modules/app-install/hooks/use-app-install';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
 import Admin from '../icons/admin';
 import Home from '../icons/home';
@@ -21,6 +25,9 @@ import LocaleSelector from './locale-selector';
 function OptionsSidebar() {
   const { session } = useAuth();
   const t = useTranslations('Nav');
+  const installT = useTranslations('InstallApp');
+  const androidPhone = useAndroidPhone();
+  const appUrl = getAndroidAppUrl();
 
   return (
     <Drawer swipeDirection='right'>
@@ -48,6 +55,9 @@ function OptionsSidebar() {
           <SidebarLink href={session ? '/account' : '/signup'}>
             <User /> {session ? t('account') : t('signUp')}
           </SidebarLink>
+          {androidPhone && appUrl && (
+            <SidebarLink href={appUrl}>{installT('menu')}</SidebarLink>
+          )}
           <LangDataAllowed>
             <SidebarLink href='/data'>
               <Admin /> {t('data')}
