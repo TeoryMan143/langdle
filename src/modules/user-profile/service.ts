@@ -3,13 +3,23 @@ import { db } from '@/core/database/relational/config';
 import { userTable } from '@/core/database/relational/tables';
 import { evictUserSessionsCache } from '@/modules/auth/service';
 import type { UserDTO } from '@/modules/auth/types';
+import type { PublicProfile } from './types';
 
-const { password: _password, ...userTableWithoutPassword } = userTable;
+const publicProfileColumns = {
+  id: userTable.id,
+  nickname: userTable.nickname,
+  country: userTable.country,
+  admin: userTable.admin,
+  nativeLanguage: userTable.nativeLanguage,
+  fluent: userTable.fluent,
+};
 
-export async function getUserProfile(userId: string): Promise<UserDTO | null> {
+export async function getUserProfile(
+  userId: string,
+): Promise<PublicProfile | null> {
   try {
     const [result] = await db
-      .select({ user: userTableWithoutPassword })
+      .select({ user: publicProfileColumns })
       .from(userTable)
       .where(eq(userTable.id, userId))
       .limit(1);

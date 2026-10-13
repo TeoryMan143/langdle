@@ -1,8 +1,8 @@
 import { RedirectType } from 'next/navigation';
-import { getLocale } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { redirect } from '@/i18n/navigation';
+import { getOAuthSignupData } from '@/modules/auth/actions';
 import GoogleDataForm from '@/modules/auth/components/google-data-form';
-import { decodeGoogleSignupToken } from '@/modules/auth/service';
 
 type Props = {
   searchParams: Promise<{ data?: string }>;
@@ -17,16 +17,18 @@ async function EndGooglePage({ searchParams }: Props) {
     return redirect({ href: '/', locale }, RedirectType.replace);
   }
 
-  const accountData = await decodeGoogleSignupToken(data);
+  const res = await getOAuthSignupData(data);
 
-  if (!accountData) {
+  if (!res.success) {
     return redirect({ href: '/', locale }, RedirectType.replace);
   }
 
+  const t = await getTranslations('AuthPage');
+
   return (
     <div className='flex flex-col items-center gap-5'>
-      <h2 className='text-3xl text-center'>We are almost done</h2>
-      <GoogleDataForm accountData={accountData} dataToken={data} />
+      <h2 className='text-3xl text-center'>{t('almostDone')}</h2>
+      <GoogleDataForm accountData={res.result} dataToken={data} />
     </div>
   );
 }

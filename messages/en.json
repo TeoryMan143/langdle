@@ -255,6 +255,8 @@
     "password": "Password",
     "email": "Email",
     "confirmPassword": "Confirm password",
+    "country": "Country",
+    "searchCountry": "Search a country",
     "noAccount": "Don't have an account?",
     "alreadyHaveAccount": "Already have an account?",
     "createAccount": "Create account",
@@ -265,6 +267,7 @@
     "signedIn": "Signed in successfully",
     "signingUp": "Creating your account",
     "signingIn": "Signing in",
+    "almostDone": "We are almost done",
     "errors": {
       "unknownSu": "Unknown error, could not sign up",
       "unknownSi": "Unknown error, could not sign in",
@@ -277,7 +280,8 @@
       "unknown": "Unknown error",
       "notSignedIn": "You must be signed in",
       "invalidData": "Data validation error",
-      "invalidToken": "The sign up link is no longer valid"
+      "invalidToken": "The sign up link is no longer valid",
+      "missingEmail": "Your account has no verified email"
     }
   },
   "AddPermissionPage": {
@@ -366,13 +370,23 @@
     "target": "Target",
     "guessed": "Guessed",
     "guesses": "Guesses",
+    "noGames": "No games yet",
     "updating": "Updating",
     "selectLang": "Select a language",
     "unknownError": "Unknown server error",
     "newNative": "New native language set",
     "newFluent": "New fluent language added",
+    "fluentRemoved": "Fluent language removed",
     "yes": "yes",
-    "no": "no"
+    "no": "no",
+    "deleteAccount": "Delete account",
+    "deleteAccountTitle": "Delete your account?",
+    "deleteAccountDescription": "Your profile, game history, permissions and change requests will be removed. This cannot be undone.",
+    "deleteAccountConfirm": "Delete forever",
+    "cancel": "Cancel",
+    "deletingAccount": "Deleting account",
+    "successDeleteAccount": "Account deleted",
+    "errorDeleteAccount": "The account could not be deleted"
   },
   "ChangeRequests": {
     "myTitle": "My change requests",
@@ -475,5 +489,26 @@
     "xh": "Xhosa",
     "yue": "Cantonese",
     "zh": "Chinese"
+  },
+  "Mobile": {
+    "daily": "Daily",
+    "random": "Random",
+    "atlas": "Atlas",
+    "help": "Help",
+    "newRandom": "New random language",
+    "loading": "Loading",
+    "retry": "Retry",
+    "connectionError": "Could not reach Langdle. Check your connection and try again.",
+    "close": "Close",
+    "language": "Language",
+    "or": "or",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithApple": "Continue with Apple",
+    "oauthFailed": "Could not sign in with that account. Try again.",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "finishSignup": "Choose a nickname and your country to finish creating your account.",
+    "edit": "Edit",
+    "remove": "Remove"
   }
 }

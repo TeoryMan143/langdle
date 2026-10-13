@@ -1,6 +1,7 @@
 import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { auth } from '@/modules/auth/actions';
+import DeleteAccountButton from '@/modules/auth/components/delete-account-button';
 import SignOutButton from '@/modules/auth/components/signout-button';
 import MyChangeRequests from '@/modules/lang-data/components/my-change-requests';
 import GameHistory from '@/modules/lang-guess/components/game-history';
@@ -24,8 +25,9 @@ async function AccountPage() {
           <GameHistory />
         </div>
         <MyChangeRequests />
-        <div className='flex justify-center'>
+        <div className='flex justify-center gap-3'>
           <SignOutButton />
+          <DeleteAccountButton />
         </div>
       </div>
     </div>

@@ -38,6 +38,30 @@ browser / flutter app
 Both clients go through the same endpoints. Server actions are a thin browser
 convenience on top of the API, never a second implementation of it.
 
+### The API is a public contract
+
+The mobile app (`mobile/`, see [`MOBILE.md`](./MOBILE.md)) is a released
+binary. Old versions stay installed for weeks, so a deploy cannot change
+the app in step with the server the way it changes the web. Every endpoint is
+therefore treated as a public contract:
+
+- **Change additively.** New endpoints, new optional body fields and new
+  response fields are free. Renaming or removing a field, changing its type,
+  tightening validation, or changing a status code or an error `key` breaks
+  installed apps.
+- **A breaking change gets a new path.** Keep the old one working as an alias
+  until no supported app version calls it (as `/auth/google/signup` still
+  answers next to `/auth/oauth/signup`).
+- **Error keys are API surface.** The app translates them, so a new `key` also
+  needs its translation in `messages/` (and in the `Mobile` group if only the
+  app shows it).
+- **No cookies, no redirects for the app.** Native clients authenticate with
+  `Authorization: Bearer` and read JSON. A flow that only works through
+  cookies and browser redirects (the web Google callback) needs a JSON
+  counterpart before the app can use it (`/auth/google/token`).
+- **The same change updates the app's model.** When a response gains or changes
+  a field the app reads, update its `fromJson` in `mobile/lib` and its test.
+
 ## 2. Low level: the module
 
 `src/core/` and every folder in `src/modules/` follow the same anatomy. All
@@ -155,11 +179,14 @@ core/
 | `user-profile` | the profile a signed-in user edits: native and fluent languages | `/api/user` |
 | `lang-data` | the language catalogue, feature editing, edit permissions, change requests and their review | `/api/lang` |
 | `lang-guess` | the game: daily language, guess matching, game history | `/api/guess` |
+| `meta` | read-only catalogues the clients build forms from (features, countries) | `/api/meta` |
 
 ## 4. Endpoint inventory
 
 `B` = `Authorization: Bearer <sessionToken>`, `A` = administrator,
-`C` = cron secret.
+`C` = cron secret. Every `B` answer carries an `X-Session-Expires-At` header
+with the (possibly renewed) session expiry, so clients that store the token
+(the mobile app) keep its expiry current.
 
 ### `/api/auth`
 
@@ -169,9 +196,13 @@ core/
 | POST | `/signin` | — | same payload for existing credentials |
 | POST | `/signout` | B | invalidates the session |
 | GET | `/me` | B | the current user |
+| DELETE | `/me` | B | deletes the account: sessions, history, permissions, change requests (reviews it made lose their reviewer) |
 | GET | `/google` | — | redirects to Google, stores state cookies |
 | GET | `/google/callback` | — | signs the user in, or redirects to `/endgoogle?data=<encrypted claims>` |
-| POST | `/google/signup` | — | finishes a Google signup from `{ dataToken, nickname, country }` |
+| POST | `/google/token` | — | native sign in from `{ idToken }`: `{ status: 'signedIn', user, token, expiresAt }` or `{ status: 'needsSignup', dataToken, nickname, email }` |
+| POST | `/apple/token` | — | same contract for Sign in with Apple; `{ idToken, nickname? }` (Apple only gives the name to the app) |
+| GET | `/oauth/signup-data?token=` | — | `{ provider, nickname, email }` inside a signup token, to prefill the form |
+| POST | `/oauth/signup` | — | finishes a Google/Apple signup from `{ dataToken, nickname, country }`; `/google/signup` is an alias |
 
 ### `/api/lang`
 
@@ -202,11 +233,18 @@ core/
 | PUT | `/history` | B | stores a finished game |
 | GET | `/jobs/daily` | C | rolls the language of the day |
 
+### `/api/meta`
+
+| Method | Path | Guard | Purpose |
+| --- | --- | --- | --- |
+| GET | `/features` | — | `{ groups, statuses }`: the feature catalogue of `core/lib/features.ts` |
+| GET | `/countries` | — | the country list of `core/lib/countries.ts` |
+
 ### `/api/user`
 
 | Method | Path | Guard | Purpose |
 | --- | --- | --- | --- |
-| GET | `/:id` | — | public profile (never the password) |
+| GET | `/:id` | — | public profile: id, nickname, country, admin, native and fluent languages (never the password, email or OAuth ids) |
 | PUT | `/native-lang` | B | sets the native language |
 | PUT | `/fluent` | B | replaces the fluent languages |
 
@@ -216,7 +254,11 @@ Environment: `DATABASE_URL`, `REDIS_USER`, `REDIS_PASSWORD`, `REDIS_HOST`,
 `REDIS_PORT`, `JWT_SECRET` (base64url, 64 bytes), `GOOGLE_CLIENT_ID`,
 `GOOGLE_CLIENT_SECRET`, `CRON_SECRET`, `NEXT_PUBLIC_BASE_URL`, `RESEND_API_KEY`
 and `EMAIL_FROM` (a sender verified in Resend; without them emails are logged
-as failed and skipped, never thrown).
+as failed and skipped, never thrown). Optional, for the mobile app:
+`GOOGLE_MOBILE_CLIENT_IDS` (comma separated iOS/Android OAuth client ids
+accepted besides `GOOGLE_CLIENT_ID` as the audience of a Google ID token) and
+`APPLE_CLIENT_IDS` (comma separated bundle/service ids; without it
+`/auth/apple/token` rejects every token).
 
 Two external registrations follow the endpoint paths and must be updated with
 them:
@@ -224,5 +266,10 @@ them:
 - **Google Cloud Console** — authorized redirect URI, today
   `${NEXT_PUBLIC_BASE_URL}/api/auth/google/callback` (`GOOGLE_CALLBACK_PATH` in
   `modules/auth/service.ts`).
+- **Apple / Android app links** — `public/.well-known/apple-app-site-association`
+  (Team ID + bundle id `teo.taberna.langdleApp`) and
+  `public/.well-known/assetlinks.json` (package `teo.taberna.langdle_app` +
+  release signing SHA-256) let `/addpermission?token=` links open in the app.
+  They must follow the bundle ids and signing keys.
 - **`vercel.json`** — the cron paths, today `/api/lang/jobs/cleanup-tokens` and
   `/api/guess/jobs/daily`.

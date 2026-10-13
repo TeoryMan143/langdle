@@ -12,7 +12,7 @@ import { SelectMenuOption } from '@/core/types';
 import { useRouter } from '@/i18n/navigation';
 import { createGoogleAccount } from '../actions';
 import { googleDataSchema } from '../schemas/google-data';
-import type { GoogleDataSchema, GoogleSignupPayload } from '../types';
+import type { GoogleDataSchema, OAuthSignupData } from '../types';
 import CountrySelector from './country-selector';
 import FormInput from './form-input';
 
@@ -20,7 +20,7 @@ function GoogleDataForm({
   accountData,
   dataToken,
 }: {
-  accountData: GoogleSignupPayload;
+  accountData: OAuthSignupData;
   dataToken: string;
 }) {
   const {

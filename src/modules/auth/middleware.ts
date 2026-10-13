@@ -33,6 +33,9 @@ export const authMiddleware = createMiddleware<AuthEnv>(async (c, next) => {
 
   c.set('session', session);
   c.set('user', user);
+  // Validation may have renewed the session: clients that store the expiry
+  // (the mobile app) keep it up to date from here.
+  c.header('X-Session-Expires-At', session.expiresAt.toISOString());
 
   await next();
 });

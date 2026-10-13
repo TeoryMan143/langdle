@@ -16,8 +16,6 @@ describe('GET /user/:id', () => {
     expect(res.body).toEqual({
       id: user.id,
       nickname: 'ana',
-      email: user.email,
-      googleId: null,
       country: 'ES',
       admin: false,
       nativeLanguage: 'spanish',
@@ -32,6 +30,20 @@ describe('GET /user/:id', () => {
 
     expect(res.body).not.toHaveProperty('password');
     expect(res.text).not.toContain('argon2');
+  });
+
+  test('never answers the email or the OAuth ids', async () => {
+    const { user } = await createTestUser({
+      googleId: 'google-secret',
+      appleId: 'apple-secret',
+    });
+
+    const res = await api('GET', `/user/${user.id}`);
+
+    expect(res.body).not.toHaveProperty('email');
+    expect(res.text).not.toContain(user.email);
+    expect(res.text).not.toContain('google-secret');
+    expect(res.text).not.toContain('apple-secret');
   });
 
   test('answers 404 for a user that does not exist', async () => {

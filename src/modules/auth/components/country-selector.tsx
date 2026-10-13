@@ -2,6 +2,7 @@
 /** biome-ignore-all lint/a11y/useSemanticElements: annoying */
 /** biome-ignore-all lint/a11y/noNoninteractiveElementToInteractiveRole: annoying */
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { COUNTRIES } from '@/core/lib/countries';
 import type { CountrySelectorProps } from '../types';
@@ -15,6 +16,7 @@ export default function CountrySelector({
   selectedValue,
 }: CountrySelectorProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const t = useTranslations('AuthPage');
 
   useEffect(() => {
     const mutableRef = ref;
@@ -101,7 +103,7 @@ export default function CountrySelector({
                     name='search'
                     autoComplete={'off'}
                     className='focus:ring-main focus:border-main block w-full sm:text-sm border-gray-300 rounded-md'
-                    placeholder={'Search a country'}
+                    placeholder={t('searchCountry')}
                     onChange={e => setQuery(e.target.value)}
                   />
                 </li>

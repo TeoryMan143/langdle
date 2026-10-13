@@ -3,6 +3,7 @@ import { handle } from 'hono/vercel';
 import authRouter from '@/modules/auth/controller';
 import langDataRouter from '@/modules/lang-data/controller';
 import langGuessRouter from '@/modules/lang-guess/controller';
+import metaRouter from '@/modules/meta/controller';
 import userProfileRouter from '@/modules/user-profile/controller';
 
 /**
@@ -15,6 +16,7 @@ api.route('/auth', authRouter);
 api.route('/lang', langDataRouter);
 api.route('/guess', langGuessRouter);
 api.route('/user', userProfileRouter);
+api.route('/meta', metaRouter);
 
 export const GET = handle(api);
 export const POST = handle(api);

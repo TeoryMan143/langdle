@@ -127,6 +127,13 @@
       "when": 1791787425442,
       "tag": "0017_lang_token_relative_expiry",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1791853627215,
+      "tag": "0018_user_apple_id",
+      "breakpoints": true
     }
   ]
 }

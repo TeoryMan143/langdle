@@ -7,9 +7,9 @@ public atlas, per-language edit permissions and a change-request flow so users
 can suggest corrections.
 
 The codebase is a Next.js app with a **real REST API** inside it (hono). The API
-is the only way into the data: server actions call it, and a future Flutter
-mobile client is expected to call the exact same endpoints. Nothing talks to the
-database behind the API's back except the services the API itself uses.
+is the only way into the data: server actions call it, and the Flutter mobile
+app in `mobile/` calls the exact same endpoints. Nothing talks to the database
+behind the API's back except the services the API itself uses.
 
 ## Where things are
 
@@ -20,8 +20,9 @@ database behind the API's back except the services the API itself uses.
 | `src/app/[locale]/` | Pages only. They compose module components and call module actions. |
 | `src/app/api/[...route]/route.ts` | Mounts every module controller under its prefix. The single API entry point. |
 | `src/i18n/` | next-intl routing, request config and navigation helpers. |
-| `messages/` | `en`, `es`, `pt` translations. |
+| `messages/` | `en`, `es`, `pt` translations, shared by the web and the mobile app. |
 | `tests/` | Vitest tests, mirroring the module names. |
+| `mobile/` | The Flutter app (iOS + Android): same API, translations, flags and design. |
 
 ## Commands
 
@@ -33,6 +34,11 @@ pnpm test:unit      # pure logic only, no Docker
 pnpm test:api       # REST API against throwaway Postgres + Redis containers
 npx biome check --write src tests   # format + lint fixes
 npx tsc --noEmit    # typecheck only
+
+# mobile app, from mobile/
+flutter run                        # against pnpm dev (Android: adb reverse tcp:3000 tcp:3000)
+flutter analyze && flutter test
+dart run tool/sync_shared.dart     # copy messages/ and public/flags into the app
 ```
 
 ## Read before writing code
@@ -48,6 +54,9 @@ npx tsc --noEmit    # typecheck only
   follows the neobrutalism.dev design: which kit to use, how to add missing
   components from its registry, the tokens (borders, shadows, colours, radius)
   and how to use the Base UI primitives underneath.
+- [`.agents/MOBILE.md`](.agents/MOBILE.md) — the Flutter app: its layout, how
+  it maps onto the web modules, translations and shared assets, the mirrored
+  design tokens, and what a web or API change owes the app.
 
-All three documents are normative: when the code and these documents disagree,
+All four documents are normative: when the code and these documents disagree,
 the documents win and the code gets fixed.
