@@ -27,10 +27,15 @@ export async function setObjectToKey(
   }
 }
 
-export async function setStringToKey(key: string, value: string) {
+/** `ttlSeconds` makes the key expire on its own; without it the key is kept. */
+export async function setStringToKey(
+  key: string,
+  value: string,
+  ttlSeconds?: number,
+) {
   try {
     const client = await getClient();
-    await client.set(key, value);
+    await client.set(key, value, ttlSeconds ? { EX: ttlSeconds } : undefined);
     return true;
   } catch (error) {
     console.error('Redis error', error);
@@ -41,9 +46,24 @@ export async function setStringToKey(key: string, value: string) {
 export async function getStringByKey(key: string) {
   try {
     const client = await getClient();
-    return client.get(key);
+    return await client.get(key);
   } catch (error) {
     console.error('Redis error', error);
     return null;
+  }
+}
+
+export async function deleteKeys(keys: string[]) {
+  if (keys.length === 0) {
+    return true;
+  }
+
+  try {
+    const client = await getClient();
+    await client.del(keys);
+    return true;
+  } catch (error) {
+    console.error('Redis error', error);
+    return false;
   }
 }

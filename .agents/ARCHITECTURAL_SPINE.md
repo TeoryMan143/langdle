@@ -10,9 +10,9 @@
 | Language | TypeScript (strict), path alias `@/*` → `src/*` |
 | REST API | hono 4, mounted inside the App Router via `hono/vercel` |
 | Relational DB | Neon Postgres through Drizzle ORM (`drizzle-kit` migrations in `drizzle/`) |
-| Key-value DB | Redis (`redis` client) with RedisJSON + RediSearch — holds the languages (`lang:<id>`) and the daily language (`daylang`) |
+| Key-value DB | Redis (`redis` client) with RedisJSON + RediSearch — holds the languages (`lang:<id>`), the daily language (`daylang`) and the session cache (`session:<sessionId>`) |
 | Validation | zod 3 (+ `drizzle-zod`, `@hookform/resolvers`) |
-| Auth | Own session implementation: argon2 password hashes, opaque session tokens hashed with SHA-256, `arctic` for Google OAuth, `jose` for short-lived encrypted tokens |
+| Auth | Own session implementation: argon2 password hashes, opaque session tokens hashed with SHA-256, stored in Postgres and cached in Redis (see §2 *Session cache*), `arctic` for Google OAuth, `jose` for short-lived encrypted tokens |
 | Client data | TanStack Query for client fetching, server components otherwise |
 | Forms | react-hook-form + zod resolver |
 | UI | Tailwind v4, neobrutalism.dev components on Base UI primitives (`@base-ui/react`), `class-variance-authority`, framer-motion, sonner toasts — see [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) |
@@ -99,6 +99,35 @@ added at the module root without a reason recorded here.
    Next request context. Anything request-bound belongs in `actions.ts`.
 5. Data access goes through the owning module's service. `lang-guess` reads
    languages via `lang-data`'s service, it does not touch `lang:*` keys itself.
+6. A service that writes a row of `userTable` calls `evictUserSessionsCache`
+   from `modules/auth/service.ts` once the write succeeds (today only
+   `user-profile`'s `updateProfile`). Otherwise the user cached with the
+   session is served stale until the cache entry expires.
+
+### Session cache
+
+`validateSessionToken` in `modules/auth/service.ts` is cache-aside over Redis:
+
+- **Postgres is the source of truth.** Sessions are created, renewed and
+  deleted there; Redis only holds copies. `createSession` does not write the
+  cache, the first validation of a session does.
+- **Key and value.** `session:<sessionId>`, where the id is the SHA-256 hash of
+  the token (the raw token is never stored anywhere). The value is the JSON of
+  `CachedSession` (`{ session, user }`, user without password); `expiresAt` is
+  revived into a `Date` on read.
+- **Lifetime.** Each entry expires after `SESSION_CACHE_TTL_S` (5 minutes) or at
+  the session's own expiry, whichever comes first. The short TTL is the
+  backstop for anything changed outside the services (an admin flag set by
+  hand in the database).
+- **Eviction.** `invalidateSession` / `invalidateAllSessions` delete the entries
+  with the rows; `evictUserSessionsCache(userId)` drops a user's entries
+  without signing them out (see dependency rule 6). A renewal rewrites the
+  entry with the new expiry.
+- **Failure mode.** Redis errors are swallowed by the `key-getters` helpers
+  (logged, reported as a miss / failed write), so a Redis outage degrades to a
+  Postgres lookup per request; it never signs anyone out.
+- Expiry and renewal are checked on the cached copy exactly as on the row, so a
+  cached session never outlives `expiresAt`.
 
 ### What `core` holds
 
@@ -122,7 +151,7 @@ core/
 
 | Module | Owns | Prefix |
 | --- | --- | --- |
-| `auth` | users, password hashing, sessions, Google OAuth, hono auth guards | `/api/auth` |
+| `auth` | users, password hashing, sessions and their Redis cache, Google OAuth, hono auth guards | `/api/auth` |
 | `user-profile` | the profile a signed-in user edits: native and fluent languages | `/api/user` |
 | `lang-data` | the language catalogue, feature editing, edit permissions, change requests and their review | `/api/lang` |
 | `lang-guess` | the game: daily language, guess matching, game history | `/api/guess` |

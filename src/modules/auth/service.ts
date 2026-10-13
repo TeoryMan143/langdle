@@ -7,10 +7,16 @@ import { Google, generateCodeVerifier, generateState } from 'arctic';
 import argon2 from 'argon2';
 import { eq } from 'drizzle-orm';
 import * as jose from 'jose';
+import {
+  deleteKeys,
+  getStringByKey,
+  setStringToKey,
+} from '@/core/database/redis/key-getters';
 import { db } from '@/core/database/relational/config';
 import { sessionTable, userTable } from '@/core/database/relational/tables';
 import { SESSION_DURATION_MS } from '@/core/lib/session-config';
 import type {
+  CachedSession,
   GoogleSignupPayload,
   Session,
   SessionValidationResult,
@@ -19,6 +25,16 @@ import type {
 
 /** A session is renewed once it is within this window of its expiry. */
 const SESSION_RENEW_THRESHOLD_MS = SESSION_DURATION_MS / 2;
+
+/**
+ * Validated sessions are cached in Redis at `session:<sessionId>` (the hashed
+ * token, never the token itself). Postgres stays the source of truth: the
+ * cache is filled on the first validation, evicted when a session or its user
+ * changes, and expires on its own after this long so anything changed behind
+ * the services' back (an admin flag set by hand) is picked up soon enough.
+ */
+const SESSION_CACHE_GROUP = 'session';
+const SESSION_CACHE_TTL_S = 60 * 5;
 
 const { password: _password, ...userTableWithoutPassword } = userTable;
 
@@ -49,12 +65,48 @@ export async function createSession(
   return session;
 }
 
-export async function validateSessionToken(
-  token: string,
-): Promise<SessionValidationResult> {
-  const sessionId = hashToken(token);
+const sessionCacheKey = (sessionId: string) =>
+  `${SESSION_CACHE_GROUP}:${sessionId}`;
 
-  const result = await db
+async function readCachedSession(
+  sessionId: string,
+): Promise<CachedSession | null> {
+  const raw = await getStringByKey(sessionCacheKey(sessionId));
+
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const { session, user } = JSON.parse(raw) as CachedSession;
+    return {
+      session: { ...session, expiresAt: new Date(session.expiresAt) },
+      user,
+    };
+  } catch (_) {
+    return null;
+  }
+}
+
+async function cacheSession(entry: CachedSession) {
+  const ttlSeconds = Math.min(
+    SESSION_CACHE_TTL_S,
+    Math.floor((entry.session.expiresAt.getTime() - Date.now()) / 1000),
+  );
+
+  if (ttlSeconds > 0) {
+    await setStringToKey(
+      sessionCacheKey(entry.session.id),
+      JSON.stringify(entry),
+      ttlSeconds,
+    );
+  }
+}
+
+async function getSessionFromDatabase(
+  sessionId: string,
+): Promise<CachedSession | null> {
+  const [result] = await db
     .select({
       user: userTableWithoutPassword,
       session: sessionTable,
@@ -63,14 +115,30 @@ export async function validateSessionToken(
     .innerJoin(userTable, eq(sessionTable.userId, userTable.id))
     .where(eq(sessionTable.id, sessionId));
 
-  if (result.length < 1) {
+  return result ?? null;
+}
+
+/**
+ * Redis is only a cache here: when it is down every helper reports a miss or
+ * a failed write and validation falls back to Postgres.
+ */
+export async function validateSessionToken(
+  token: string,
+): Promise<SessionValidationResult> {
+  const sessionId = hashToken(token);
+
+  let entry = await readCachedSession(sessionId);
+  const cached = entry !== null;
+  entry ??= await getSessionFromDatabase(sessionId);
+
+  if (!entry) {
     return { session: null, user: null };
   }
 
-  const { user, session } = result[0];
+  const { session, user } = entry;
 
   if (Date.now() >= session.expiresAt.getTime()) {
-    await db.delete(sessionTable).where(eq(sessionTable.id, session.id));
+    await invalidateSession(session.id);
     return { session: null, user: null };
   }
 
@@ -80,6 +148,9 @@ export async function validateSessionToken(
       .update(sessionTable)
       .set({ expiresAt: session.expiresAt })
       .where(eq(sessionTable.id, session.id));
+    await cacheSession(entry);
+  } else if (!cached) {
+    await cacheSession(entry);
   }
 
   return { session, user };
@@ -87,10 +158,28 @@ export async function validateSessionToken(
 
 export async function invalidateSession(sessionId: string): Promise<void> {
   await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+  await deleteKeys([sessionCacheKey(sessionId)]);
 }
 
 export async function invalidateAllSessions(userId: string): Promise<void> {
-  await db.delete(sessionTable).where(eq(sessionTable.userId, userId));
+  const sessions = await db
+    .delete(sessionTable)
+    .where(eq(sessionTable.userId, userId))
+    .returning({ id: sessionTable.id });
+  await deleteKeys(sessions.map(({ id }) => sessionCacheKey(id)));
+}
+
+/**
+ * Drops the cached copies of a user's sessions without signing them out. Any
+ * service that changes a user row calls it, so the next request reads the new
+ * user from Postgres instead of the stale one cached with the session.
+ */
+export async function evictUserSessionsCache(userId: string): Promise<void> {
+  const sessions = await db
+    .select({ id: sessionTable.id })
+    .from(sessionTable)
+    .where(eq(sessionTable.userId, userId));
+  await deleteKeys(sessions.map(({ id }) => sessionCacheKey(id)));
 }
 
 /* -------------------------------------------------------------------------- */

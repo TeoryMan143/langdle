@@ -1,12 +1,13 @@
 import argon2 from 'argon2';
 import { eq } from 'drizzle-orm';
 import { describe, expect, test, vi } from 'vitest';
+import { getClient } from '@/core/database/redis/config';
 import { db } from '@/core/database/relational/config';
 import { sessionTable, userTable } from '@/core/database/relational/tables';
 import { SESSION_DURATION_MS } from '@/core/lib/session-config';
 import { google } from '@/modules/auth/service';
 import { api } from '../support/api';
-import { createTestUser, PASSWORD } from '../support/factories';
+import { createTestUser, PASSWORD, seedLanguage } from '../support/factories';
 
 const signUpBody = {
   nickname: 'ana',
@@ -326,6 +327,129 @@ describe('sessions', () => {
     const res = await api('POST', '/auth/signout');
 
     expect(res.status).toBe(401);
+  });
+});
+
+describe('session cache', () => {
+  const cacheKey = (sessionId: string) => `session:${sessionId}`;
+
+  async function readCache(sessionId: string) {
+    const client = await getClient();
+    const raw = await client.get(cacheKey(sessionId));
+    return raw ? JSON.parse(raw) : null;
+  }
+
+  test('is filled on the first validation, not when the session opens', async () => {
+    const { token, session, user } = await createTestUser();
+
+    expect(await readCache(session.id)).toBeNull();
+
+    await api('GET', '/auth/me', { token });
+    const cached = await readCache(session.id);
+
+    expect(cached.session.id).toBe(session.id);
+    expect(cached.user.id).toBe(user.id);
+    expect(cached.user).not.toHaveProperty('password');
+  });
+
+  test('never stores the raw token as a key', async () => {
+    const { token } = await createTestUser();
+    await api('GET', '/auth/me', { token });
+
+    const client = await getClient();
+    expect(await client.keys(`*${token}*`)).toHaveLength(0);
+  });
+
+  test('expires within five minutes', async () => {
+    const { token, session } = await createTestUser();
+    await api('GET', '/auth/me', { token });
+
+    const client = await getClient();
+    const ttl = await client.ttl(cacheKey(session.id));
+
+    expect(ttl).toBeGreaterThan(0);
+    expect(ttl).toBeLessThanOrEqual(300);
+  });
+
+  test('serves the user from the cache once filled', async () => {
+    const { token, user } = await createTestUser({ nickname: 'ana' });
+    await api('GET', '/auth/me', { token });
+
+    await db
+      .update(userTable)
+      .set({ nickname: 'changed-by-hand' })
+      .where(eq(userTable.id, user.id));
+    const me = await api('GET', '/auth/me', { token });
+
+    expect(me.body.nickname).toBe('ana');
+  });
+
+  test('a profile update evicts the cached user', async () => {
+    await seedLanguage('spanish');
+    const { token, session } = await createTestUser();
+    await api('GET', '/auth/me', { token });
+
+    await api('PUT', '/user/native-lang', {
+      token,
+      body: { nativeLang: 'spanish' },
+    });
+
+    expect(await readCache(session.id)).toBeNull();
+    const me = await api('GET', '/auth/me', { token });
+    expect(me.body.nativeLanguage).toBe('spanish');
+  });
+
+  test('signing out evicts the cached session', async () => {
+    const { token, session } = await createTestUser();
+    await api('GET', '/auth/me', { token });
+
+    await api('POST', '/auth/signout', { token });
+
+    expect(await readCache(session.id)).toBeNull();
+    expect((await api('GET', '/auth/me', { token })).status).toBe(401);
+  });
+
+  test('a renewal refreshes the cached expiry', async () => {
+    const { token, session } = await createTestUser();
+    await db
+      .update(sessionTable)
+      .set({ expiresAt: new Date(Date.now() + 10 * DAY) })
+      .where(eq(sessionTable.id, session.id));
+
+    await api('GET', '/auth/me', { token });
+    const cached = await readCache(session.id);
+
+    expect(
+      new Date(cached.session.expiresAt).getTime() - Date.now(),
+    ).toBeGreaterThan(SESSION_DURATION_MS - HOUR);
+  });
+
+  test('a cached session past its expiry is rejected and deleted', async () => {
+    const { token, session } = await createTestUser();
+    await api('GET', '/auth/me', { token });
+
+    const client = await getClient();
+    const cached = await readCache(session.id);
+    cached.session.expiresAt = new Date(Date.now() - 1000).toISOString();
+    await client.set(cacheKey(session.id), JSON.stringify(cached));
+
+    const res = await api('GET', '/auth/me', { token });
+
+    expect(res.status).toBe(401);
+    expect(await readCache(session.id)).toBeNull();
+    expect(await db.select().from(sessionTable)).toHaveLength(0);
+  });
+
+  test('falls back to Postgres when Redis fails', async () => {
+    const { token, user } = await createTestUser();
+    const client = await getClient();
+    vi.spyOn(client, 'get').mockRejectedValue(new Error('redis down'));
+    vi.spyOn(client, 'set').mockRejectedValue(new Error('redis down'));
+
+    const me = await api('GET', '/auth/me', { token });
+
+    expect(me.status).toBe(200);
+    expect(me.body.id).toBe(user.id);
   });
 });
 

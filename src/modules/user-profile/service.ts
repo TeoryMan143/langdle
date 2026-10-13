@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '@/core/database/relational/config';
 import { userTable } from '@/core/database/relational/tables';
+import { evictUserSessionsCache } from '@/modules/auth/service';
 import type { UserDTO } from '@/modules/auth/types';
 
 const { password: _password, ...userTableWithoutPassword } = userTable;
@@ -31,6 +32,8 @@ async function updateProfile(userId: string, values: Partial<UserDTO>) {
     if (!newUser) {
       return null;
     }
+
+    await evictUserSessionsCache(userId);
 
     const { password: _, ...userWithoutPassword } = newUser;
 
