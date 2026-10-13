@@ -38,6 +38,30 @@ browser / flutter app
 Both clients go through the same endpoints. Server actions are a thin browser
 convenience on top of the API, never a second implementation of it.
 
+### The API is a public contract
+
+The mobile app (`mobile/`, see [`MOBILE.md`](./MOBILE.md)) is a released
+binary. Old versions stay installed for weeks, so a deploy cannot change
+the app in step with the server the way it changes the web. Every endpoint is
+therefore treated as a public contract:
+
+- **Change additively.** New endpoints, new optional body fields and new
+  response fields are free. Renaming or removing a field, changing its type,
+  tightening validation, or changing a status code or an error `key` breaks
+  installed apps.
+- **A breaking change gets a new path.** Keep the old one working as an alias
+  until no supported app version calls it (as `/auth/google/signup` still
+  answers next to `/auth/oauth/signup`).
+- **Error keys are API surface.** The app translates them, so a new `key` also
+  needs its translation in `messages/` (and in the `Mobile` group if only the
+  app shows it).
+- **No cookies, no redirects for the app.** Native clients authenticate with
+  `Authorization: Bearer` and read JSON. A flow that only works through
+  cookies and browser redirects (the web Google callback) needs a JSON
+  counterpart before the app can use it (`/auth/google/token`).
+- **The same change updates the app's model.** When a response gains or changes
+  a field the app reads, update its `fromJson` in `mobile/lib` and its test.
+
 ## 2. Low level: the module
 
 `src/core/` and every folder in `src/modules/` follow the same anatomy. All

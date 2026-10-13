@@ -55,6 +55,14 @@ Semantic status colours (the green / amber / red of the game's feature
 matches) are the one allowed exception to the palette; they still sit inside
 `border-2 border-border` shapes.
 
+### The mobile mirror
+
+The Flutter app restates these tokens in `mobile/lib/core/theme/tokens.dart`
+(`NeoColors`, `Neo`, `NeoText`), converted from oklch to hex. Changing a colour,
+the border width, the radius or the shadow in `globals.css` means changing
+`tokens.dart` in the same change, or the two clients drift apart. The app's
+widget kit and its rules are in [`MOBILE.md`](./MOBILE.md).
+
 ### Interaction pattern
 
 Pressable elements show the shadow and "press" into it on hover:

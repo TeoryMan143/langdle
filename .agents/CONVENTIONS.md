@@ -136,6 +136,19 @@ error `toast.error(t('errors.' + res.error), { id })`, on an object error map
 - `useTranslations` in client components, `await getTranslations` in server
   components and actions. Translations never reach a controller or a service:
   the API is locale-agnostic and answers with keys.
+- **The messages are shared with the mobile app.** `mobile/` bundles a copy of
+  `messages/*.json` and reads the same keys. So:
+  - Renaming, moving or deleting a key is a change to both clients: search
+    `mobile/lib` for the key and update it in the same change.
+  - Strings that exist only in the app go in the `Mobile` group (all three
+    files plus the schema, like any other key). Strings the web shows too keep
+    the web's key, so both clients say the same thing.
+  - After any change to `messages/` (or to `public/flags/`), run
+    `dart run tool/sync_shared.dart` from `mobile/` and commit the copies in
+    `mobile/assets/` with the change.
+  - Placeholders stay simple `{name}` interpolations. The app's translator
+    does not implement ICU plurals or selects, so a message that needs them
+    must be split into separate keys.
 
 ## Tests
 

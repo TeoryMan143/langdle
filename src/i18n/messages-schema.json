@@ -1210,6 +1210,30 @@
         },
         "no": {
           "type": "string"
+        },
+        "deleteAccount": {
+          "type": "string"
+        },
+        "deleteAccountTitle": {
+          "type": "string"
+        },
+        "deleteAccountDescription": {
+          "type": "string"
+        },
+        "deleteAccountConfirm": {
+          "type": "string"
+        },
+        "cancel": {
+          "type": "string"
+        },
+        "deletingAccount": {
+          "type": "string"
+        },
+        "successDeleteAccount": {
+          "type": "string"
+        },
+        "errorDeleteAccount": {
+          "type": "string"
         }
       },
       "required": [
@@ -1233,7 +1257,15 @@
         "newNative",
         "newFluent",
         "yes",
-        "no"
+        "no",
+        "deleteAccount",
+        "deleteAccountTitle",
+        "deleteAccountDescription",
+        "deleteAccountConfirm",
+        "cancel",
+        "deletingAccount",
+        "successDeleteAccount",
+        "errorDeleteAccount"
       ]
     },
     "ChangeRequests": {
@@ -1633,6 +1665,53 @@
         "yue",
         "zh"
       ]
+    },
+    "Mobile": {
+      "type": "object",
+      "properties": {
+        "daily": {
+          "type": "string"
+        },
+        "random": {
+          "type": "string"
+        },
+        "atlas": {
+          "type": "string"
+        },
+        "help": {
+          "type": "string"
+        },
+        "newRandom": {
+          "type": "string"
+        },
+        "loading": {
+          "type": "string"
+        },
+        "retry": {
+          "type": "string"
+        },
+        "connectionError": {
+          "type": "string"
+        },
+        "close": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "daily",
+        "random",
+        "atlas",
+        "help",
+        "newRandom",
+        "loading",
+        "retry",
+        "connectionError",
+        "close",
+        "language"
+      ]
     }
   },
   "required": [
@@ -1648,6 +1727,7 @@
     "ChangeRequests",
     "Emails",
     "Game",
-    "Exonyms"
+    "Exonyms",
+    "Mobile"
   ]
 }

@@ -483,5 +483,17 @@
     "xh": "xhosa",
     "yue": "cantonés",
     "zh": "chino"
+  },
+  "Mobile": {
+    "daily": "Diario",
+    "random": "Aleatorio",
+    "atlas": "Atlas",
+    "help": "Ayuda",
+    "newRandom": "Nuevo idioma aleatorio",
+    "loading": "Cargando",
+    "retry": "Reintentar",
+    "connectionError": "No pudimos conectar con Langdle. Revisa tu conexión e inténtalo de nuevo.",
+    "close": "Cerrar",
+    "language": "Idioma"
   }
 }

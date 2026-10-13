@@ -1,30 +1,77 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:langdle_app/main.dart';
+import 'package:langdle_app/core/models/language.dart';
+import 'package:langdle_app/modules/lang_guess/guess_models.dart';
+import 'package:langdle_app/modules/lang_guess/guess_repository.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('Language.search', () {
+    const languages = [
+      Language(id: 'es', name: 'Español', searchParams: ['spanish', 'español']),
+      Language(id: 'de', name: 'Deutsch', searchParams: ['german', 'deutsch']),
+      Language(id: 'pt', name: 'Português', searchParams: ['portuguese']),
+    ];
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    test('answers every language for an empty query', () {
+      expect(Language.search(languages, ''), languages);
+    });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    test('ranks by the closest search param', () {
+      final ids = Language.search(languages, 'germen').map((l) => l.id);
+      expect(ids.first, 'de');
+    });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    test('matches any of the params', () {
+      expect(Language.search(languages, 'español').first.id, 'es');
+    });
+  });
+
+  group('GuessResult.fromJson', () {
+    test('a right guess carries the target', () {
+      final result = GuessResult.fromJson({
+        'guessed': {'id': 'es', 'name': 'Español'},
+      });
+
+      expect(result, isA<Guessed>());
+      expect((result as Guessed).target.id, 'es');
+    });
+
+    test('a wrong guess carries the matching', () {
+      final result = GuessResult.fromJson({
+        'correct': ['sov'],
+        'partial': [],
+        'incorrect': ['tones'],
+      });
+
+      expect(result, isA<Missed>());
+      expect((result as Missed).matching.incorrect, ['tones']);
+    });
+  });
+
+  test('DailySave survives a JSON round trip', () {
+    final save = DailySave(
+      date: '2026-10-12',
+      targetId: 'es',
+      won: false,
+      guesses: const [
+        LanguageGuess(
+          language: Language(id: 'de', name: 'Deutsch'),
+          matching: LanguageMatching(
+            correct: ['svo'],
+            partial: [],
+            incorrect: ['tones'],
+          ),
+        ),
+      ],
+    );
+
+    final copy = DailySave.fromJson(save.toJson());
+
+    expect(copy.date, save.date);
+    expect(copy.guesses.single.language.id, 'de');
+    expect(copy.guesses.single.matching.correct, ['svo']);
+  });
+
+  test('utcDateString uses the UTC day', () {
+    expect(utcDateString(DateTime.utc(2026, 10, 12, 23, 59)), '2026-10-12');
   });
 }
