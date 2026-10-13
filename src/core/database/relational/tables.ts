@@ -18,6 +18,7 @@ export const userTable = pgTable('user', {
   password: text(),
   email: text().unique().notNull(),
   googleId: text(),
+  appleId: text('apple_id').unique(),
   country: text().notNull(),
   admin: boolean('admin').notNull().default(false),
   nativeLanguage: text('native_language'),

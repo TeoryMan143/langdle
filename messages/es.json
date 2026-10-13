@@ -372,7 +372,15 @@
     "newNative": "Idioma nativo guardado",
     "newFluent": "Nuevo idioma fluido guardado",
     "yes": "sí",
-    "no": "no"
+    "no": "no",
+    "deleteAccount": "Eliminar cuenta",
+    "deleteAccountTitle": "¿Eliminar tu cuenta?",
+    "deleteAccountDescription": "Se borrarán tu perfil, historial de partidas, permisos y solicitudes de cambio. No se puede deshacer.",
+    "deleteAccountConfirm": "Eliminar para siempre",
+    "cancel": "Cancelar",
+    "deletingAccount": "Eliminando cuenta",
+    "successDeleteAccount": "Cuenta eliminada",
+    "errorDeleteAccount": "No se pudo eliminar la cuenta"
   },
   "ChangeRequests": {
     "myTitle": "Mis solicitudes de cambio",

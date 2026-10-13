@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAMID.teo.taberna.langdleApp"],
+        "components": [
+          { "/": "/addpermission", "?": { "token": "?*" } },
+          { "/": "/*/addpermission", "?": { "token": "?*" } }
+        ]
+      }
+    ]
+  }
+}

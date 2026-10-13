@@ -5,6 +5,7 @@ import { actionError, actionSuccess } from '@/core/lib/action';
 import { apiRequest } from '@/core/lib/api-client';
 import type { ActionResult } from '@/core/types';
 import type { UserDTO } from '@/modules/auth/types';
+import type { PublicProfile } from './types';
 
 export async function editNativeLanguage(
   langId: string,
@@ -44,8 +45,8 @@ export async function editFluentLanguages(
 
 export async function getUserProfile(
   userId: string,
-): Promise<ActionResult<UserDTO>> {
-  const res = await apiRequest<UserDTO>(`/user/${userId}`);
+): Promise<ActionResult<PublicProfile>> {
+  const res = await apiRequest<PublicProfile>(`/user/${userId}`);
 
   return res.success ? actionSuccess(res.result) : actionError(res.error.key);
 }

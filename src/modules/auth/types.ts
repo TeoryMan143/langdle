@@ -9,6 +9,7 @@ import type {
   googleDataSchema,
   googleSignUpSchema,
 } from './schemas/google-data';
+import type { oauthTokenSchema } from './schemas/oauth-token';
 import type { signInSchema } from './schemas/signin';
 import type { signUpSchema } from './schemas/signup';
 
@@ -29,11 +30,41 @@ export type AuthPayload = {
   expiresAt: string;
 };
 
-export type GoogleSignupPayload = {
+export type OAuthProvider = 'google' | 'apple';
+
+/** Claims carried by the encrypted token that finishes an OAuth sign up. */
+export type OAuthSignupPayload = {
+  provider: OAuthProvider;
+  providerId: string;
   nickname: string;
-  googleId: string;
   email: string;
 };
+
+/** What `GET /auth/oauth/signup-data` reveals of a sign up token. */
+export type OAuthSignupData = Pick<
+  OAuthSignupPayload,
+  'provider' | 'nickname' | 'email'
+>;
+
+/** Claims taken from a verified Google or Apple ID token. */
+export type OAuthIdentity = {
+  providerId: string;
+  email?: string;
+  name?: string;
+};
+
+/**
+ * Answer of the native sign in endpoints: a session for known accounts, the
+ * data to finish the sign up otherwise.
+ */
+export type OAuthTokenResult =
+  | ({ status: 'signedIn' } & AuthPayload)
+  | {
+      status: 'needsSignup';
+      dataToken: string;
+      nickname: string;
+      email: string;
+    };
 
 /* ------------------------------ Component props ----------------------------- */
 
@@ -52,6 +83,7 @@ export type SignUpSchema = z.infer<typeof signUpSchema>;
 export type SignInSchema = z.infer<typeof signInSchema>;
 export type GoogleDataSchema = z.infer<typeof googleDataSchema>;
 export type GoogleSignUpSchema = z.infer<typeof googleSignUpSchema>;
+export type OAuthTokenSchema = z.infer<typeof oauthTokenSchema>;
 
 /* -------------------------------- Error keys ------------------------------- */
 

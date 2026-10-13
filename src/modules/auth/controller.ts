@@ -9,24 +9,33 @@ import {
 } from '@/core/lib/session-config';
 import { authMiddleware } from './middleware';
 import { googleSignUpSchema } from './schemas/google-data';
+import { oauthTokenSchema } from './schemas/oauth-token';
 import { signInSchema } from './schemas/signin';
 import { signUpSchema } from './schemas/signup';
 import {
   createGoogleAuthorization,
   createSession,
   createUser,
-  decodeGoogleSignupToken,
-  encodeGoogleSignupToken,
+  decodeOAuthSignupToken,
+  deleteUser,
+  encodeOAuthSignupToken,
   generateSessionToken,
-  getUserByGoogleId,
   getUserByNickname,
+  getUserByProviderId,
   google,
   hashPassword,
   invalidateSession,
   toUserDTO,
+  verifyOAuthIdToken,
   verifyPassword,
 } from './service';
-import type { AuthPayload, User } from './types';
+import type {
+  AuthPayload,
+  OAuthProvider,
+  OAuthSignupPayload,
+  OAuthTokenResult,
+  User,
+} from './types';
 
 const OAUTH_COOKIE_OPTIONS = {
   path: '/',
@@ -68,6 +77,73 @@ async function openSession(user: User): Promise<AuthPayload> {
     expiresAt: session.expiresAt.toISOString(),
   };
 }
+
+/**
+ * The step every OAuth flow shares: a known account gets a session, an unknown
+ * one the encrypted token that finishes its sign up.
+ */
+async function resolveOAuthAccount(
+  claims: OAuthSignupPayload,
+): Promise<OAuthTokenResult> {
+  const existingUser = await getUserByProviderId(
+    claims.provider,
+    claims.providerId,
+  );
+
+  if (existingUser) {
+    return { status: 'signedIn', ...(await openSession(existingUser)) };
+  }
+
+  return {
+    status: 'needsSignup',
+    dataToken: await encodeOAuthSignupToken(claims),
+    nickname: claims.nickname,
+    email: claims.email,
+  };
+}
+
+/** Native sign in: verifies the ID token a Google / Apple SDK handed the app. */
+const oauthTokenHandler = (provider: OAuthProvider) => async (c: Context) => {
+  const parsed = await parseJsonBody(c, oauthTokenSchema);
+
+  if (!parsed.success) {
+    return parsed.response;
+  }
+
+  const identity = await verifyOAuthIdToken(provider, parsed.data.idToken);
+
+  if (!identity) {
+    return apiError(c, 401, 'invalidToken', 'The ID token is not valid');
+  }
+
+  try {
+    const existingUser = await getUserByProviderId(
+      provider,
+      identity.providerId,
+    );
+
+    if (!existingUser && !identity.email) {
+      return apiError(
+        c,
+        400,
+        'missingEmail',
+        'The account has no verified email',
+      );
+    }
+
+    return c.json(
+      await resolveOAuthAccount({
+        provider,
+        providerId: identity.providerId,
+        nickname: parsed.data.nickname ?? identity.name ?? '',
+        email: identity.email ?? '',
+      }),
+    );
+  } catch (e) {
+    console.error(e);
+    return unknownError(c, 'The account could not be processed');
+  }
+};
 
 const authRouter = new Hono();
 
@@ -141,6 +217,17 @@ authRouter.post('/signout', authMiddleware, async c => {
 
 authRouter.get('/me', authMiddleware, c => c.json(c.get('user')));
 
+/** Deletes the signed in account and everything it owns. */
+authRouter.delete('/me', authMiddleware, async c => {
+  try {
+    await deleteUser(c.get('user').id);
+    return c.json({ success: true });
+  } catch (e) {
+    console.error(e);
+    return unknownError(c, 'The account could not be deleted');
+  }
+});
+
 /* -------------------------------------------------------------------------- */
 /*                                Google OAuth                                */
 /* -------------------------------------------------------------------------- */
@@ -186,36 +273,51 @@ authRouter.get('/google/callback', async c => {
   };
 
   try {
-    const existingUser = await getUserByGoogleId(claims.sub);
+    const result = await resolveOAuthAccount({
+      provider: 'google',
+      providerId: claims.sub,
+      nickname: claims.name,
+      email: claims.email,
+    });
 
-    if (existingUser) {
-      const { token, expiresAt } = await openSession(existingUser);
-
+    if (result.status === 'signedIn') {
       setCookie(
         c,
         SESSION_COOKIE,
-        token,
-        sessionCookieOptions(new Date(expiresAt)),
+        result.token,
+        sessionCookieOptions(new Date(result.expiresAt)),
       );
 
       return c.redirect('/');
     }
 
-    const dataToken = await encodeGoogleSignupToken({
-      nickname: claims.name,
-      googleId: claims.sub,
-      email: claims.email,
-    });
-
-    return c.redirect(`/endgoogle?data=${dataToken}`);
+    return c.redirect(`/endgoogle?data=${result.dataToken}`);
   } catch (e) {
     console.error(e);
     return unknownError(c, 'The Google account could not be processed');
   }
 });
 
-/** Finishes a Google sign up with the data the user completed by hand. */
-authRouter.post('/google/signup', async c => {
+authRouter.post('/google/token', oauthTokenHandler('google'));
+authRouter.post('/apple/token', oauthTokenHandler('apple'));
+
+/** The claims inside a sign up token, to prefill the form that finishes it. */
+authRouter.get('/oauth/signup-data', async c => {
+  const claims = await decodeOAuthSignupToken(c.req.query('token') ?? '');
+
+  if (!claims) {
+    return apiError(c, 400, 'invalidToken', 'The signup token is not valid');
+  }
+
+  return c.json({
+    provider: claims.provider,
+    nickname: claims.nickname,
+    email: claims.email,
+  });
+});
+
+/** Finishes an OAuth sign up with the data the user completed by hand. */
+async function oauthSignupHandler(c: Context) {
   const parsed = await parseJsonBody(c, googleSignUpSchema);
 
   if (!parsed.success) {
@@ -224,7 +326,7 @@ authRouter.post('/google/signup', async c => {
 
   const { dataToken, nickname, country } = parsed.data;
 
-  const claims = await decodeGoogleSignupToken(dataToken);
+  const claims = await decodeOAuthSignupToken(dataToken);
 
   if (!claims) {
     return apiError(c, 400, 'invalidToken', 'The signup token is not valid');
@@ -234,7 +336,8 @@ authRouter.post('/google/signup', async c => {
     const newUser = await createUser({
       nickname: nickname.length > 0 ? nickname : claims.nickname,
       email: claims.email,
-      googleId: claims.googleId,
+      googleId: claims.provider === 'google' ? claims.providerId : null,
+      appleId: claims.provider === 'apple' ? claims.providerId : null,
       country,
       password: null,
     });
@@ -252,6 +355,10 @@ authRouter.post('/google/signup', async c => {
       apiError(c, 500, 'unknownSu', 'The user could not be created')
     );
   }
-});
+}
+
+authRouter.post('/oauth/signup', oauthSignupHandler);
+/** Kept for the web flow and older clients. */
+authRouter.post('/google/signup', oauthSignupHandler);
 
 export default authRouter;

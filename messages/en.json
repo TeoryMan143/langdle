@@ -372,7 +372,15 @@
     "newNative": "New native language set",
     "newFluent": "New fluent language added",
     "yes": "yes",
-    "no": "no"
+    "no": "no",
+    "deleteAccount": "Delete account",
+    "deleteAccountTitle": "Delete your account?",
+    "deleteAccountDescription": "Your profile, game history, permissions and change requests will be removed. This cannot be undone.",
+    "deleteAccountConfirm": "Delete forever",
+    "cancel": "Cancel",
+    "deletingAccount": "Deleting account",
+    "successDeleteAccount": "Account deleted",
+    "errorDeleteAccount": "The account could not be deleted"
   },
   "ChangeRequests": {
     "myTitle": "My change requests",

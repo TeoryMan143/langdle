@@ -13,11 +13,18 @@ import {
   setStringToKey,
 } from '@/core/database/redis/key-getters';
 import { db } from '@/core/database/relational/config';
-import { sessionTable, userTable } from '@/core/database/relational/tables';
+import {
+  changeRequestTable,
+  langPermissionTable,
+  sessionTable,
+  userTable,
+} from '@/core/database/relational/tables';
 import { SESSION_DURATION_MS } from '@/core/lib/session-config';
 import type {
   CachedSession,
-  GoogleSignupPayload,
+  OAuthIdentity,
+  OAuthProvider,
+  OAuthSignupPayload,
   Session,
   SessionValidationResult,
   User,
@@ -200,6 +207,7 @@ export async function createUser(values: {
   country: string;
   password?: string | null;
   googleId?: string | null;
+  appleId?: string | null;
 }): Promise<User | undefined> {
   const [newUser] = await db.insert(userTable).values(values).returning();
   return newUser;
@@ -223,6 +231,40 @@ export async function getUserByGoogleId(googleId: string) {
     .limit(1);
 
   return user;
+}
+
+export async function getUserByAppleId(appleId: string) {
+  const [user] = await db
+    .select()
+    .from(userTable)
+    .where(eq(userTable.appleId, appleId))
+    .limit(1);
+
+  return user;
+}
+
+export function getUserByProviderId(provider: OAuthProvider, id: string) {
+  return provider === 'google' ? getUserByGoogleId(id) : getUserByAppleId(id);
+}
+
+/**
+ * Deletes the account and everything it owns. Sessions and game history go
+ * with the row (cascade); permissions and change requests are removed by hand
+ * and reviews the user made lose their reviewer.
+ */
+export async function deleteUser(userId: string): Promise<void> {
+  await invalidateAllSessions(userId);
+  await db.batch([
+    db
+      .update(changeRequestTable)
+      .set({ reviewedBy: null })
+      .where(eq(changeRequestTable.reviewedBy, userId)),
+    db.delete(changeRequestTable).where(eq(changeRequestTable.userId, userId)),
+    db
+      .delete(langPermissionTable)
+      .where(eq(langPermissionTable.userId, userId)),
+    db.delete(userTable).where(eq(userTable.id, userId)),
+  ]);
 }
 
 export function toUserDTO(user: User) {
@@ -259,28 +301,117 @@ function getJwtSecret() {
 }
 
 /**
- * Google accounts missing from our database are redirected to a page that asks
- * for the remaining data. The claims travel in this encrypted token so they
- * cannot be tampered with by the client.
+ * OAuth accounts missing from our database are sent to a step that asks for
+ * the remaining data. The claims travel in this encrypted token so they cannot
+ * be tampered with by the client.
  */
-export function encodeGoogleSignupToken(payload: GoogleSignupPayload) {
+export function encodeOAuthSignupToken(payload: OAuthSignupPayload) {
   return new jose.EncryptJWT({ ...payload })
     .setExpirationTime('30m')
     .setProtectedHeader({ alg: 'dir', enc: 'A256CBC-HS512' })
     .encrypt(getJwtSecret());
 }
 
-export async function decodeGoogleSignupToken(token: string) {
+export async function decodeOAuthSignupToken(
+  token: string,
+): Promise<OAuthSignupPayload | null> {
   try {
-    const { payload } = await jose.jwtDecrypt<GoogleSignupPayload>(
+    const { payload } = await jose.jwtDecrypt<OAuthSignupPayload>(
       token,
       getJwtSecret(),
     );
 
+    if (
+      (payload.provider !== 'google' && payload.provider !== 'apple') ||
+      !payload.providerId ||
+      !payload.email
+    ) {
+      return null;
+    }
+
     return {
-      nickname: payload.nickname,
-      googleId: payload.googleId,
+      provider: payload.provider,
+      providerId: payload.providerId,
+      nickname: payload.nickname ?? '',
       email: payload.email,
+    };
+  } catch (_) {
+    return null;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                         Native ID tokens (mobile)                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Key sets the ID tokens are verified against. A mutable object so tests can
+ * swap them for local keys.
+ */
+export const oauthKeySets: Record<OAuthProvider, jose.JWTVerifyGetKey> = {
+  google: jose.createRemoteJWKSet(
+    new URL('https://www.googleapis.com/oauth2/v3/certs'),
+  ),
+  apple: jose.createRemoteJWKSet(
+    new URL('https://appleid.apple.com/auth/keys'),
+  ),
+};
+
+const OAUTH_ISSUERS: Record<OAuthProvider, string[]> = {
+  google: ['https://accounts.google.com', 'accounts.google.com'],
+  apple: ['https://appleid.apple.com'],
+};
+
+const splitIds = (value?: string) =>
+  (value ?? '')
+    .split(',')
+    .map(id => id.trim())
+    .filter(Boolean);
+
+function oauthAudiences(provider: OAuthProvider) {
+  return provider === 'google'
+    ? [
+        process.env.GOOGLE_CLIENT_ID,
+        ...splitIds(process.env.GOOGLE_MOBILE_CLIENT_IDS),
+      ]
+    : splitIds(process.env.APPLE_CLIENT_IDS);
+}
+
+/**
+ * Verifies an ID token issued to one of our apps by the native Google / Apple
+ * SDKs. `null` for anything that is not a valid token addressed to us.
+ */
+export async function verifyOAuthIdToken(
+  provider: OAuthProvider,
+  idToken: string,
+): Promise<OAuthIdentity | null> {
+  const audience = oauthAudiences(provider);
+
+  if (audience.length === 0) {
+    return null;
+  }
+
+  try {
+    const { payload } = await jose.jwtVerify<{
+      email?: string;
+      email_verified?: boolean | string;
+      name?: string;
+    }>(idToken, oauthKeySets[provider], {
+      issuer: OAUTH_ISSUERS[provider],
+      audience,
+    });
+
+    if (!payload.sub) {
+      return null;
+    }
+
+    const emailVerified =
+      payload.email_verified === true || payload.email_verified === 'true';
+
+    return {
+      providerId: payload.sub,
+      email: payload.email && emailVerified ? payload.email : undefined,
+      name: payload.name,
     };
   } catch (_) {
     return null;

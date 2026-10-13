@@ -372,7 +372,15 @@
     "newNative": "Idioma nativo salvo",
     "newFluent": "Novo idioma fluente salvo",
     "yes": "sim",
-    "no": "não"
+    "no": "não",
+    "deleteAccount": "Excluir conta",
+    "deleteAccountTitle": "Excluir sua conta?",
+    "deleteAccountDescription": "Seu perfil, histórico de jogos, permissões e solicitações de alteração serão removidos. Isso não pode ser desfeito.",
+    "deleteAccountConfirm": "Excluir para sempre",
+    "cancel": "Cancelar",
+    "deletingAccount": "Excluindo conta",
+    "successDeleteAccount": "Conta excluída",
+    "errorDeleteAccount": "Não foi possível excluir a conta"
   },
   "ChangeRequests": {
     "myTitle": "Meus pedidos de alteração",

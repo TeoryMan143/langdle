@@ -14,6 +14,7 @@ import { validateSessionToken } from './service';
 import type {
   AuthPayload,
   GoogleSignUpSchema,
+  OAuthSignupData,
   SessionValidationResult,
   SignInSchema,
   SignUpSchema,
@@ -64,13 +65,23 @@ export async function signInUser(
   return startSession(res.result);
 }
 
+export async function getOAuthSignupData(
+  token: string,
+): Promise<ActionResult<OAuthSignupData>> {
+  const res = await apiRequest<OAuthSignupData>('/auth/oauth/signup-data', {
+    searchParams: { token },
+  });
+
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
+}
+
 export async function createGoogleAccount(
   data: GoogleSignUpSchema,
 ): Promise<AuthActionResult<GoogleSignUpSchema>> {
   const res = await apiRequest<
     AuthPayload,
     typeToFlattenedError<GoogleSignUpSchema>
-  >('/auth/google/signup', { method: 'post', body: data });
+  >('/auth/oauth/signup', { method: 'post', body: data });
 
   if (!res.success) {
     return actionError(res.error.errors ?? res.error.key);
@@ -89,6 +100,21 @@ export async function signOutUser(): Promise<ActionResult<undefined>> {
     return actionError(
       res.error.key === 'notSignedIn' ? 'noSession' : res.error.key,
     );
+  }
+
+  await clearSessionCookie();
+
+  return actionSuccess(undefined);
+}
+
+export async function deleteAccount(): Promise<ActionResult<undefined>> {
+  const res = await apiRequest<{ success: boolean }>('/auth/me', {
+    method: 'delete',
+    auth: true,
+  });
+
+  if (!res.success) {
+    return actionError(res.error.key);
   }
 
   await clearSessionCookie();
