@@ -7,33 +7,49 @@ import 'package:provider/provider.dart';
 import 'core/api/api_client.dart';
 import 'core/i18n/translations.dart';
 import 'core/theme/app_theme.dart';
+import 'modules/auth/auth_controller.dart';
+import 'modules/auth/auth_repository.dart';
 import 'modules/lang_data/lang_repository.dart';
 import 'modules/lang_guess/guess_repository.dart';
+import 'modules/meta/meta_repository.dart';
+import 'modules/user_profile/profile_repository.dart';
 import 'router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  final api = ApiClient();
+  final auth = AuthController(
+    api: api,
+    repository: AuthRepository(api),
+    store: SessionStore(),
+  );
   final locale = LocaleController();
-  await locale.load();
+  await Future.wait([locale.load(), auth.restore()]);
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
-  runApp(LangdleApp(locale: locale));
+  runApp(LangdleApp(api: api, locale: locale, auth: auth));
 }
 
 class LangdleApp extends StatefulWidget {
-  const LangdleApp({super.key, required this.locale});
+  const LangdleApp({
+    super.key,
+    required this.api,
+    required this.locale,
+    required this.auth,
+  });
 
+  final ApiClient api;
   final LocaleController locale;
+  final AuthController auth;
 
   @override
   State<LangdleApp> createState() => _LangdleAppState();
 }
 
 class _LangdleAppState extends State<LangdleApp> {
-  final ApiClient _api = ApiClient();
-  final GoRouter _router = buildRouter();
+  late final GoRouter _router = buildRouter(widget.auth);
 
   @override
   void dispose() {
@@ -43,12 +59,17 @@ class _LangdleAppState extends State<LangdleApp> {
 
   @override
   Widget build(BuildContext context) {
+    final api = widget.api;
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: widget.locale),
-        Provider.value(value: _api),
-        Provider(create: (_) => LangRepository(_api)),
-        Provider(create: (_) => GuessRepository(_api)),
+        ChangeNotifierProvider.value(value: widget.auth),
+        Provider.value(value: api),
+        Provider(create: (_) => LangRepository(api)),
+        Provider(create: (_) => GuessRepository(api)),
+        Provider(create: (_) => MetaRepository(api)),
+        Provider(create: (_) => ProfileRepository(api)),
         Provider(create: (_) => DailySaveStore()),
       ],
       child: Consumer<LocaleController>(

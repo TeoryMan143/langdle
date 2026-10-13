@@ -43,6 +43,18 @@ ThemeData buildAppTheme() {
       focusedBorder: outline.copyWith(
         borderSide: const BorderSide(color: NeoColors.border, width: 3),
       ),
+      // The web marks an invalid field with a red ring.
+      errorBorder: outline.copyWith(
+        borderSide: const BorderSide(
+          color: NeoColors.incorrect,
+          width: Neo.borderWidth,
+        ),
+      ),
+      focusedErrorBorder: outline.copyWith(
+        borderSide: const BorderSide(color: NeoColors.incorrect, width: 3),
+      ),
+      errorStyle: const TextStyle(color: NeoColors.incorrect, fontSize: 13),
+      errorMaxLines: 3,
       hintStyle: const TextStyle(color: Color(0x99000000)),
     ),
     textSelectionTheme: const TextSelectionThemeData(

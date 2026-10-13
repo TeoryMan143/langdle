@@ -255,6 +255,8 @@
     "password": "Senha",
     "email": "E-mail",
     "confirmPassword": "Confirmar senha",
+    "country": "País",
+    "searchCountry": "Pesquise um país",
     "noAccount": "Não tem uma conta?",
     "alreadyHaveAccount": "Já tem uma conta?",
     "createAccount": "Criar conta",
@@ -265,6 +267,7 @@
     "signedIn": "Login realizado com sucesso",
     "signingUp": "Criando sua conta",
     "signingIn": "Entrando",
+    "almostDone": "Estamos quase lá",
     "errors": {
       "unknownSu": "Erro desconhecido, não foi possível criar a conta",
       "unknownSi": "Erro desconhecido, não foi possível entrar",
@@ -277,7 +280,8 @@
       "unknown": "Erro desconhecido",
       "notSignedIn": "Você precisa entrar",
       "invalidData": "Erro de validação de dados",
-      "invalidToken": "O link de cadastro não é mais válido"
+      "invalidToken": "O link de cadastro não é mais válido",
+      "missingEmail": "Sua conta não tem um e-mail verificado"
     }
   },
   "AddPermissionPage": {
@@ -366,11 +370,13 @@
     "target": "Objetivo",
     "guessed": "Adivinhado",
     "guesses": "Tentativas",
+    "noGames": "Nenhuma partida ainda",
     "updating": "Atualizando",
     "selectLang": "Selecione um idioma",
     "unknownError": "Erro do servidor",
     "newNative": "Idioma nativo salvo",
     "newFluent": "Novo idioma fluente salvo",
+    "fluentRemoved": "Idioma fluente removido",
     "yes": "sim",
     "no": "não",
     "deleteAccount": "Excluir conta",
@@ -494,6 +500,15 @@
     "retry": "Tentar novamente",
     "connectionError": "Não foi possível conectar ao Langdle. Verifique sua conexão e tente novamente.",
     "close": "Fechar",
-    "language": "Idioma"
+    "language": "Idioma",
+    "or": "ou",
+    "continueWithGoogle": "Continuar com o Google",
+    "continueWithApple": "Continuar com a Apple",
+    "oauthFailed": "Não foi possível entrar com essa conta. Tente novamente.",
+    "showPassword": "Mostrar senha",
+    "hidePassword": "Ocultar senha",
+    "finishSignup": "Escolha um nome de usuário e seu país para terminar de criar sua conta.",
+    "edit": "Editar",
+    "remove": "Remover"
   }
 }

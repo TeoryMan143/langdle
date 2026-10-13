@@ -893,6 +893,12 @@
         "confirmPassword": {
           "type": "string"
         },
+        "country": {
+          "type": "string"
+        },
+        "searchCountry": {
+          "type": "string"
+        },
         "noAccount": {
           "type": "string"
         },
@@ -923,6 +929,9 @@
         "signingIn": {
           "type": "string"
         },
+        "almostDone": {
+          "type": "string"
+        },
         "errors": {
           "type": "object",
           "properties": {
@@ -949,6 +958,21 @@
             },
             "dataValidation": {
               "type": "string"
+            },
+            "missingEmail": {
+              "type": "string"
+            },
+            "unknown": {
+              "type": "string"
+            },
+            "notSignedIn": {
+              "type": "string"
+            },
+            "invalidData": {
+              "type": "string"
+            },
+            "invalidToken": {
+              "type": "string"
             }
           },
           "required": [
@@ -959,7 +983,12 @@
             "emailAlreadyExists",
             "failedCreateUser",
             "noSession",
-            "dataValidation"
+            "dataValidation",
+            "missingEmail",
+            "unknown",
+            "notSignedIn",
+            "invalidData",
+            "invalidToken"
           ]
         }
       },
@@ -970,6 +999,8 @@
         "password",
         "email",
         "confirmPassword",
+        "country",
+        "searchCountry",
         "noAccount",
         "alreadyHaveAccount",
         "createAccount",
@@ -980,6 +1011,7 @@
         "signedIn",
         "signingUp",
         "signingIn",
+        "almostDone",
         "errors"
       ]
     },
@@ -1190,6 +1222,9 @@
         "guesses": {
           "type": "string"
         },
+        "noGames": {
+          "type": "string"
+        },
         "updating": {
           "type": "string"
         },
@@ -1203,6 +1238,9 @@
           "type": "string"
         },
         "newFluent": {
+          "type": "string"
+        },
+        "fluentRemoved": {
           "type": "string"
         },
         "yes": {
@@ -1251,11 +1289,13 @@
         "target",
         "guessed",
         "guesses",
+        "noGames",
         "updating",
         "selectLang",
         "unknownError",
         "newNative",
         "newFluent",
+        "fluentRemoved",
         "yes",
         "no",
         "deleteAccount",
@@ -1698,6 +1738,33 @@
         },
         "language": {
           "type": "string"
+        },
+        "or": {
+          "type": "string"
+        },
+        "continueWithGoogle": {
+          "type": "string"
+        },
+        "continueWithApple": {
+          "type": "string"
+        },
+        "oauthFailed": {
+          "type": "string"
+        },
+        "showPassword": {
+          "type": "string"
+        },
+        "hidePassword": {
+          "type": "string"
+        },
+        "finishSignup": {
+          "type": "string"
+        },
+        "edit": {
+          "type": "string"
+        },
+        "remove": {
+          "type": "string"
         }
       },
       "required": [
@@ -1710,7 +1777,16 @@
         "retry",
         "connectionError",
         "close",
-        "language"
+        "language",
+        "or",
+        "continueWithGoogle",
+        "continueWithApple",
+        "oauthFailed",
+        "showPassword",
+        "hidePassword",
+        "finishSignup",
+        "edit",
+        "remove"
       ]
     }
   },

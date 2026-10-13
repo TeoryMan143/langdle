@@ -255,6 +255,8 @@
     "password": "Contraseña",
     "email": "Correo electrónico",
     "confirmPassword": "Confirmar contraseña",
+    "country": "País",
+    "searchCountry": "Busca un país",
     "noAccount": "¿No tienes una cuenta?",
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
     "createAccount": "Crear cuenta",
@@ -265,6 +267,7 @@
     "signedIn": "Inicio de sesión exitoso",
     "signingUp": "Creando tu cuenta",
     "signingIn": "Iniciando sesión",
+    "almostDone": "Ya casi terminamos",
     "errors": {
       "unknownSu": "Error desconocido, no se pudo crear la cuenta",
       "unknownSi": "Error desconocido, no se pudo iniciar sesión",
@@ -277,7 +280,8 @@
       "unknown": "Error desconocido",
       "notSignedIn": "Debes iniciar sesión",
       "invalidData": "Error de validación de datos",
-      "invalidToken": "El enlace de registro ya no es válido"
+      "invalidToken": "El enlace de registro ya no es válido",
+      "missingEmail": "Tu cuenta no tiene un correo verificado"
     }
   },
   "AddPermissionPage": {
@@ -366,11 +370,13 @@
     "target": "Objetivo",
     "guessed": "Adivinado",
     "guesses": "Intentos",
+    "noGames": "Aún no hay partidas",
     "updating": "Actualizando",
     "selectLang": "Selecciona un idioma",
     "unknownError": "Error del servidor",
     "newNative": "Idioma nativo guardado",
     "newFluent": "Nuevo idioma fluido guardado",
+    "fluentRemoved": "Idioma fluido eliminado",
     "yes": "sí",
     "no": "no",
     "deleteAccount": "Eliminar cuenta",
@@ -494,6 +500,15 @@
     "retry": "Reintentar",
     "connectionError": "No pudimos conectar con Langdle. Revisa tu conexión e inténtalo de nuevo.",
     "close": "Cerrar",
-    "language": "Idioma"
+    "language": "Idioma",
+    "or": "o",
+    "continueWithGoogle": "Continuar con Google",
+    "continueWithApple": "Continuar con Apple",
+    "oauthFailed": "No se pudo iniciar sesión con esa cuenta. Inténtalo de nuevo.",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "finishSignup": "Elige un nombre de usuario y tu país para terminar de crear tu cuenta.",
+    "edit": "Editar",
+    "remove": "Quitar"
   }
 }

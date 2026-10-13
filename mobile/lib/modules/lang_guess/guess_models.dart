@@ -1,5 +1,7 @@
 import '../../core/models/language.dart';
 
+enum GameType { daily, random }
+
 List<String> _strings(Object? value) =>
     value is List ? value.whereType<String>().toList() : const [];
 
@@ -70,4 +72,47 @@ class Missed extends GuessResult {
   const Missed(this.matching);
 
   final LanguageMatching matching;
+}
+
+/// A finished game of the signed in user's history (`/api/guess/history`).
+class GameRecord {
+  const GameRecord({
+    required this.type,
+    required this.targetLang,
+    required this.guesses,
+    required this.guessed,
+    this.id,
+    this.date,
+  });
+
+  factory GameRecord.fromJson(Map<String, dynamic> json) => GameRecord(
+    id: json['id'] as String?,
+    date: json['date'] as String?,
+    type: json['type'] == 'random' ? GameType.random : GameType.daily,
+    targetLang: json['targetLang'] as String,
+    guesses: (json['guesses'] as num).toInt(),
+    guessed: json['guessed'] as bool,
+  );
+
+  /// Set by the API once stored.
+  final String? id;
+
+  /// The day the API stored it (`yyyy-mm-dd`).
+  final String? date;
+  final GameType type;
+
+  /// Id of the language to guess.
+  final String targetLang;
+
+  /// Attempts used, the right one included.
+  final int guesses;
+  final bool guessed;
+
+  /// The `PUT /api/guess/history` body.
+  Map<String, dynamic> toRequest() => {
+    'type': type.name,
+    'targetLang': targetLang,
+    'guesses': guesses,
+    'guessed': guessed,
+  };
 }

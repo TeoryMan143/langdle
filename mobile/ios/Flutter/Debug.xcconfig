@@ -1,1 +1,8 @@
 #include "Generated.xcconfig"
+
+// The iOS OAuth client id of Google sign in, reversed
+// (com.googleusercontent.apps.<id>): the URL scheme Google returns through.
+GOOGLE_REVERSED_CLIENT_ID=
+
+// The web host whose /addpermission links open the app (Universal Links).
+APP_LINK_HOST=localhost

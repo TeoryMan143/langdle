@@ -15,7 +15,9 @@ for it.
 | State | `provider` + `ChangeNotifier` |
 | Navigation | `go_router` (`StatefulShellRoute` for the tab bar) |
 | HTTP | `http`, wrapped by `core/api/api_client.dart` |
-| Local storage | `shared_preferences` (per-device conveniences only) |
+| Local storage | `shared_preferences` (per-device conveniences only), `flutter_secure_storage` (the session) |
+| Sign in | `google_sign_in` and `sign_in_with_apple`: they only produce the ID token the API verifies |
+| Icons | Material icons, `flutter_svg` for the few web SVGs (the Google logo) |
 | Fonts | `google_fonts`: Dongle (display), Noto Sans (body), Roboto Mono (eyebrows) |
 | i18n | the web's `messages/*.json`, bundled as assets, read by `LocaleController`; `flutter_localizations` for Material's own strings |
 | Lint | `flutter_lints` (`analysis_options.yaml`), `dart format` |
@@ -38,11 +40,13 @@ mobile/
       i18n/          LocaleController, context.t()
       theme/         tokens.dart (the design tokens), app_theme.dart
       ui/            the kit: NeoButton, NeoCard, NeoPill, Eyebrow, showNeoDialog,
-                     LangFlag, FeatureResult, FeatureStatusChip, NeoLoading, NeoError
+                     showNeoConfirm, LangFlag, FeatureResult, FeatureStatusChip,
+                     NeoLoading, NeoError
       shell/         header, locale picker, bottom tab bar
-      models/        types shared across modules (Language)
+      models/        types shared across modules (Language, Country)
     modules/<name>/  one feature, named after the web module in snake_case
-                     (lang_guess, lang_data, how_to_play; later auth, user_profile)
+                     (auth, user_profile, lang_guess, lang_data, meta,
+                     how_to_play)
   assets/i18n, assets/flags   generated: copied from the web, never edited here
   tool/sync_shared.dart       the script that copies them
   test/                       flutter test
@@ -114,6 +118,100 @@ A widget used by more than one module moves to `core/ui/`, a model to
     UTC, and the matching order is correct, partial, then incorrect. Change both
     clients together.
 
+## Auth
+
+The `auth` module mirrors the web's: `/signin`, `/signup`, `/endgoogle`
+(finishing a Google **or** Apple sign up) and `/account`, all in the account
+tab.
+
+- **`AuthController`** is app-wide (created in `main.dart`, like
+  `LocaleController`) and is the only owner of the session. It implements
+  `ApiSession`, so `ApiClient` signs every request with
+  `Authorization: Bearer`, saves the renewed expiry of each
+  `X-Session-Expires-At` answer, and closes the session when a request that
+  carried it gets `notSignedIn`. Other modules never touch the token: they call
+  their endpoints and the client signs them.
+- **The session lives in the keychain** (`SessionStore`, rule 9). At launch
+  `restore()` opens it if it has not expired and refreshes the user from
+  `GET /auth/me` in the background, so an offline launch stays signed in.
+- **The router guards the tab** through `signedInChanges`: `/account` without a
+  session goes to `/signin`, the sign in screens with one go to `/account`.
+  Screens do not navigate after signing in or out; the guard does.
+- **Google and Apple only prove identity.** `NativeOAuth` gets an ID token from
+  the platform SDK; `POST /auth/{google,apple}/token` verifies it and answers a
+  session or a `needsSignup` data token, which `/endgoogle` finishes with
+  `POST /auth/oauth/signup`. Cancelling the provider sheet is not an error.
+- **Validation is the API's.** The forms send what was typed and show the
+  `invalidData` field messages (`ApiException.fieldErrors`) under each field.
+- **The account screen composes three modules**, like the web page: the auth
+  data, `user_profile`'s `ProfileLanguages` (native and fluent languages; each
+  edit hands the user the API answered to `AuthController.updateUser`) and
+  `lang_guess`'s `GameHistory`. Their controllers are created by the
+  `/account` route.
+- **Finished games go to the history** (`PUT /guess/history`) when signed in,
+  from `GameController`, with the web's counts: the misses plus the right
+  guess. `GuessRepository.historyChanges` reloads an open history.
+- **Permission links** (`/addpermission?token=`, also with a locale prefix)
+  open `AddPermissionScreen` in the account tab, which claims the token. The
+  guard is `routeRedirect` in `router.dart`: signed out, the link goes to
+  `/signup?redtk=<token>`; the token rides along through `/signin` and
+  `/endgoogle` (`withRedirectToken`) and the guard returns to the link once the
+  session opens, like the web's `redtk`.
+
+### Provider setup
+
+Google needs OAuth clients in the Google Cloud project of `GOOGLE_CLIENT_ID`:
+an **Android** client (package `teo.taberna.langdle_app` + the SHA-1 of each
+signing key, debug included) and an **iOS** client (bundle
+`teo.taberna.langdleApp`). On Android the ID token is addressed to the web
+client (`GOOGLE_CLIENT_ID`); on iOS it can be addressed to the iOS client, so
+list both mobile client ids in the API's `GOOGLE_MOBILE_CLIENT_IDS`. Then build
+with:
+
+```bash
+flutter run   --dart-define=GOOGLE_SERVER_CLIENT_ID=<web client id>   --dart-define=GOOGLE_IOS_CLIENT_ID=<iOS client id>
+```
+
+and set `GOOGLE_REVERSED_CLIENT_ID` (the iOS client id reversed,
+`com.googleusercontent.apps.<id>`) in `ios/Flutter/Debug.xcconfig` and
+`Release.xcconfig`: it is the URL scheme Google returns through. Without
+`GOOGLE_SERVER_CLIENT_ID` (or, on iOS, `GOOGLE_IOS_CLIENT_ID`) the Google
+button is hidden.
+
+Apple is offered on iOS only: on Android it needs a web callback the API does
+not have. The App ID needs the *Sign in with Apple* capability (the
+`Runner.entitlements` file already requests it, which needs a paid developer
+team to sign), and the API's `APPLE_CLIENT_IDS` must contain the bundle id.
+
+### Release signing
+
+Android release builds are signed with the key described in
+`android/key.properties`, which git ignores along with every `.jks`:
+
+```properties
+# storeFile is relative to android/, whose .gitignore covers *.jks
+storeFile=langdle-release.jks
+storePassword=…
+keyPassword=…
+keyAlias=langdle
+```
+
+Without that file they fall back to the debug key. The release key's SHA-1
+needs its own Android OAuth client, and its SHA-256 goes in
+`public/.well-known/assetlinks.json`. Losing the keystore or its passwords
+means no more updates to an app already signed with it: keep a backup outside
+the repo.
+
+### App links
+
+The web host whose links open the app is a build setting, `localhost` until
+set: the `langdle.appLinkHost` Gradle property on Android
+(`android/gradle.properties` or `-Plangdle.appLinkHost=`) and `APP_LINK_HOST`
+in `ios/Flutter/Debug.xcconfig` and `Release.xcconfig` (an Associated Domains
+entitlement, also a paid team capability). That host must serve
+`public/.well-known/` with the real Team ID and release SHA-256 in place of
+their placeholders, or the OS will not verify the links.
+
 ## Shared assets
 
 `messages/*.json` and `public/flags/*.webp` are copied into
@@ -144,6 +242,7 @@ cd mobile
 flutter pub get
 flutter run                                          # against pnpm dev
 flutter run --dart-define=API_BASE_URL=https://…     # against another API
+                                                     # + Google ids, see Auth
 flutter analyze && flutter test
 ```
 
@@ -164,5 +263,7 @@ Plain `http` is allowed only for local development: Android through
 `flutter test` runs `mobile/test/`: pure logic such as models, JSON parsing,
 the search ranking and the daily save, with no network. The API behaviour is
 already covered by the web's `pnpm test:api`. The app's tests only check that
-it reads the API's answers correctly. When an endpoint's response shape
+it reads the API's answers correctly, and that the client keeps the session
+(`test/auth_test.dart` drives `AuthController` through a mocked `http`
+client). When an endpoint's response shape
 changes, update the model's `fromJson` and its test in the same change.

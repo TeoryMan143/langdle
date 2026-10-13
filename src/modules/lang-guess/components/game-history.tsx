@@ -5,21 +5,21 @@ import { getGameHistory } from '../actions';
 
 async function GameHistory() {
   const historyRes = await getGameHistory();
+  const t = await getTranslations('AccountPage');
 
   if (!historyRes.success) {
-    return <p className='text-red'>Internal error</p>;
+    return <p className='text-red'>{t('unknownError')}</p>;
   }
 
   const history = historyRes.result;
 
-  const t = await getTranslations('AccountPage');
   const ex = await getTranslations('Exonyms');
 
   return (
     <div className='p-5 bg-background border-2 rounded-base space-y-3 flex flex-col flex-1 max-h-[50dvh] min-h-0'>
-      <h4 className='text-2xl font-bold text-center'>Game History</h4>
+      <h4 className='text-2xl font-bold text-center'>{t('gameHistory')}</h4>
       <div className='overflow-y-auto space-y-3 flex-1 min-h-0'>
-        {history.length === 0 && <p>No data</p>}
+        {history.length === 0 && <p>{t('noGames')}</p>}
         {history.map(
           async ({ id, date, guessed, guesses, targetLang, type }) => {
             const langRes = await getLanguage(targetLang);

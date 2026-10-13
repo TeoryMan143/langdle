@@ -38,6 +38,45 @@ class LangRepository {
   Future<Language> random() async =>
       Language.fromJson(await _api.get('/lang/random') as Map<String, dynamic>);
 
+  Future<Language> one(String id) async => Language.fromJson(
+    await _api.get('/lang/${Uri.encodeComponent(id)}') as Map<String, dynamic>,
+  );
+
+  /// The languages with these ids, playable or not. Ids no longer in the
+  /// catalogue are left out (the API answers holes, or `404` for none).
+  Future<List<Language>> byIds(Iterable<String> ids) async {
+    final unique = ids.toSet();
+
+    if (unique.isEmpty) {
+      return const [];
+    }
+
+    final Object? json;
+
+    try {
+      json = await _api.get('/lang', query: {'id': unique});
+    } on ApiException catch (e) {
+      if (e.key == 'notFounds') return const [];
+      rethrow;
+    }
+
+    return [
+      for (final item in json as List)
+        if (item is Map<String, dynamic> && item['name'] is String)
+          Language.fromJson(item),
+    ];
+  }
+
+  /// Claims the edit permission an administrator shared as a link
+  /// (`/addpermission?token=`). Answers the id of the language it grants.
+  Future<String> claimPermission(String token) async {
+    final json = await _api.put(
+      '/lang/permissions/claim/${Uri.encodeComponent(token)}',
+    ) as Map<String, dynamic>;
+
+    return json['lang'] as String;
+  }
+
   Future<FeatureCatalogue> catalogue() => _catalogue ??= _loadCatalogue();
 
   Future<List<Language>> _loadActive() async {

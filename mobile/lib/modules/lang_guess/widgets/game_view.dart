@@ -9,6 +9,7 @@ import '../../../core/ui/lang_flag.dart';
 import '../../../core/ui/neo_button.dart';
 import '../../../core/ui/neo_dialog.dart';
 import '../game_controller.dart';
+import '../guess_models.dart';
 import 'daily_timer.dart';
 import 'guess_search.dart';
 import 'guesses_list.dart';

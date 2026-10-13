@@ -3,11 +3,10 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import '../../core/models/language.dart';
+import '../auth/auth_controller.dart';
 import '../lang_data/lang_repository.dart';
 import 'guess_models.dart';
 import 'guess_repository.dart';
-
-enum GameType { daily, random }
 
 enum GameStatus { loading, error, playing, won, lost }
 
@@ -22,6 +21,7 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
     required this._langs,
     required GuessRepository guesses,
     required this._saves,
+    required this._auth,
   }) : _guessRepo = guesses {
     WidgetsBinding.instance.addObserver(this);
     start();
@@ -33,6 +33,7 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
   final LangRepository _langs;
   final GuessRepository _guessRepo;
   final DailySaveStore _saves;
+  final AuthController _auth;
 
   GameStatus _status = GameStatus.loading;
   Object? _error;
@@ -162,6 +163,10 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
       _selected = null;
       await _saveDaily();
 
+      if (finished) {
+        unawaited(_saveHistory(target));
+      }
+
       return switch (_status) {
         GameStatus.won => GuessOutcome.won,
         GameStatus.lost => GuessOutcome.lost,
@@ -188,6 +193,28 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
         won: _status == GameStatus.won,
       ),
     );
+  }
+
+  /// Adds the finished game to the user's history, like the web does when
+  /// signed in. A failure only loses that entry, never the game.
+  Future<void> _saveHistory(Language target) async {
+    if (!_auth.signedIn) return;
+
+    final won = _status == GameStatus.won;
+
+    try {
+      await _guessRepo.saveHistory(
+        GameRecord(
+          type: type,
+          targetLang: target.id,
+          // The misses, plus the right guess when there was one.
+          guesses: _guesses.length + (won ? 1 : 0),
+          guessed: won,
+        ),
+      );
+    } catch (e) {
+      debugPrint('Game not added to the history: $e');
+    }
   }
 
   void _showHint(String key) {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/api/api_client.dart';
@@ -20,6 +21,23 @@ class GuessRepository {
         await _api.get('/guess/$guessId', query: {'target': targetId})
             as Map<String, dynamic>,
       );
+
+  /// Counts the games stored from this device, so an open history reloads.
+  final ValueNotifier<int> historyChanges = ValueNotifier(0);
+
+  /// The signed in user's games, newest first.
+  Future<List<GameRecord>> history() async => [
+    for (final record in (await _api.get(
+      '/guess/history',
+    ) as List).cast<Map<String, dynamic>>())
+      GameRecord.fromJson(record),
+  ];
+
+  /// Stores a finished game in the signed in user's history.
+  Future<void> saveHistory(GameRecord record) async {
+    await _api.put('/guess/history', body: record.toRequest());
+    historyChanges.value++;
+  }
 }
 
 /// Progress of today's daily game, so leaving the app does not reset it (the

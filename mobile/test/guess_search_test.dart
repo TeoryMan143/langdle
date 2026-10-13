@@ -7,8 +7,11 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:langdle_app/core/api/api_client.dart';
 import 'package:langdle_app/core/i18n/translations.dart';
+import 'package:langdle_app/modules/auth/auth_controller.dart';
+import 'package:langdle_app/modules/auth/auth_repository.dart';
 import 'package:langdle_app/modules/lang_data/lang_repository.dart';
 import 'package:langdle_app/modules/lang_guess/game_controller.dart';
+import 'package:langdle_app/modules/lang_guess/guess_models.dart';
 import 'package:langdle_app/modules/lang_guess/guess_repository.dart';
 import 'package:langdle_app/modules/lang_guess/widgets/game_view.dart';
 import 'package:provider/provider.dart';
@@ -60,6 +63,11 @@ Future<void> _pumpGame(WidgetTester tester) async {
             langs: context.read<LangRepository>(),
             guesses: context.read<GuessRepository>(),
             saves: context.read<DailySaveStore>(),
+            auth: AuthController(
+              api: api,
+              repository: AuthRepository(api),
+              store: SessionStore(),
+            ),
           ),
         ),
       ],

@@ -43,3 +43,55 @@ Future<void> showNeoDialog(
     ),
   );
 }
+
+/// The kit `Dialog` asking to confirm an action: [cancel] and [confirm]
+/// buttons in its footer. Answers `true` only when [confirm] was pressed.
+Future<bool> showNeoConfirm(
+  BuildContext context, {
+  required String title,
+  required String description,
+  required String confirm,
+  required String cancel,
+}) async {
+  final confirmed = await showDialog<bool>(
+    context: context,
+    barrierColor: NeoColors.overlay,
+    builder: (context) => Dialog(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      insetPadding: const EdgeInsets.all(24),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: Neo.box(color: NeoColors.background),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(title, style: NeoText.heading(22)),
+            const SizedBox(height: 10),
+            Text(description, style: NeoText.muted),
+            const SizedBox(height: 20),
+            Wrap(
+              alignment: WrapAlignment.end,
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                NeoButton(
+                  variant: NeoButtonVariant.neutral,
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(cancel),
+                ),
+                NeoButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text(confirm),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  return confirmed ?? false;
+}

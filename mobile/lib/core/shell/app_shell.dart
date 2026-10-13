@@ -11,6 +11,7 @@ const _tabs = [
   (icon: Icons.shuffle_rounded, label: 'Mobile.random'),
   (icon: Icons.public_rounded, label: 'Mobile.atlas'),
   (icon: Icons.help_outline_rounded, label: 'Mobile.help'),
+  (icon: Icons.person_rounded, label: 'Nav.account'),
 ];
 
 /// The app frame: the blue `LANGDLE` header of the web and a bottom bar
