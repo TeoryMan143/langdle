@@ -20,7 +20,6 @@ import {
 } from 'usehooks-ts';
 import { getUTCDateString } from '@/core/lib/utils';
 import { Language } from '@/core/types';
-import { useAuth } from '@/modules/auth/hooks/use-auth';
 import { useLang } from '@/modules/lang-data/hooks/use-lang';
 import { addGameHistory, checkGuess } from '../actions';
 import { LanguageGuess } from '../types';
@@ -72,8 +71,6 @@ export const GameProvider = ({
     { date: 'invalid', guesses: [], dailyLang: null },
   );
 
-  const { session } = useAuth();
-
   const t = useTranslations('Game');
 
   const [guesses, setGuesses] = useState<LanguageGuess[]>([]);
@@ -87,7 +84,6 @@ export const GameProvider = ({
     if (type === 'daily') {
       if (
         !hasRetrievedSave.current &&
-        !session &&
         localGuesses.date === getUTCDateString()
       ) {
         hasRetrievedSave.current = true;
@@ -95,18 +91,17 @@ export const GameProvider = ({
         setHasGuessed(localGuesses.dailyLang !== null);
       } else if (
         !hasRetrievedSave.current &&
-        !session &&
         localGuesses.date !== getUTCDateString()
       ) {
         setLocalGuesses({ date: 'invalid', guesses: [], dailyLang: null });
         hasRetrievedSave.current = true;
       }
     }
-  }, [session, localGuesses, setLocalGuesses, type]);
+  }, [localGuesses, setLocalGuesses, type]);
 
   useEffect(() => {
     if (type === 'daily') {
-      if (hasRetrievedSave.current && !session && !localGuesses.dailyLang) {
+      if (hasRetrievedSave.current && !localGuesses.dailyLang) {
         setLocalGuesses({
           date: getUTCDateString(),
           guesses,
@@ -114,7 +109,7 @@ export const GameProvider = ({
         });
       }
     }
-  }, [guesses, setLocalGuesses, session, localGuesses.dailyLang, type]);
+  }, [guesses, setLocalGuesses, localGuesses.dailyLang, type]);
 
   useEffect(() => {
     if (inputRef.current && selectedLang) {
