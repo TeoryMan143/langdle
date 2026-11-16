@@ -1,6 +1,10 @@
-import * as dotenv from 'dotenv';
+import { existsSync } from 'node:fs';
 
-dotenv.config();
+// Same as `dotenv.config()`: variables already set win, and a missing file
+// (CI has none) is not an error.
+if (existsSync('.env')) {
+  process.loadEnvFile('.env');
+}
 
 // Importing a service pulls in the database clients, which parse their
 // connection strings eagerly. Unit tests that never touch the database still

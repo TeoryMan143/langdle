@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/a11y/useFocusableInteractive: annoying */
 /** biome-ignore-all lint/a11y/useSemanticElements: annoying */
 /** biome-ignore-all lint/a11y/noNoninteractiveElementToInteractiveRole: annoying */
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { COUNTRIES } from '@/core/lib/countries';

@@ -15,6 +15,14 @@ const pool = new Pool({ connectionString: inject('postgresUrl') });
 
 afterAll(() => pool.end());
 
+/**
+ * What a query through drizzle rejects with: drizzle wraps the driver's error,
+ * so the constraint Postgres names is in the message of the `cause`.
+ */
+const violating = (constraint: RegExp) => ({
+  cause: { message: expect.stringMatching(constraint) },
+});
+
 describe('migrations', () => {
   const definedTables = Object.values(tables).filter(value =>
     is(value, PgTable),
@@ -87,23 +95,23 @@ describe('constraints', () => {
   test('nicknames are unique', async () => {
     await createTestUser({ nickname: 'ana' });
 
-    await expect(createTestUser({ nickname: 'ana' })).rejects.toThrow(
-      /user_nickname_unique/,
+    await expect(createTestUser({ nickname: 'ana' })).rejects.toMatchObject(
+      violating(/user_nickname_unique/),
     );
   });
 
   test('emails are unique', async () => {
     await createTestUser({ email: 'ana@langdle.test' });
 
-    await expect(createTestUser({ email: 'ana@langdle.test' })).rejects.toThrow(
-      /user_email_unique/,
-    );
+    await expect(
+      createTestUser({ email: 'ana@langdle.test' }),
+    ).rejects.toMatchObject(violating(/user_email_unique/));
   });
 
   test('a game cannot belong to a user that does not exist', async () => {
     await expect(
       seedHistory('00000000-0000-4000-8000-000000000000'),
-    ).rejects.toThrow(/game_history_user_id_user_id_fk/);
+    ).rejects.toMatchObject(violating(/game_history_user_id_user_id_fk/));
   });
 
   test('a change request cannot have an unknown feature or status', async () => {
@@ -163,7 +171,7 @@ describe('constraints', () => {
       db
         .insert(tables.langPermissionTable)
         .values({ userId: user.id, lang: 'spanish' }),
-    ).rejects.toThrow(/lang_permission_user_id_lang_pk/);
+    ).rejects.toMatchObject(violating(/lang_permission_user_id_lang_pk/));
   });
 });
 

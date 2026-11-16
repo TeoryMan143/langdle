@@ -11,11 +11,11 @@
 | REST API | hono 4, mounted inside the App Router via `hono/vercel` |
 | Relational DB | Neon Postgres through Drizzle ORM (`drizzle-kit` migrations in `drizzle/`) |
 | Key-value DB | Redis (`redis` client) with RedisJSON + RediSearch — holds the languages (`lang:<id>`), the daily language (`daylang`) and the session cache (`session:<sessionId>`) |
-| Validation | zod 3 (+ `drizzle-zod`, `@hookform/resolvers`) |
+| Validation | zod 4 (+ `drizzle-zod`, `@hookform/resolvers`) |
 | Auth | Own session implementation: argon2 password hashes, opaque session tokens hashed with SHA-256, stored in Postgres and cached in Redis (see §2 *Session cache*), `arctic` for Google OAuth, `jose` for short-lived encrypted tokens |
 | Client data | TanStack Query for client fetching, server components otherwise |
 | Forms | react-hook-form + zod resolver |
-| UI | Tailwind v4, neobrutalism.dev components on Base UI primitives (`@base-ui/react`), `class-variance-authority`, framer-motion, sonner toasts — see [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) |
+| UI | Tailwind v4, neobrutalism.dev components on Base UI primitives (`@base-ui/react`), `class-variance-authority`, `motion` (imported from `motion/react`), sonner toasts — see [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) |
 | i18n | next-intl, locale prefix in the route (`/[locale]/…`), proxy in `src/proxy.ts` |
 | Email | Resend (`resend`) with React Email templates (`react-email`); templates restyle the neobrutalism tokens inline, since mail clients ignore Tailwind |
 | Tooling | Biome (format + lint), Vitest, pnpm, deployed on Vercel (crons in `vercel.json`) |

@@ -152,7 +152,7 @@ error `toast.error(t('errors.' + res.error), { id })`, on an object error map
 
 ## Tests
 
-Vitest, imports through the `@/` alias, two projects (`vitest.config.ts`):
+Vitest, imports through the `@/` alias, two projects (`vitest.config.mts`):
 
 - **`unit`** — `tests/<module>/<subject>.test.ts(x)`. Pure logic (`getMatching`,
   `applyFeatureStatus`, email templates). No database, no Docker. Importing a

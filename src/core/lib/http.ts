@@ -1,6 +1,6 @@
 import type { Context } from 'hono';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
-import type { ZodType, z } from 'zod';
+import { type ZodType, z } from 'zod';
 
 /**
  * Builds the error shape every endpoint of the API answers with:
@@ -61,7 +61,7 @@ export async function parseJsonBody<S extends ZodType>(
         400,
         'invalidData',
         'An error occurred parsing the body data',
-        result.error.flatten(),
+        z.flattenError(result.error),
       ),
     };
   }

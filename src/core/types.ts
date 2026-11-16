@@ -10,7 +10,7 @@ import type { langDataSchema } from './schemas/lang';
 export type LangFeatures = (typeof langFeatures)[number];
 export type FeatureStatus = (typeof featureStatuses)[number];
 
-export type LanguageData = z.TypeOf<typeof langDataSchema>;
+export type LanguageData = z.infer<typeof langDataSchema>;
 export type Language = { id: string } & LanguageData;
 
 export type SelectMenuOption = (typeof COUNTRIES)[number];

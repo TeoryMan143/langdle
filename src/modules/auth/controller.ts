@@ -1,5 +1,6 @@
 import { NeonDbError } from '@neondatabase/serverless';
 import { decodeIdToken, type OAuth2Tokens } from 'arctic';
+import { DrizzleQueryError } from 'drizzle-orm';
 import { type Context, Hono } from 'hono';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { apiError, parseJsonBody, unknownError } from '@/core/lib/http';
@@ -59,9 +60,11 @@ const SIGNUP_CONFLICTS: Record<string, { key: string; message: string }> = {
 
 /** The `409` for a taken nickname or email, `null` for any other failure. */
 function signupConflict(c: Context, error: unknown) {
+  // drizzle wraps what the driver throws; the driver's error is the `cause`.
+  const dbError = error instanceof DrizzleQueryError ? error.cause : error;
   const conflict =
-    error instanceof NeonDbError && error.constraint
-      ? SIGNUP_CONFLICTS[error.constraint]
+    dbError instanceof NeonDbError && dbError.constraint
+      ? SIGNUP_CONFLICTS[dbError.constraint]
       : undefined;
 
   return conflict ? apiError(c, 409, conflict.key, conflict.message) : null;

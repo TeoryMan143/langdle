@@ -15,28 +15,27 @@ export const signUpSchema = createInsertSchema(userTable)
   .extend({
     nickname: z
       .string()
-      .min(3, { message: 'Nickname must be at least 3 characters long' })
-      .max(20, { message: 'Nickname must be at most 20 characters long' })
+      .min(3, { error: 'Nickname must be at least 3 characters long' })
+      .max(20, { error: 'Nickname must be at most 20 characters long' })
       .trim(),
     email: z
-      .string()
-      .email({ message: 'It must be a valid email' })
-      .min(3, { message: 'Email must be at least 3 characters long' })
-      .max(254, { message: 'Email must be at most 254 characters long' })
+      .email({ error: 'It must be a valid email' })
+      .min(3, { error: 'Email must be at least 3 characters long' })
+      .max(254, { error: 'Email must be at most 254 characters long' })
       .trim(),
     password: z
       .string()
-      .min(8, { message: 'Password must be at least 8 characters long' })
-      .max(100, { message: 'Password must be at most 100 characters long' })
+      .min(8, { error: 'Password must be at least 8 characters long' })
+      .max(100, { error: 'Password must be at most 100 characters long' })
       .trim(),
     confirmPassword: z
       .string()
-      .min(8, { message: 'Password must be at least 8 characters long' })
-      .max(100, { message: 'Password must be at most 100 characters long' })
+      .min(8, { error: 'Password must be at least 8 characters long' })
+      .max(100, { error: 'Password must be at most 100 characters long' })
       .trim(),
-    country: z.string().min(1, { message: 'Country is required' }),
+    country: z.string().min(1, { error: 'Country is required' }),
   })
   .refine(fields => fields.password === fields.confirmPassword, {
-    message: 'Passwords do not match',
+    error: 'Passwords do not match',
     path: ['confirmPassword'],
   });
