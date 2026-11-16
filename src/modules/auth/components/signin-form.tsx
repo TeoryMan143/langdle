@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import Google from '@/core/components/icons/google';
 import { Button, buttonVariants } from '@/core/components/ui/button';
+import { safeNextPath, withNext } from '@/core/lib/redirect';
 import { cn } from '@/core/lib/utils';
 import { Link, useRouter } from '@/i18n/navigation';
 import { signInUser } from '../actions';
@@ -29,7 +30,7 @@ function SignInForm() {
   const t = useTranslations('AuthPage');
 
   const sParams = useSearchParams();
-  const redtk = sParams.get('redtk');
+  const next = safeNextPath(sParams.get('next'));
 
   const onSubmit = async (data: SignInSchema) => {
     const toastId = toast.loading(`${t('signingIn')}...`);
@@ -53,7 +54,7 @@ function SignInForm() {
     }
 
     toast.success(t('signedIn'), { id: toastId });
-    router.push(redtk ? `/addpermission?token=${redtk}` : '/account');
+    router.push(next ?? '/account');
   };
 
   return (
@@ -80,7 +81,10 @@ function SignInForm() {
         <Button disabled={isLoading} type='submit'>
           {isLoading ? t('signingIn') : t('signIn')}
         </Button>
-        <a className={cn(buttonVariants(), 'bg-white')} href='/api/auth/google'>
+        <a
+          className={cn(buttonVariants(), 'bg-white')}
+          href={withNext('/api/auth/google', next)}
+        >
           <Google />
         </a>
       </div>
@@ -88,7 +92,7 @@ function SignInForm() {
         <p className='text-center'>
           {t('noAccount')}{' '}
           <Link
-            href='/signup'
+            href={withNext('/signup', next)}
             className='text-green-700 hover:underline hover:text-soft-det'
           >
             {t('signUpHere')}

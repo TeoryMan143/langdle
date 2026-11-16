@@ -5,11 +5,11 @@ import { getOAuthSignupData } from '@/modules/auth/actions';
 import GoogleDataForm from '@/modules/auth/components/google-data-form';
 
 type Props = {
-  searchParams: Promise<{ data?: string }>;
+  searchParams: Promise<{ data?: string; next?: string }>;
 };
 
 async function EndGooglePage({ searchParams }: Props) {
-  const { data } = await searchParams;
+  const { data, next } = await searchParams;
 
   const locale = await getLocale();
 
@@ -28,7 +28,7 @@ async function EndGooglePage({ searchParams }: Props) {
   return (
     <div className='flex flex-col items-center gap-5'>
       <h2 className='text-3xl text-center'>{t('almostDone')}</h2>
-      <GoogleDataForm accountData={res.result} dataToken={data} />
+      <GoogleDataForm accountData={res.result} dataToken={data} next={next} />
     </div>
   );
 }

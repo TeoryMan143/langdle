@@ -156,7 +156,7 @@ tab.
   guard is `routeRedirect` in `router.dart`: signed out, the link goes to
   `/signup?redtk=<token>`; the token rides along through `/signin` and
   `/endgoogle` (`withRedirectToken`) and the guard returns to the link once the
-  session opens, like the web's `redtk`.
+  session opens, like the web's `?next=` return path.
 
 ### Provider setup
 

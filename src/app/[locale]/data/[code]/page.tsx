@@ -1,4 +1,5 @@
 import { notFound, RedirectType, redirect } from 'next/navigation';
+import { withNext } from '@/core/lib/redirect';
 import { auth } from '@/modules/auth/actions';
 import { getLangPermissions, getLanguage } from '@/modules/lang-data/actions';
 import LangFeaturesForm from '@/modules/lang-data/components/lang-features';
@@ -16,7 +17,7 @@ async function EditDataPage({ params }: Props) {
   const { user, session } = await auth();
 
   if (!session) {
-    redirect('/', RedirectType.replace);
+    redirect(withNext('/signin', `/data/${code}`), RedirectType.replace);
   }
 
   const langPermissionsRes = await getLangPermissions(user.id);

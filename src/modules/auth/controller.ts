@@ -4,6 +4,7 @@ import { DrizzleQueryError } from 'drizzle-orm';
 import { type Context, Hono } from 'hono';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { apiError, parseJsonBody, unknownError } from '@/core/lib/http';
+import { NEXT_PARAM, safeNextPath, withNext } from '@/core/lib/redirect';
 import {
   SESSION_COOKIE,
   sessionCookieOptions,
@@ -37,6 +38,9 @@ import type {
   OAuthTokenResult,
   User,
 } from './types';
+
+/** Where to return after the web Google sign in, kept across the round trip. */
+const OAUTH_NEXT_COOKIE = 'google_oauth_next';
 
 const OAUTH_COOKIE_OPTIONS = {
   path: '/',
@@ -241,6 +245,15 @@ authRouter.get('/google', c => {
   setCookie(c, 'google_oauth_state', state, OAUTH_COOKIE_OPTIONS);
   setCookie(c, 'google_code_verifier', codeVerifier, OAUTH_COOKIE_OPTIONS);
 
+  // Where the web sends the user once signed in (`?next=/data/es`).
+  const next = safeNextPath(c.req.query(NEXT_PARAM));
+
+  if (next) {
+    setCookie(c, OAUTH_NEXT_COOKIE, next, OAUTH_COOKIE_OPTIONS);
+  } else {
+    deleteCookie(c, OAUTH_NEXT_COOKIE, { path: '/' });
+  }
+
   return c.redirect(url);
 });
 
@@ -260,6 +273,9 @@ authRouter.get('/google/callback', async c => {
 
   deleteCookie(c, 'google_oauth_state', { path: '/' });
   deleteCookie(c, 'google_code_verifier', { path: '/' });
+
+  const next = safeNextPath(getCookie(c, OAUTH_NEXT_COOKIE));
+  deleteCookie(c, OAUTH_NEXT_COOKIE, { path: '/' });
 
   let tokens: OAuth2Tokens;
 
@@ -291,10 +307,12 @@ authRouter.get('/google/callback', async c => {
         sessionCookieOptions(new Date(result.expiresAt)),
       );
 
-      return c.redirect('/');
+      return c.redirect(next ?? '/');
     }
 
-    return c.redirect(`/endgoogle?data=${result.dataToken}`);
+    return c.redirect(
+      withNext(`/endgoogle?data=${encodeURIComponent(result.dataToken)}`, next),
+    );
   } catch (e) {
     console.error(e);
     return unknownError(c, 'The Google account could not be processed');

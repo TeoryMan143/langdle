@@ -198,8 +198,8 @@ with the (possibly renewed) session expiry, so clients that store the token
 | POST | `/signout` | B | invalidates the session |
 | GET | `/me` | B | the current user |
 | DELETE | `/me` | B | deletes the account: sessions, history, permissions, change requests (reviews it made lose their reviewer) |
-| GET | `/google` | — | redirects to Google, stores state cookies |
-| GET | `/google/callback` | — | signs the user in, or redirects to `/endgoogle?data=<encrypted claims>` |
+| GET | `/google` | — | redirects to Google, stores state cookies (and a safe `?next=` return path) |
+| GET | `/google/callback` | — | signs the user in and redirects to `next` (or `/`), or redirects to `/endgoogle?data=<encrypted claims>&next=` |
 | POST | `/google/token` | — | native sign in from `{ idToken }`: `{ status: 'signedIn', user, token, expiresAt }` or `{ status: 'needsSignup', dataToken, nickname, email }` |
 | POST | `/apple/token` | — | same contract for Sign in with Apple; `{ idToken, nickname? }` (Apple only gives the name to the app) |
 | GET | `/oauth/signup-data?token=` | — | `{ provider, nickname, email }` inside a signup token, to prefill the form |

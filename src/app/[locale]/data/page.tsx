@@ -2,6 +2,7 @@ import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { buttonVariants } from '@/core/components/ui/button';
 import { dongle } from '@/core/lib/fonts';
+import { withNext } from '@/core/lib/redirect';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/modules/auth/actions';
 import { getLangPermissions } from '@/modules/lang-data/actions';
@@ -11,7 +12,7 @@ async function DataPage() {
   const { session, user } = await auth();
 
   if (!session) {
-    redirect('/', RedirectType.replace);
+    redirect(withNext('/signin', '/data'), RedirectType.replace);
   }
 
   const permissionsRes = await getLangPermissions(user.id);
