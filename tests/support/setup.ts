@@ -4,6 +4,7 @@ import { createClient } from 'redis';
 import { afterAll, afterEach, beforeAll, beforeEach, inject, vi } from 'vitest';
 import { getClient } from '@/core/database/redis/config';
 import { sendEmail } from '@/core/lib/email';
+import { copyObject, deleteObject, putObject } from '@/core/lib/storage';
 import {
   assertLocalDatabase,
   closeNeonShim,
@@ -22,6 +23,12 @@ import { resetRedis } from './redis';
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
 
 vi.mock('@/core/lib/email', () => ({ sendEmail: vi.fn() }));
+vi.mock('@/core/lib/storage', () => ({
+  putObject: vi.fn(),
+  copyObject: vi.fn(),
+  deleteObject: vi.fn(),
+  publicUrl: (key: string) => `https://flags.langdle.test/${key}`,
+}));
 
 process.env.DATABASE_URL = inject('postgresUrl');
 process.env.REDIS_HOST = inject('redisHost');
@@ -31,6 +38,12 @@ process.env.CRON_SECRET = 'test-cron-secret';
 process.env.NEXT_PUBLIC_BASE_URL = 'http://localhost:3000';
 process.env.GOOGLE_CLIENT_ID = 'test-google-client-id';
 process.env.GOOGLE_CLIENT_SECRET = 'test-google-client-secret';
+// The bucket itself is mocked; these only satisfy the environment schema.
+process.env.R2_ACCOUNT_ID = 'test-account';
+process.env.R2_ACCESS_KEY_ID = 'test-access-key';
+process.env.R2_SECRET_ACCESS_KEY = 'test-secret-key';
+process.env.R2_BUCKET = 'test-bucket';
+process.env.NEXT_PUBLIC_FLAGS_URL = 'https://flags.langdle.test';
 
 for (const name of [
   'REDIS_USER',
@@ -73,6 +86,9 @@ beforeEach(async () => {
   await resetRedis(redis);
 
   vi.mocked(sendEmail).mockReset().mockResolvedValue(true);
+  vi.mocked(putObject).mockReset().mockResolvedValue(true);
+  vi.mocked(copyObject).mockReset().mockResolvedValue(true);
+  vi.mocked(deleteObject).mockReset().mockResolvedValue(true);
 
   // Services log the failures they report (a duplicated nickname, a bad
   // token…), which is noise when a test provokes them on purpose. Run with

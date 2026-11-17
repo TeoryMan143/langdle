@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import Google from '@/core/components/icons/google';
 import { Button, buttonVariants } from '@/core/components/ui/button';
 import { COUNTRIES } from '@/core/lib/countries';
+import { safeNextPath, withNext } from '@/core/lib/redirect';
 import { cn } from '@/core/lib/utils';
 import { SelectMenuOption } from '@/core/types';
 import { Link, useRouter } from '@/i18n/navigation';
@@ -35,13 +36,13 @@ function SignUpForm() {
   const t = useTranslations('AuthPage');
 
   const sParams = useSearchParams();
-  const redtk = sParams.get('redtk');
+  const next = safeNextPath(sParams.get('next'));
 
   useEffect(() => {
-    if (redtk) {
+    if (next?.startsWith('/addpermission')) {
       toast.info(t('needAccountForPerm'));
     }
-  }, [redtk, t]);
+  }, [next, t]);
 
   const [isOpen, setIsOpen] = useState(false);
   const [country, setCountry] = useState('AF');
@@ -73,7 +74,7 @@ function SignUpForm() {
       }
 
       toast.success(t('accountCreated'), { id: toastId });
-      router.push(redtk ? `/addpermission?token=${redtk}` : '/account');
+      router.push(next ?? '/account');
     } catch (error) {
       console.error(error);
     }
@@ -133,7 +134,10 @@ function SignUpForm() {
         <Button disabled={isLoading} type='submit'>
           {isLoading ? t('creatingAccount') : t('createAccount')}{' '}
         </Button>
-        <a className={cn(buttonVariants(), 'bg-white')} href='/api/auth/google'>
+        <a
+          className={cn(buttonVariants(), 'bg-white')}
+          href={withNext('/api/auth/google', next)}
+        >
           <Google />
         </a>
       </div>
@@ -141,7 +145,7 @@ function SignUpForm() {
         <p className='text-center'>
           {t('alreadyHaveAccount')}{' '}
           <Link
-            href={`/signin${redtk ? `?redtk=${redtk}` : ''}`}
+            href={withNext('/signin', next)}
             className='text-green-700 hover:underline hover:text-soft-det'
           >
             {t('signInHere')}

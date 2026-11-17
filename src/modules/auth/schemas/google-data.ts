@@ -3,7 +3,7 @@ import { z } from 'zod';
 /** Fields the user fills in to finish a Google sign up. */
 export const googleDataSchema = z.object({
   nickname: z.string(),
-  country: z.string().min(1, { message: 'Country required' }),
+  country: z.string().min(1, { error: 'Country required' }),
 });
 
 /**
@@ -11,5 +11,5 @@ export const googleDataSchema = z.object({
  * carries the trusted claims (`googleId`, `email`).
  */
 export const googleSignUpSchema = googleDataSchema.extend({
-  dataToken: z.string().min(1, { message: 'dataToken required' }),
+  dataToken: z.string().min(1, { error: 'dataToken required' }),
 });

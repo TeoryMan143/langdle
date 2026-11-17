@@ -16,6 +16,7 @@ import { db } from '@/core/database/relational/config';
 import {
   changeRequestTable,
   langPermissionTable,
+  languageRequestTable,
   sessionTable,
   userTable,
 } from '@/core/database/relational/tables';
@@ -260,6 +261,13 @@ export async function deleteUser(userId: string): Promise<void> {
       .set({ reviewedBy: null })
       .where(eq(changeRequestTable.reviewedBy, userId)),
     db.delete(changeRequestTable).where(eq(changeRequestTable.userId, userId)),
+    db
+      .update(languageRequestTable)
+      .set({ reviewedBy: null })
+      .where(eq(languageRequestTable.reviewedBy, userId)),
+    db
+      .delete(languageRequestTable)
+      .where(eq(languageRequestTable.userId, userId)),
     db
       .delete(langPermissionTable)
       .where(eq(langPermissionTable.userId, userId)),

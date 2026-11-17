@@ -316,7 +316,8 @@
   "ListPage": {
     "langList": "Languages list",
     "publicOverview": "Open public feature atlas",
-    "changeRequests": "Review change requests"
+    "changeRequests": "Review change requests",
+    "requestLanguage": "Request a language"
   },
   "PublicDataPage": {
     "eyebrow": "Public atlas",
@@ -344,7 +345,8 @@
       "writingSystem": "Writing system",
       "morphosyntax": "Morpho-syntax"
     },
-    "empty": "No languages match your search right now."
+    "empty": "No languages match your search right now.",
+    "requestLanguage": "Request a language"
   },
   "LangData": {
     "loading": "Updating features",
@@ -433,7 +435,52 @@
       "requestNotFound": "The request does not exist anymore",
       "requestAlreadyReviewed": "Another administrator already reviewed this request",
       "langNotFound": "The language does not exist anymore",
-      "invalidData": "Invalid data"
+      "invalidData": "Invalid data",
+      "langExists": "That language already exists"
+    },
+    "languageAccepted": "Request accepted: the language was created inactive",
+    "languageAcceptedNoEmail": "Request accepted and the language created inactive, but the email could not be sent"
+  },
+  "LanguageRequests": {
+    "title": "Request a language",
+    "intro": "Is a language missing from Langdle? Tell us about it: its code, its flag and the features it has. An administrator will review it and, once accepted, you will be able to keep editing it.",
+    "requestLanguage": "Request a language",
+    "adminTitle": "Language requests",
+    "myTitle": "My language requests",
+    "myEmpty": "You haven't requested any language yet.",
+    "code": "ISO code",
+    "codeHint": "ISO 639-1 (2 letters) or ISO 639-3 (3 letters), e.g. eu or hak.",
+    "name": "Name",
+    "nameHint": "The name of the language in the language itself.",
+    "exonym": "Name in English (optional)",
+    "flag": "Flag",
+    "flagHint": "PNG, JPEG or WebP, 2 MB at most. It is cropped to 3:2.",
+    "flagPreview": "Flag preview",
+    "description": "Why should it be added?",
+    "descriptionPlaceholder": "Where it is spoken, and sources for the features you marked.",
+    "features": "Features",
+    "featuresHint": "Mark what the language has. Everything left as \"Not present\" is sent as absent.",
+    "present": "Present",
+    "partial": "Partial",
+    "none": "None",
+    "submit": "Send request",
+    "sending": "Sending request...",
+    "sent": "Request sent! You can follow it from your account.",
+    "codeFormat": "Use a 2 or 3 letter lowercase ISO code",
+    "nameRequired": "The name is required",
+    "descriptionRequired": "Tell us why it should be added",
+    "featureTwice": "A feature cannot be present and partial at once",
+    "errors": {
+      "unknown": "Unknown server error",
+      "notSignedIn": "You must be signed in",
+      "invalidData": "Some fields are not valid",
+      "invalidBody": "The request could not be read",
+      "langExists": "That language is already in Langdle",
+      "requestPending": "There is already an open request for that language",
+      "invalidFlag": "The flag must be a PNG, JPEG or WebP image of 2 MB at most",
+      "flagRequired": "A flag is required",
+      "flagType": "Use a PNG, JPEG or WebP image",
+      "flagSize": "The image is larger than 2 MB"
     }
   },
   "Emails": {
@@ -443,6 +490,13 @@
       "rejectedSubject": "Your change request for {language} was rejected",
       "rejectedBody": "Hi {nickname}, your request to change \"{feature}\" to \"{status}\" in {language} was rejected.",
       "viewRequests": "See all your requests"
+    },
+    "languageRequest": {
+      "acceptedSubject": "Your request for {language} was accepted",
+      "acceptedBody": "Hi {nickname}, your request to add {language} ({code}) to Langdle was accepted. It is not playable yet: you can now edit its features, and an administrator will activate it soon. Thank you for helping Langdle!",
+      "rejectedSubject": "Your request for {language} was rejected",
+      "rejectedBody": "Hi {nickname}, your request to add {language} ({code}) to Langdle was rejected.",
+      "viewRequests": "Open the language"
     }
   },
   "Game": {

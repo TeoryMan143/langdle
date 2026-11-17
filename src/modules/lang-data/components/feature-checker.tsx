@@ -16,8 +16,9 @@ type Props = {
 function CheckButton({ className, ...props }: React.ComponentProps<'button'>) {
   return (
     <button
+      type='button'
       className={cn(
-        'bg-white cursor-pointer size-6 rounded-lg border-2 border-black transition-colors',
+        'bg-secondary-background cursor-pointer size-6 rounded-base border-2 border-border transition-colors',
         className,
       )}
       {...props}
@@ -34,7 +35,7 @@ function FeatureChecker({ feat, state, onChange: _onChange }: Props) {
 
   return (
     <FeatureToolTip feature={feat}>
-      <div className='flex gap-3 bg-main py-3 rounded-lg justify-between items-center'>
+      <div className='flex gap-3 bg-main py-3 pr-2 rounded-base border-2 border-border justify-between items-center'>
         <p className='px-1 max-w-36 ml-2'>{name}</p>
         <div className='grid grid-cols-3 gap-0.5 [&_label]:text-center'>
           <div className='flex flex-col items-center gap-1'>

@@ -7,8 +7,10 @@ import { apiRequest } from '@/core/lib/api-client';
 import type { ActionResult, Language, LanguageData } from '@/core/types';
 import type {
   AdminChangeRequestDTO,
+  AdminLanguageRequestDTO,
   ChangeRequestDTO,
   ChangeRequestFormValues,
+  LanguageRequestDTO,
 } from './types';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -43,7 +45,10 @@ export async function getAllActiveLanguages(): Promise<
   return actionSuccess(
     res.result.map(lang => ({
       ...lang,
-      searchParams: [...lang.searchParams, t(lang.id)],
+      // Languages added through requests have no translated exonym yet.
+      searchParams: t.has(lang.id)
+        ? [...lang.searchParams, t(lang.id)]
+        : lang.searchParams,
     })),
   );
 }
@@ -230,6 +235,117 @@ export async function rejectChangeRequest(
 ): Promise<ActionResult<ReviewPayload>> {
   const res = await apiRequest<ReviewPayload>(
     `/lang/change-requests/${id}/reject`,
+    { method: 'put', auth: true, body: { reason } },
+  );
+
+  if (!res.success) {
+    return actionError(res.error.key);
+  }
+
+  revalidatePath('/data/requests');
+  revalidatePath('/account');
+
+  return actionSuccess(res.result);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              Language requests                             */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Sends a language request. The form gives the multipart body the API wants
+ * (`data` as JSON plus the `flag` file); the locale is added to `data` here.
+ */
+export async function uploadLanguageRequest(
+  formData: FormData,
+): Promise<ActionResult<LanguageRequestDTO>> {
+  const raw = formData.get('data');
+  const flag = formData.get('flag');
+
+  if (typeof raw !== 'string' || !(flag instanceof File)) {
+    return actionError('invalidData');
+  }
+
+  let data: Record<string, unknown>;
+
+  try {
+    data = JSON.parse(raw);
+  } catch (_) {
+    return actionError('invalidData');
+  }
+
+  const body = new FormData();
+  body.set('data', JSON.stringify({ ...data, locale: await getLocale() }));
+  body.set('flag', flag);
+
+  const res = await apiRequest<LanguageRequestDTO>('/lang/language-requests', {
+    method: 'post',
+    auth: true,
+    body,
+  });
+
+  if (!res.success) {
+    return actionError(res.error.key);
+  }
+
+  revalidatePath('/account');
+
+  return actionSuccess(res.result);
+}
+
+export async function getMyLanguageRequests(): Promise<
+  ActionResult<LanguageRequestDTO[]>
+> {
+  const res = await apiRequest<LanguageRequestDTO[]>(
+    '/lang/language-requests/mine',
+    { auth: true, cache: 'no-store' },
+  );
+
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
+}
+
+export async function getLanguageRequests(): Promise<
+  ActionResult<AdminLanguageRequestDTO[]>
+> {
+  const res = await apiRequest<AdminLanguageRequestDTO[]>(
+    '/lang/language-requests',
+    { auth: true, cache: 'no-store' },
+  );
+
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
+}
+
+type LanguageReviewPayload = {
+  request: LanguageRequestDTO;
+  emailSent: boolean;
+};
+
+export async function acceptLanguageRequest(
+  id: string,
+): Promise<ActionResult<LanguageReviewPayload>> {
+  const res = await apiRequest<LanguageReviewPayload>(
+    `/lang/language-requests/${id}/accept`,
+    { method: 'put', auth: true },
+  );
+
+  if (!res.success) {
+    return actionError(res.error.key);
+  }
+
+  revalidatePath('/data/requests');
+  revalidatePath('/data');
+  revalidatePath('/data/public');
+  revalidatePath('/account');
+
+  return actionSuccess(res.result);
+}
+
+export async function rejectLanguageRequest(
+  id: string,
+  reason: string,
+): Promise<ActionResult<LanguageReviewPayload>> {
+  const res = await apiRequest<LanguageReviewPayload>(
+    `/lang/language-requests/${id}/reject`,
     { method: 'put', auth: true, body: { reason } },
   );
 

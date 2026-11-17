@@ -13,7 +13,8 @@
       "**/tests/**",
       "**/next.config.ts",
       "**/biome.config.js",
-      "./vitest.*.ts"
+      "./vitest.*.ts",
+      "./vitest.*.mts"
     ]
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
@@ -31,7 +32,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "correctness": {
         "noUnusedVariables": "warn",
         "noUnusedImports": "warn",

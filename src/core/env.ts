@@ -19,6 +19,13 @@ const envSchema = z.object({
   JWT_SECRET: z.string(),
   RESEND_API_KEY: z.string(),
   EMAIL_FROM: z.string(),
+  /** Cloudflare R2 (S3 compatible) bucket that stores the language flags. */
+  R2_ACCOUNT_ID: z.string(),
+  R2_ACCESS_KEY_ID: z.string(),
+  R2_SECRET_ACCESS_KEY: z.string(),
+  R2_BUCKET: z.string(),
+  /** Public base URL of that bucket, without a trailing slash. */
+  NEXT_PUBLIC_FLAGS_URL: z.string(),
 });
 
 envSchema.parse(process.env);

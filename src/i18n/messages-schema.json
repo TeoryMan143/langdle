@@ -21,6 +21,9 @@
         "howToPlay": {
           "type": "string"
         },
+        "publicData": {
+          "type": "string"
+        },
         "account": {
           "type": "string"
         },
@@ -29,9 +32,20 @@
         },
         "data": {
           "type": "string"
+        },
+        "home": {
+          "type": "string"
         }
       },
-      "required": ["options", "howToPlay", "account", "signUp", "data"]
+      "required": [
+        "options",
+        "howToPlay",
+        "publicData",
+        "account",
+        "signUp",
+        "data",
+        "home"
+      ]
     },
     "InstallApp": {
       "type": "object",
@@ -286,6 +300,65 @@
     "Features": {
       "type": "object",
       "properties": {
+        "changeRequest": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "requestedStatus": {
+              "type": "string"
+            },
+            "statusPlaceholder": {
+              "type": "string"
+            },
+            "statusPresent": {
+              "type": "string"
+            },
+            "statusPartial": {
+              "type": "string"
+            },
+            "statusNotPresent": {
+              "type": "string"
+            },
+            "descriptionLabel": {
+              "type": "string"
+            },
+            "descriptionPlaceholder": {
+              "type": "string"
+            },
+            "descriptionRequired": {
+              "type": "string"
+            },
+            "cancel": {
+              "type": "string"
+            },
+            "submit": {
+              "type": "string"
+            },
+            "submitting": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "title",
+            "description",
+            "requestedStatus",
+            "statusPlaceholder",
+            "statusPresent",
+            "statusPartial",
+            "statusNotPresent",
+            "descriptionLabel",
+            "descriptionPlaceholder",
+            "descriptionRequired",
+            "cancel",
+            "submit",
+            "submitting"
+          ]
+        },
         "description": {
           "type": "object",
           "properties": {
@@ -901,7 +974,7 @@
           ]
         }
       },
-      "required": ["description", "name"]
+      "required": ["changeRequest", "description", "name"]
     },
     "AuthPage": {
       "type": "object",
@@ -990,9 +1063,6 @@
             "dataValidation": {
               "type": "string"
             },
-            "missingEmail": {
-              "type": "string"
-            },
             "unknown": {
               "type": "string"
             },
@@ -1003,6 +1073,9 @@
               "type": "string"
             },
             "invalidToken": {
+              "type": "string"
+            },
+            "missingEmail": {
               "type": "string"
             }
           },
@@ -1015,11 +1088,11 @@
             "failedCreateUser",
             "noSession",
             "dataValidation",
-            "missingEmail",
             "unknown",
             "notSignedIn",
             "invalidData",
-            "invalidToken"
+            "invalidToken",
+            "missingEmail"
           ]
         }
       },
@@ -1135,11 +1208,131 @@
         "langList": {
           "type": "string"
         },
+        "publicOverview": {
+          "type": "string"
+        },
         "changeRequests": {
+          "type": "string"
+        },
+        "requestLanguage": {
           "type": "string"
         }
       },
-      "required": ["langList", "changeRequests"]
+      "required": [
+        "langList",
+        "publicOverview",
+        "changeRequests",
+        "requestLanguage"
+      ]
+    },
+    "PublicDataPage": {
+      "type": "object",
+      "properties": {
+        "eyebrow": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "intro": {
+          "type": "string"
+        },
+        "loadError": {
+          "type": "string"
+        },
+        "backToList": {
+          "type": "string"
+        },
+        "search": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "placeholder": {
+              "type": "string"
+            }
+          },
+          "required": ["label", "placeholder"]
+        },
+        "summary": {
+          "type": "object",
+          "properties": {
+            "languages": {
+              "type": "string"
+            },
+            "activeLanguages": {
+              "type": "string"
+            },
+            "activeFeatures": {
+              "type": "string"
+            },
+            "partialFeatures": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "languages",
+            "activeLanguages",
+            "activeFeatures",
+            "partialFeatures"
+          ]
+        },
+        "status": {
+          "type": "object",
+          "properties": {
+            "active": {
+              "type": "string"
+            },
+            "inactive": {
+              "type": "string"
+            }
+          },
+          "required": ["active", "inactive"]
+        },
+        "groups": {
+          "type": "object",
+          "properties": {
+            "phonology": {
+              "type": "string"
+            },
+            "wordOrder": {
+              "type": "string"
+            },
+            "writingSystem": {
+              "type": "string"
+            },
+            "morphosyntax": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "phonology",
+            "wordOrder",
+            "writingSystem",
+            "morphosyntax"
+          ]
+        },
+        "empty": {
+          "type": "string"
+        },
+        "requestLanguage": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eyebrow",
+        "title",
+        "intro",
+        "loadError",
+        "backToList",
+        "search",
+        "summary",
+        "status",
+        "groups",
+        "empty",
+        "requestLanguage"
+      ]
     },
     "LangData": {
       "type": "object",
@@ -1452,6 +1645,9 @@
             },
             "invalidData": {
               "type": "string"
+            },
+            "langExists": {
+              "type": "string"
             }
           },
           "required": [
@@ -1461,8 +1657,15 @@
             "requestNotFound",
             "requestAlreadyReviewed",
             "langNotFound",
-            "invalidData"
+            "invalidData",
+            "langExists"
           ]
+        },
+        "languageAccepted": {
+          "type": "string"
+        },
+        "languageAcceptedNoEmail": {
+          "type": "string"
         }
       },
       "required": [
@@ -1491,6 +1694,175 @@
         "reasonPlaceholder",
         "reasonRequired",
         "state",
+        "errors",
+        "languageAccepted",
+        "languageAcceptedNoEmail"
+      ]
+    },
+    "LanguageRequests": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "intro": {
+          "type": "string"
+        },
+        "requestLanguage": {
+          "type": "string"
+        },
+        "adminTitle": {
+          "type": "string"
+        },
+        "myTitle": {
+          "type": "string"
+        },
+        "myEmpty": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "codeHint": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "nameHint": {
+          "type": "string"
+        },
+        "exonym": {
+          "type": "string"
+        },
+        "flag": {
+          "type": "string"
+        },
+        "flagHint": {
+          "type": "string"
+        },
+        "flagPreview": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "descriptionPlaceholder": {
+          "type": "string"
+        },
+        "features": {
+          "type": "string"
+        },
+        "featuresHint": {
+          "type": "string"
+        },
+        "present": {
+          "type": "string"
+        },
+        "partial": {
+          "type": "string"
+        },
+        "none": {
+          "type": "string"
+        },
+        "submit": {
+          "type": "string"
+        },
+        "sending": {
+          "type": "string"
+        },
+        "sent": {
+          "type": "string"
+        },
+        "codeFormat": {
+          "type": "string"
+        },
+        "nameRequired": {
+          "type": "string"
+        },
+        "descriptionRequired": {
+          "type": "string"
+        },
+        "featureTwice": {
+          "type": "string"
+        },
+        "errors": {
+          "type": "object",
+          "properties": {
+            "unknown": {
+              "type": "string"
+            },
+            "notSignedIn": {
+              "type": "string"
+            },
+            "invalidData": {
+              "type": "string"
+            },
+            "invalidBody": {
+              "type": "string"
+            },
+            "langExists": {
+              "type": "string"
+            },
+            "requestPending": {
+              "type": "string"
+            },
+            "invalidFlag": {
+              "type": "string"
+            },
+            "flagRequired": {
+              "type": "string"
+            },
+            "flagType": {
+              "type": "string"
+            },
+            "flagSize": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "unknown",
+            "notSignedIn",
+            "invalidData",
+            "invalidBody",
+            "langExists",
+            "requestPending",
+            "invalidFlag",
+            "flagRequired",
+            "flagType",
+            "flagSize"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "intro",
+        "requestLanguage",
+        "adminTitle",
+        "myTitle",
+        "myEmpty",
+        "code",
+        "codeHint",
+        "name",
+        "nameHint",
+        "exonym",
+        "flag",
+        "flagHint",
+        "flagPreview",
+        "description",
+        "descriptionPlaceholder",
+        "features",
+        "featuresHint",
+        "present",
+        "partial",
+        "none",
+        "submit",
+        "sending",
+        "sent",
+        "codeFormat",
+        "nameRequired",
+        "descriptionRequired",
+        "featureTwice",
         "errors"
       ]
     },
@@ -1523,9 +1895,36 @@
             "rejectedBody",
             "viewRequests"
           ]
+        },
+        "languageRequest": {
+          "type": "object",
+          "properties": {
+            "acceptedSubject": {
+              "type": "string"
+            },
+            "acceptedBody": {
+              "type": "string"
+            },
+            "rejectedSubject": {
+              "type": "string"
+            },
+            "rejectedBody": {
+              "type": "string"
+            },
+            "viewRequests": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "acceptedSubject",
+            "acceptedBody",
+            "rejectedSubject",
+            "rejectedBody",
+            "viewRequests"
+          ]
         }
       },
-      "required": ["changeRequest"]
+      "required": ["changeRequest", "languageRequest"]
     },
     "Game": {
       "type": "object",
@@ -1830,9 +2229,11 @@
     "AuthPage",
     "AddPermissionPage",
     "ListPage",
+    "PublicDataPage",
     "LangData",
     "AccountPage",
     "ChangeRequests",
+    "LanguageRequests",
     "Emails",
     "Game",
     "Exonyms",

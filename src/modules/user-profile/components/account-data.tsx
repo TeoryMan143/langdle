@@ -9,7 +9,7 @@ function AccountData({ user }: { user: UserDTO }) {
         <img
           className='h-8 rounded-sm aspect-video'
           alt={`${user.country}-flag`}
-          src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${user.country}.svg`}
+          src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${user.country}.svg`}
         />
         <h4 className='text-center text-2xl'>{user.nickname}</h4>
       </div>

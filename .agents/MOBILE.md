@@ -11,7 +11,7 @@ for it.
 
 | Concern | Choice |
 | --- | --- |
-| Framework | Flutter 3.47 (Dart 3.13), Material 3 as the base, restyled |
+| Framework | Flutter 3.47 (Dart 3.13), Material 3 as the base, restyled. CI pins the exact version (`flutter-version` in `.github/workflows/tests.yaml`): from 3.48 `package:flutter/material.dart` is deprecated for `material_ui`, so upgrading means migrating those imports too |
 | State | `provider` + `ChangeNotifier` |
 | Navigation | `go_router` (`StatefulShellRoute` for the tab bar) |
 | HTTP | `http`, wrapped by `core/api/api_client.dart` |
@@ -156,7 +156,7 @@ tab.
   guard is `routeRedirect` in `router.dart`: signed out, the link goes to
   `/signup?redtk=<token>`; the token rides along through `/signin` and
   `/endgoogle` (`withRedirectToken`) and the guard returns to the link once the
-  session opens, like the web's `redtk`.
+  session opens, like the web's `?next=` return path.
 
 ### Provider setup
 
@@ -225,6 +225,15 @@ Run it after any change to the messages or the flags, and commit the copies
 with the change. The app ships what is in `assets/`, not what is in the web
 folders.
 
+Languages added through language requests have their flag only in the R2
+bucket. `LangFlag` tries the asset, then `$FLAGS_BASE_URL/flags/<code>.webp`,
+then the unknown flag, like the web `LangImage`. Build with
+`--dart-define=FLAGS_BASE_URL=<the web's NEXT_PUBLIC_FLAGS_URL>`.
+
+**Pending:** the app has no language request form or review yet. The endpoints
+are ready (`/api/lang/language-requests`, multipart `data` + `flag`; see the
+spine's inventory).
+
 ## Code style
 
 - Files and folders in `snake_case`, classes in `PascalCase`, members in
@@ -242,6 +251,7 @@ cd mobile
 flutter pub get
 flutter run                                          # against pnpm dev
 flutter run --dart-define=API_BASE_URL=https://…     # against another API
+            --dart-define=FLAGS_BASE_URL=https://…   # the flags bucket
                                                      # + Google ids, see Auth
 flutter analyze && flutter test
 ```

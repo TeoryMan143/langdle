@@ -1,4 +1,6 @@
 import { getTranslations } from 'next-intl/server';
+import { buttonVariants } from '@/core/components/ui/button';
+import { Link } from '@/i18n/navigation';
 import { getAllLanguages } from '@/modules/lang-data/actions';
 import PublicLanguageAtlas from '@/modules/lang-data/components/public-language-atlas';
 
@@ -38,6 +40,9 @@ async function PublicDataPage() {
                 {t('intro')}
               </p>
             </div>
+            <Link className={buttonVariants()} href='/data/request-language'>
+              {t('requestLanguage')}
+            </Link>
           </div>
         </div>
       </section>

@@ -1,6 +1,7 @@
 import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { buttonVariants } from '@/core/components/ui/button';
+import { withNext } from '@/core/lib/redirect';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/modules/auth/actions';
 import { getLanguage, setLangPermission } from '@/modules/lang-data/actions';
@@ -25,7 +26,10 @@ async function AddPermissionPage({ searchParams }: Props) {
   const { session } = await auth();
 
   if (!session) {
-    return redirect(`/signup?redtk=${token}`, RedirectType.replace);
+    return redirect(
+      withNext('/signup', `/addpermission?token=${encodeURIComponent(token)}`),
+      RedirectType.replace,
+    );
   }
 
   const res = await setLangPermission(token);

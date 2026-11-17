@@ -1,11 +1,15 @@
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import type { z } from 'zod';
-import type { changeRequestTable } from '@/core/database/relational/tables';
+import type {
+  changeRequestTable,
+  languageRequestTable,
+} from '@/core/database/relational/tables';
 import type { FeatureStatus, LangFeatures } from '@/core/types';
 import type {
   changeRequestSchema,
   rejectChangeRequestSchema,
 } from './schemas/change-request';
+import type { languageRequestSchema } from './schemas/language-request';
 
 export type FeatureChangeRequest = InferInsertModel<typeof changeRequestTable>;
 
@@ -68,3 +72,67 @@ export type PermissionErrorKey =
 export type SetPermissionResult =
   | { success: true; lang: string; key?: never }
   | { success: false; lang?: never; key: PermissionErrorKey };
+
+/* -------------------------------------------------------------------------- */
+/*                              Language requests                             */
+/* -------------------------------------------------------------------------- */
+
+export type NewLanguageRequest = InferInsertModel<typeof languageRequestTable>;
+
+/** What the form fills in; the flag is sent beside it as a file. */
+export type LanguageRequestFormValues = z.input<typeof languageRequestSchema>;
+export type LanguageRequestValues = z.output<typeof languageRequestSchema>;
+
+/** A language request as the API sends it to the user who made it. */
+export type LanguageRequestDTO = {
+  id: string;
+  code: string;
+  name: string;
+  exonym: string | null;
+  features: LangFeatures[];
+  partial: LangFeatures[];
+  description: string;
+  /**
+   * Public URL of the flag: the upload while pending, the published flag once
+   * accepted, `null` once rejected (the upload is deleted).
+   */
+  flagUrl: string | null;
+  state: ChangeRequestState;
+  rejectionReason: string | null;
+  createdAt: string;
+  reviewedAt: string | null;
+};
+
+export type AdminLanguageRequestDTO = LanguageRequestDTO & {
+  user: { id: string; nickname: string };
+};
+
+export type CreateLanguageRequestErrorKey =
+  | 'langExists'
+  | 'requestPending'
+  | 'invalidFlag'
+  | 'unknown';
+
+export type CreateLanguageRequestResult =
+  | { success: true; request: LanguageRequestDTO; key?: never }
+  | { success: false; request?: never; key: CreateLanguageRequestErrorKey };
+
+export type LanguageReviewErrorKey =
+  | 'requestNotFound'
+  | 'requestAlreadyReviewed'
+  | 'langExists'
+  | 'unknown';
+
+export type ReviewLanguageRequestResult =
+  | {
+      success: true;
+      request: LanguageRequestDTO;
+      emailSent: boolean;
+      key?: never;
+    }
+  | {
+      success: false;
+      request?: never;
+      emailSent?: never;
+      key: LanguageReviewErrorKey;
+    };

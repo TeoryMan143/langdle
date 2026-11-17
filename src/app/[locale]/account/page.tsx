@@ -1,9 +1,11 @@
 import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { withNext } from '@/core/lib/redirect';
 import { auth } from '@/modules/auth/actions';
 import DeleteAccountButton from '@/modules/auth/components/delete-account-button';
 import SignOutButton from '@/modules/auth/components/signout-button';
 import MyChangeRequests from '@/modules/lang-data/components/my-change-requests';
+import MyLanguageRequests from '@/modules/lang-data/components/my-language-requests';
 import GameHistory from '@/modules/lang-guess/components/game-history';
 import AccountData from '@/modules/user-profile/components/account-data';
 
@@ -11,7 +13,7 @@ async function AccountPage() {
   const { user, session } = await auth();
 
   if (!session) {
-    redirect('/', RedirectType.replace);
+    redirect(withNext('/signin', '/account'), RedirectType.replace);
   }
 
   const t = await getTranslations('AccountPage');
@@ -25,6 +27,7 @@ async function AccountPage() {
           <GameHistory />
         </div>
         <MyChangeRequests />
+        <MyLanguageRequests />
         <div className='flex justify-center gap-3'>
           <SignOutButton />
           <DeleteAccountButton />

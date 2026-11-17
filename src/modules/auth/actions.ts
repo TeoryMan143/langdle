@@ -1,7 +1,7 @@
 'use server';
 
 import { cache } from 'react';
-import type { typeToFlattenedError } from 'zod';
+import type { ZodFlattenedError } from 'zod';
 import { actionError, actionSuccess } from '@/core/lib/action';
 import { apiRequest } from '@/core/lib/api-client';
 import {
@@ -21,10 +21,7 @@ import type {
   UserDTO,
 } from './types';
 
-type AuthActionResult<S> = ActionResult<
-  UserDTO,
-  typeToFlattenedError<S> | string
->;
+type AuthActionResult<S> = ActionResult<UserDTO, ZodFlattenedError<S> | string>;
 
 /**
  * Opens the session returned by the API in the browser. Setting the cookie is
@@ -38,7 +35,7 @@ async function startSession(payload: AuthPayload) {
 export async function signUpUser(
   data: unknown,
 ): Promise<AuthActionResult<SignUpSchema>> {
-  const res = await apiRequest<AuthPayload, typeToFlattenedError<SignUpSchema>>(
+  const res = await apiRequest<AuthPayload, ZodFlattenedError<SignUpSchema>>(
     '/auth/signup',
     { method: 'post', body: data },
   );
@@ -53,7 +50,7 @@ export async function signUpUser(
 export async function signInUser(
   data: unknown,
 ): Promise<AuthActionResult<SignInSchema>> {
-  const res = await apiRequest<AuthPayload, typeToFlattenedError<SignInSchema>>(
+  const res = await apiRequest<AuthPayload, ZodFlattenedError<SignInSchema>>(
     '/auth/signin',
     { method: 'post', body: data },
   );
@@ -80,7 +77,7 @@ export async function createGoogleAccount(
 ): Promise<AuthActionResult<GoogleSignUpSchema>> {
   const res = await apiRequest<
     AuthPayload,
-    typeToFlattenedError<GoogleSignUpSchema>
+    ZodFlattenedError<GoogleSignUpSchema>
   >('/auth/oauth/signup', { method: 'post', body: data });
 
   if (!res.success) {

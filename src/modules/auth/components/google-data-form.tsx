@@ -7,6 +7,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Button } from '@/core/components/ui/button';
 import { COUNTRIES } from '@/core/lib/countries';
+import { safeNextPath } from '@/core/lib/redirect';
 import { cn } from '@/core/lib/utils';
 import { SelectMenuOption } from '@/core/types';
 import { useRouter } from '@/i18n/navigation';
@@ -19,9 +20,11 @@ import FormInput from './form-input';
 function GoogleDataForm({
   accountData,
   dataToken,
+  next,
 }: {
   accountData: OAuthSignupData;
   dataToken: string;
+  next?: string;
 }) {
   const {
     register,
@@ -66,7 +69,7 @@ function GoogleDataForm({
     }
 
     toast.success(t('signedIn'), { id: toastId });
-    router.push('/account');
+    router.push(safeNextPath(next) ?? '/account');
   };
 
   const [isOpen, setIsOpen] = useState(false);

@@ -50,7 +50,7 @@ edit permissions, and a change-request flow so players can suggest corrections.
 ### Prerequisites
 
 - [Node.js](https://nodejs.org) (a current LTS release)
-- [pnpm](https://pnpm.io) 11 (the version pinned in `package.json`; enable it with `corepack enable`)
+- [pnpm](https://pnpm.io) 12 (CI pins the exact version in `.github/workflows/tests.yaml`)
 - PostgreSQL and Redis, either installed locally or through Docker
 - [Docker](https://www.docker.com) (required for the API tests)
 - [Flutter](https://flutter.dev) (only if you work on the mobile app)
@@ -98,6 +98,7 @@ npx drizzle-kit studio     # browse the database in the browser
 pnpm dev            # start the dev server (next dev --turbo) at http://localhost:3000
 pnpm build          # production build (also typechecks)
 pnpm start          # serve the production build
+pnpm lint           # format and lint check, changes nothing (biome check src tests)
 pnpm format         # format and lint fixes (biome check --write src tests)
 npx biome check --write src tests   # the same, run directly
 npx tsc --noEmit    # typecheck only

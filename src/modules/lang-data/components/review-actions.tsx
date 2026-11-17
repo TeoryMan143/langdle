@@ -17,17 +17,40 @@ import {
   DialogTrigger,
 } from '@/core/components/ui/dialog';
 import { Textarea } from '@/core/components/ui/textarea';
-import { acceptChangeRequest, rejectChangeRequest } from '../actions';
+import {
+  acceptChangeRequest,
+  acceptLanguageRequest,
+  rejectChangeRequest,
+  rejectLanguageRequest,
+} from '../actions';
 import { createRejectChangeRequestSchema } from '../schemas/change-request';
 import type { RejectChangeRequestValues } from '../types';
 
+/** The same review for both kinds of request, only the endpoints differ. */
+const REVIEWERS = {
+  change: {
+    accept: acceptChangeRequest,
+    reject: rejectChangeRequest,
+    accepted: 'accepted',
+    acceptedNoEmail: 'acceptedNoEmail',
+  },
+  language: {
+    accept: acceptLanguageRequest,
+    reject: rejectLanguageRequest,
+    accepted: 'languageAccepted',
+    acceptedNoEmail: 'languageAcceptedNoEmail',
+  },
+} as const;
+
 type Props = {
+  kind?: keyof typeof REVIEWERS;
   requestId: string;
   /** Author of the request, named in the rejection dialog. */
   nickname: string;
 };
 
-function ReviewActions({ requestId, nickname }: Props) {
+function ReviewActions({ kind = 'change', requestId, nickname }: Props) {
+  const reviewer = REVIEWERS[kind];
   const t = useTranslations('ChangeRequests');
   const cancelT = useTranslations('Features.changeRequest');
   const [accepting, setAccepting] = useState(false);
@@ -46,7 +69,7 @@ function ReviewActions({ requestId, nickname }: Props) {
     setAccepting(true);
     const toastId = toast.loading(t('accepting'));
 
-    const res = await acceptChangeRequest(requestId);
+    const res = await reviewer.accept(requestId);
     setAccepting(false);
 
     if (!res.success) {
@@ -54,16 +77,16 @@ function ReviewActions({ requestId, nickname }: Props) {
     }
 
     if (!res.result.emailSent) {
-      return toast.warning(t('acceptedNoEmail'), { id: toastId });
+      return toast.warning(t(reviewer.acceptedNoEmail), { id: toastId });
     }
 
-    toast.success(t('accepted'), { id: toastId });
+    toast.success(t(reviewer.accepted), { id: toastId });
   };
 
   const onReject = async ({ reason }: RejectChangeRequestValues) => {
     const toastId = toast.loading(t('rejecting'));
 
-    const res = await rejectChangeRequest(requestId, reason);
+    const res = await reviewer.reject(requestId, reason);
 
     if (!res.success) {
       return toast.error(t(`errors.${res.error}`), { id: toastId });

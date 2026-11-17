@@ -10,7 +10,7 @@ import type { langDataSchema } from './schemas/lang';
 export type LangFeatures = (typeof langFeatures)[number];
 export type FeatureStatus = (typeof featureStatuses)[number];
 
-export type LanguageData = z.TypeOf<typeof langDataSchema>;
+export type LanguageData = z.infer<typeof langDataSchema>;
 export type Language = { id: string } & LanguageData;
 
 export type SelectMenuOption = (typeof COUNTRIES)[number];
@@ -51,7 +51,7 @@ export type ApiErrorBody<E = unknown> = {
 
 export type ApiRequestOptions = {
   method?: 'get' | 'post' | 'put' | 'patch' | 'delete';
-  /** JSON serializable payload. */
+  /** JSON serializable payload, or a `FormData` sent as multipart. */
   body?: unknown;
   /** Sends the current session token as a `Bearer` header. */
   auth?: boolean;

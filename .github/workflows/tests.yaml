@@ -13,18 +13,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-      
-      - name: Enable pnpm
-        run: corepack enable pnpm
+          node-version: "24"
+
+      # package.json no longer pins pnpm, so the version is pinned here.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.18.0
 
       - name: Install dependencies
         run: pnpm install
-      
+
       # The api tests start their own Postgres and Redis Stack containers
       # (the runner ships with Docker), so no database secret is needed.
       - name: Run tests
@@ -41,10 +44,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Pinned to the version the app is developed with (MOBILE.md, Stack).
+      # Newer stables deprecate `package:flutter/material.dart` in favour of
+      # `material_ui`, which fails `flutter analyze`; bump this together with
+      # that migration.
       - name: Setup flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: 3.47.9
           cache: true
 
       - name: Install dependencies

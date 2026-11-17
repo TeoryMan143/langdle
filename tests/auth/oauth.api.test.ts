@@ -67,94 +67,94 @@ function idToken(
     .sign(privateKey);
 }
 
-describe.each<OAuthProvider>([
-  'google',
-  'apple',
-])('POST /auth/%s/token', provider => {
-  const column = provider === 'google' ? 'googleId' : 'appleId';
+describe.each<OAuthProvider>(['google', 'apple'])(
+  'POST /auth/%s/token',
+  provider => {
+    const column = provider === 'google' ? 'googleId' : 'appleId';
 
-  test('signs in an existing account', async () => {
-    const { user } = await createTestUser({ [column]: `${provider}-sub-1` });
+    test('signs in an existing account', async () => {
+      const { user } = await createTestUser({ [column]: `${provider}-sub-1` });
 
-    const res = await api('POST', `/auth/${provider}/token`, {
-      body: { idToken: await idToken(provider) },
+      const res = await api('POST', `/auth/${provider}/token`, {
+        body: { idToken: await idToken(provider) },
+      });
+
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe('signedIn');
+      expect(res.body.user.id).toBe(user.id);
+
+      const me = await api('GET', '/auth/me', { token: res.body.token });
+      expect(me.status).toBe(200);
     });
 
-    expect(res.status).toBe(200);
-    expect(res.body.status).toBe('signedIn');
-    expect(res.body.user.id).toBe(user.id);
+    test('asks a new account to finish the sign up', async () => {
+      const res = await api('POST', `/auth/${provider}/token`, {
+        body: { idToken: await idToken(provider), nickname: 'chosen' },
+      });
 
-    const me = await api('GET', '/auth/me', { token: res.body.token });
-    expect(me.status).toBe(200);
-  });
+      expect(res.status).toBe(200);
+      expect(res.body).toMatchObject({
+        status: 'needsSignup',
+        nickname: 'chosen',
+        email: 'oauth@langdle.test',
+      });
 
-  test('asks a new account to finish the sign up', async () => {
-    const res = await api('POST', `/auth/${provider}/token`, {
-      body: { idToken: await idToken(provider), nickname: 'chosen' },
+      const data = await api('GET', '/auth/oauth/signup-data', {
+        query: { token: res.body.dataToken },
+      });
+      expect(data.body).toEqual({
+        provider,
+        nickname: 'chosen',
+        email: 'oauth@langdle.test',
+      });
+
+      const signup = await api('POST', '/auth/oauth/signup', {
+        body: { dataToken: res.body.dataToken, nickname: '', country: 'PT' },
+      });
+
+      expect(signup.status).toBe(201);
+      expect(signup.body.user).toMatchObject({
+        nickname: 'chosen',
+        [column]: `${provider}-sub-1`,
+      });
     });
 
-    expect(res.status).toBe(200);
-    expect(res.body).toMatchObject({
-      status: 'needsSignup',
-      nickname: 'chosen',
-      email: 'oauth@langdle.test',
+    test('rejects a token addressed to another app', async () => {
+      const res = await api('POST', `/auth/${provider}/token`, {
+        body: { idToken: await idToken(provider, { audience: 'someone' }) },
+      });
+
+      expect(res.status).toBe(401);
+      expect(res.body.key).toBe('invalidToken');
     });
 
-    const data = await api('GET', '/auth/oauth/signup-data', {
-      query: { token: res.body.dataToken },
-    });
-    expect(data.body).toEqual({
-      provider,
-      nickname: 'chosen',
-      email: 'oauth@langdle.test',
-    });
+    test('rejects a token from another issuer', async () => {
+      const res = await api('POST', `/auth/${provider}/token`, {
+        body: {
+          idToken: await idToken(provider, { issuer: 'https://evil.test' }),
+        },
+      });
 
-    const signup = await api('POST', '/auth/oauth/signup', {
-      body: { dataToken: res.body.dataToken, nickname: '', country: 'PT' },
+      expect(res.status).toBe(401);
     });
 
-    expect(signup.status).toBe(201);
-    expect(signup.body.user).toMatchObject({
-      nickname: 'chosen',
-      [column]: `${provider}-sub-1`,
-    });
-  });
+    test('needs a verified email to create an account', async () => {
+      const res = await api('POST', `/auth/${provider}/token`, {
+        body: { idToken: await idToken(provider, { email: null }) },
+      });
 
-  test('rejects a token addressed to another app', async () => {
-    const res = await api('POST', `/auth/${provider}/token`, {
-      body: { idToken: await idToken(provider, { audience: 'someone' }) },
+      expect(res.status).toBe(400);
+      expect(res.body.key).toBe('missingEmail');
     });
 
-    expect(res.status).toBe(401);
-    expect(res.body.key).toBe('invalidToken');
-  });
+    test('validates the body', async () => {
+      const res = await api('POST', `/auth/${provider}/token`, { body: {} });
 
-  test('rejects a token from another issuer', async () => {
-    const res = await api('POST', `/auth/${provider}/token`, {
-      body: {
-        idToken: await idToken(provider, { issuer: 'https://evil.test' }),
-      },
+      expect(res.status).toBe(400);
+      expect(res.body.key).toBe('invalidData');
     });
-
-    expect(res.status).toBe(401);
-  });
-
-  test('needs a verified email to create an account', async () => {
-    const res = await api('POST', `/auth/${provider}/token`, {
-      body: { idToken: await idToken(provider, { email: null }) },
-    });
-
-    expect(res.status).toBe(400);
-    expect(res.body.key).toBe('missingEmail');
-  });
-
-  test('validates the body', async () => {
-    const res = await api('POST', `/auth/${provider}/token`, { body: {} });
-
-    expect(res.status).toBe(400);
-    expect(res.body.key).toBe('invalidData');
-  });
-});
+  },
+);
 
 describe('GET /auth/oauth/signup-data', () => {
   test('rejects a forged token', async () => {
