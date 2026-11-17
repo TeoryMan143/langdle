@@ -250,11 +250,16 @@ spine's inventory).
 cd mobile
 flutter pub get
 flutter run                                          # against pnpm dev
+flutter run --dart-define-from-file=env.json         # every define at once
 flutter run --dart-define=API_BASE_URL=https://…     # against another API
             --dart-define=FLAGS_BASE_URL=https://…   # the flags bucket
                                                      # + Google ids, see Auth
 flutter analyze && flutter test
 ```
+
+`env.json` (git ignored, copied from `env.example.json`) holds the four
+defines: `API_BASE_URL`, `FLAGS_BASE_URL`, `GOOGLE_SERVER_CLIENT_ID` and
+`GOOGLE_IOS_CLIENT_ID`. A new define goes in both files.
 
 Without `API_BASE_URL` the app calls `http://localhost:3000`. On Android, a
 phone or an emulator reaches the dev server through USB forwarding. Run this
