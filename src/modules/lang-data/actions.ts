@@ -10,6 +10,7 @@ import type {
   AdminLanguageRequestDTO,
   ChangeRequestDTO,
   ChangeRequestFormValues,
+  LanguageName,
   LanguagePage,
   LanguagePageParams,
   LanguageRequestDTO,
@@ -37,6 +38,38 @@ export async function getAllActiveLanguages(): Promise<
 > {
   const res = await apiRequest<Language[]>('/lang', {
     searchParams: { oactive: '1' },
+  });
+
+  if (!res.success) {
+    return actionError(res.error.key);
+  }
+
+  const t = await getTranslations('Exonyms');
+
+  return actionSuccess(
+    res.result.map(lang => ({
+      ...lang,
+      // Languages added through requests have no translated exonym yet.
+      searchParams: t.has(lang.id)
+        ? [...lang.searchParams, t(lang.id)]
+        : lang.searchParams,
+    })),
+  );
+}
+
+/**
+ * The names a picker searches, with the exonym translated in the current
+ * locale added to each language's search params: the game shows that name, so
+ * the user types it.
+ */
+export async function getLanguageNames({
+  active,
+}: {
+  active?: boolean;
+} = {}): Promise<ActionResult<LanguageName[]>> {
+  const res = await apiRequest<LanguageName[]>('/lang/names', {
+    searchParams: active === undefined ? {} : { active },
+    cache: 'no-store',
   });
 
   if (!res.success) {

@@ -13,6 +13,7 @@ import { useRouter } from '@/i18n/navigation';
 import LangImage from '@/modules/lang-data/components/lang-image';
 import LangSelector from '@/modules/lang-data/components/lang-selector';
 import { useLang } from '@/modules/lang-data/hooks/use-lang';
+import type { LanguageName } from '@/modules/lang-data/types';
 import { editNativeLanguage } from '../actions';
 
 function NativeLang({ langId }: { langId?: string | null }) {
@@ -80,7 +81,7 @@ function Editor({
 }: {
   setEditing: Dispatch<SetStateAction<boolean>>;
 }) {
-  const [selectedLang, setSelectedLang] = useState<Language | null>(null);
+  const [selectedLang, setSelectedLang] = useState<LanguageName | null>(null);
   const [loading, setLoading] = useState(false);
   const t = useTranslations('AccountPage');
   const router = useRouter();

@@ -149,6 +149,13 @@ export type LanguageName = {
   searchParams: string[];
 };
 
+/** What `useLangSearch` gives a picker: the matches, best first. */
+export type LangSearchResult = {
+  data: LanguageName[] | undefined;
+  error: Error | null;
+  isLoading: boolean;
+};
+
 /** The orders `GET /lang/page` lists the catalogue in (`?sort=`). */
 export const languagePageSorts = ['name', 'coverage'] as const;
 export type LanguagePageSort = (typeof languagePageSorts)[number];

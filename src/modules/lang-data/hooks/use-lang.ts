@@ -1,5 +1,4 @@
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
-import { distance } from 'fastest-levenshtein';
 import type { Language, LanguageData } from '@/core/types';
 import { getDailyLanguage } from '@/modules/lang-guess/actions';
 import {
@@ -37,15 +36,6 @@ type GetLanguageByCodes = {
   onlyActives?: never;
 };
 
-type GetLanguagesbySearch = {
-  action: 'search';
-  langs?: never;
-  lang?: never;
-  query: string;
-  data?: never;
-  onlyActives?: never;
-};
-
 type ModifyLanguage = {
   action: 'modify';
   langs?: never;
@@ -61,9 +51,6 @@ export function useLang(
   options: ModifyLanguage,
 ): UseQueryResult<{ message: string; success: true }>;
 export function useLang(
-  options: GetLanguagesbySearch,
-): UseQueryResult<Language[]>;
-export function useLang(
   options: GetLanguageByCodes,
 ): UseQueryResult<Language[]>;
 
@@ -72,7 +59,6 @@ export function useLang(
     | GetAllLanguages
     | GetLanguageByCode
     | ModifyLanguage
-    | GetLanguagesbySearch
     | GetLanguageByCodes,
 ) {
   const { action, lang, data, query, onlyActives = false, langs } = options;
@@ -117,29 +103,6 @@ export function useLang(
         if (!success) {
           throw new Error(error);
         }
-
-        return result;
-      }
-      if (action === 'search' && query !== undefined) {
-        const { success, error, result: langs } = await getAllActiveLanguages();
-
-        if (!success) {
-          console.log(error);
-          throw new Error(error);
-        }
-
-        if (query.length === 0) {
-          return langs;
-        }
-
-        const result = langs
-          .map(lang => ({
-            ...lang,
-            score: Math.min(
-              ...lang.searchParams.map(param => distance(query, param)),
-            ),
-          }))
-          .sort((a, b) => a.score - b.score);
 
         return result;
       }

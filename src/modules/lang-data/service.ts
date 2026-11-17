@@ -265,6 +265,28 @@ export function clearLanguageIndex() {
   languageIndex = null;
 }
 
+/**
+ * The names of the catalogue (or of its playable or unplayable part), by
+ * name: what a picker needs to search in the browser, without the features.
+ */
+export async function getLanguageNames(
+  active?: boolean,
+): Promise<LanguageName[] | null> {
+  try {
+    return (await getLanguageIndex())
+      .filter(language => active === undefined || language.active === active)
+      .map(({ id, name, exonym, searchParams }) => ({
+        id,
+        name,
+        ...(exonym ? { exonym } : {}),
+        searchParams,
+      }));
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+}
+
 /* ---------------------------------- Paging --------------------------------- */
 
 /**

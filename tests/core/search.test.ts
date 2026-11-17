@@ -1,5 +1,10 @@
 import { describe, expect, test } from 'vitest';
-import { matchRank, normalizeSearchText, searchTerms } from '@/core/lib/search';
+import {
+  matchRank,
+  normalizeSearchText,
+  rankByQuery,
+  searchTerms,
+} from '@/core/lib/search';
 
 describe('normalizeSearchText', () => {
   test('drops case, accents and extra spaces', () => {
@@ -43,5 +48,20 @@ describe('matchRank', () => {
 
   test('forgives no typo below four letters', () => {
     expect(matchRank(['ale'], 'alx')).toBeNull();
+  });
+});
+
+describe('rankByQuery', () => {
+  const items = ['kale', 'aleut', 'ale', 'zulu'].map(name => ({
+    item: name,
+    terms: [name],
+  }));
+
+  test('keeps every item, in order, without a query', () => {
+    expect(rankByQuery(items, '  ')).toEqual(['kale', 'aleut', 'ale', 'zulu']);
+  });
+
+  test('keeps the matches, best first', () => {
+    expect(rankByQuery(items, 'ALE')).toEqual(['ale', 'aleut', 'kale']);
   });
 });

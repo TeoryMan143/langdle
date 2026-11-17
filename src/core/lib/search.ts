@@ -1,8 +1,9 @@
 import { distance } from 'fastest-levenshtein';
 
 /**
- * How languages are matched against what a user types (`GET /lang/page?q=`):
- * what a query finds and in which order.
+ * How languages are matched against what a user types, shared by the API
+ * (`GET /lang/page?q=`) and the pickers that rank in the browser, so both
+ * agree on what a query finds and in which order.
  */
 
 /** Lowercase, accents and extra spaces dropped: `Català` matches `catala`. */
@@ -100,4 +101,27 @@ export function matchRank(terms: string[], query: string): number | null {
   );
 
   return fuzzy ? 4 : null;
+}
+
+/**
+ * The `items` matching `query`, best matches first; items of the same rank
+ * keep their order. Without a query every item is kept.
+ */
+export function rankByQuery<T>(
+  items: Array<{ item: T; terms: string[] }>,
+  query: string,
+): T[] {
+  const normalized = normalizeSearchText(query);
+
+  if (!normalized) {
+    return items.map(({ item }) => item);
+  }
+
+  return items
+    .flatMap(({ item, terms }) => {
+      const rank = matchRank(terms, normalized);
+      return rank === null ? [] : [{ item, rank }];
+    })
+    .sort((a, b) => a.rank - b.rank)
+    .map(({ item }) => item);
 }

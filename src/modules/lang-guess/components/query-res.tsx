@@ -2,12 +2,12 @@
 
 import { useTranslations } from 'next-intl';
 import Loading from '@/core/components/icons/loading';
-import { Language } from '@/core/types';
 import LangImage from '@/modules/lang-data/components/lang-image';
+import type { LanguageName } from '@/modules/lang-data/types';
 import { useGame } from '../hooks/use-game';
 
 type Props = {
-  onSelect: (lang: Language) => void;
+  onSelect: (lang: LanguageName) => void;
 };
 
 function QueryRes({ onSelect }: Props) {

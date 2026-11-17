@@ -758,6 +758,49 @@ describe('GET /lang/summary', () => {
   });
 });
 
+describe('GET /lang/names', () => {
+  test('lists the names of every language by name, without features', async () => {
+    await seedLanguage('spanish', {
+      name: 'Spanish',
+      exonym: 'Español',
+      features: ['svo'],
+      searchParams: ['castellano'],
+    });
+    await seedLanguage('basque', { name: 'Basque', active: false });
+
+    const res = await api('GET', '/lang/names');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual([
+      { id: 'basque', name: 'Basque', exonym: 'basque', searchParams: [] },
+      {
+        id: 'spanish',
+        name: 'Spanish',
+        exonym: 'Español',
+        searchParams: ['castellano'],
+      },
+    ]);
+  });
+
+  test('keeps the playable languages with ?active=true', async () => {
+    await seedLanguage('spanish');
+    await seedLanguage('basque', { active: false });
+
+    const res = await api('GET', '/lang/names', { query: { active: 'true' } });
+
+    expect(res.body.map((lang: { id: string }) => lang.id)).toEqual([
+      'spanish',
+    ]);
+  });
+
+  test('rejects ?active=1', async () => {
+    const res = await api('GET', '/lang/names', { query: { active: '1' } });
+
+    expect(res.status).toBe(400);
+    expect(res.body.key).toBe('invalidData');
+  });
+});
+
 describe('GET /lang/page?q= with typos', () => {
   test('finds a language despite a typo, after the exact matches', async () => {
     await seedLanguage('spanish', { name: 'Spanish' });

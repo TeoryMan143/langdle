@@ -16,7 +16,10 @@ import {
   changeRequestStateSchema,
   rejectChangeRequestSchema,
 } from './schemas/change-request';
-import { languagePageQuerySchema } from './schemas/language-page';
+import {
+  languageNamesQuerySchema,
+  languagePageQuerySchema,
+} from './schemas/language-page';
 import { languageRequestBodySchema } from './schemas/language-request';
 import {
   canEditLanguage,
@@ -27,6 +30,7 @@ import {
   getAllLanguages,
   getChangeRequests,
   getLanguageById,
+  getLanguageNames,
   getLanguageRequests,
   getLanguagesByIds,
   getLanguagesPage,
@@ -178,6 +182,32 @@ langDataRouter.get('/page', async c => {
   }
 
   return c.json(result.page);
+});
+
+/**
+ * The names of every language (`?active=true|false` for one part), by name:
+ * light enough for a picker to load once and search in the browser.
+ */
+langDataRouter.get('/names', async c => {
+  const parsed = languageNamesQuerySchema.safeParse(c.req.query());
+
+  if (!parsed.success) {
+    return apiError(
+      c,
+      400,
+      'invalidData',
+      'Invalid names query',
+      parsed.error.flatten(),
+    );
+  }
+
+  const names = await getLanguageNames(parsed.data.active);
+
+  if (!names) {
+    return unknownError(c, 'The languages could not be read');
+  }
+
+  return c.json(names);
 });
 
 /** How many languages and features the catalogue holds. */

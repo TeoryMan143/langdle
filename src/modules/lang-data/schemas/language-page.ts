@@ -10,6 +10,11 @@ const activeFilterSchema = z
   .transform(value => value === 'true')
   .optional();
 
+/** The query of `GET /lang/names`. */
+export const languageNamesQuerySchema = z.object({
+  active: activeFilterSchema,
+});
+
 /** The query of `GET /lang/page`. */
 export const languagePageQuerySchema = z.object({
   limit: z.coerce

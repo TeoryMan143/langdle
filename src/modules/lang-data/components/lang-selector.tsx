@@ -11,27 +11,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/core/components/ui/popover';
-import type { Language } from '@/core/types';
-import { useLang } from '@/modules/lang-data/hooks/use-lang';
+import { useLangSearch } from '@/modules/lang-data/hooks/use-lang-search';
+import type { LanguageName } from '@/modules/lang-data/types';
 import LangImage from './lang-image';
 
 export default function LangSelector({
   onValueChange,
 }: {
-  onValueChange?: (value: Language) => void;
+  onValueChange?: (value: LanguageName) => void;
 }) {
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState('');
-  const [value, setValue] = React.useState<Language | null>(null);
+  const [value, setValue] = React.useState<LanguageName | null>(null);
 
-  const {
-    data: langs,
-    isLoading: loading,
-    error,
-  } = useLang({
-    action: 'search',
-    query,
-  });
+  const { data: langs, isLoading: loading, error } = useLangSearch({ query });
 
   React.useEffect(() => {
     if (onValueChange && value) {

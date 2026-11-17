@@ -108,7 +108,10 @@ already.
   directly. A list of the whole catalogue never loads it at once: it reads it
   batch by batch with `useLangPages` (`GET /lang/page`), with the first batch
   read by the server component and handed over as `initialPage`, and the
-  `LoadMore` component at its end.
+  `LoadMore` component at its end. A picker (the game, the profile's language
+  selector) searches with `useLangSearch` instead: it loads the light
+  `/lang/names` list once per locale and ranks it on every keystroke, with no
+  debounce and no request.
 - Shared UI comes from `core/components/ui`, which is shadcn-style: `cva`
   variants, `cn()` for class merging, `React.ComponentProps<'x'>` for props.
   Icons are small components in `core/components/icons`.
