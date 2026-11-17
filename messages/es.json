@@ -316,7 +316,8 @@
   "ListPage": {
     "langList": "Lista de idiomas",
     "publicOverview": "Abrir atlas público de rasgos",
-    "changeRequests": "Revisar solicitudes de cambio"
+    "changeRequests": "Revisar solicitudes de cambio",
+    "requestLanguage": "Solicitar un idioma"
   },
   "PublicDataPage": {
     "eyebrow": "Atlas público",
@@ -344,7 +345,8 @@
       "writingSystem": "Sistema de escritura",
       "morphosyntax": "Morfosintaxis"
     },
-    "empty": "No hay idiomas que coincidan con tu búsqueda."
+    "empty": "No hay idiomas que coincidan con tu búsqueda.",
+    "requestLanguage": "Solicitar un idioma"
   },
   "LangData": {
     "loading": "Actualizando características",
@@ -433,7 +435,52 @@
       "requestNotFound": "La solicitud ya no existe",
       "requestAlreadyReviewed": "Otro administrador ya revisó esta solicitud",
       "langNotFound": "El idioma ya no existe",
-      "invalidData": "Datos inválidos"
+      "invalidData": "Datos inválidos",
+      "langExists": "Ese idioma ya existe"
+    },
+    "languageAccepted": "Solicitud aceptada: el idioma se creó inactivo",
+    "languageAcceptedNoEmail": "Solicitud aceptada y el idioma creado inactivo, pero no se pudo enviar el correo"
+  },
+  "LanguageRequests": {
+    "title": "Solicitar un idioma",
+    "intro": "¿Falta un idioma en Langdle? Cuéntanos sobre él: su código, su bandera y sus características. Un administrador revisará la solicitud y, una vez aceptada, podrás seguir editándolo.",
+    "requestLanguage": "Solicitar un idioma",
+    "adminTitle": "Solicitudes de idiomas",
+    "myTitle": "Mis solicitudes de idiomas",
+    "myEmpty": "Aún no has solicitado ningún idioma.",
+    "code": "Código ISO",
+    "codeHint": "ISO 639-1 (2 letras) o ISO 639-3 (3 letras), p. ej. eu o hak.",
+    "name": "Nombre",
+    "nameHint": "El nombre del idioma en el propio idioma.",
+    "exonym": "Nombre en inglés (opcional)",
+    "flag": "Bandera",
+    "flagHint": "PNG, JPEG o WebP, 2 MB como máximo. Se recorta a 3:2.",
+    "flagPreview": "Vista previa de la bandera",
+    "description": "¿Por qué debería añadirse?",
+    "descriptionPlaceholder": "Dónde se habla y fuentes para las características que marcaste.",
+    "features": "Características",
+    "featuresHint": "Marca lo que tiene el idioma. Lo que quede como \"No presente\" se envía como ausente.",
+    "present": "Presente",
+    "partial": "Parcial",
+    "none": "Ninguna",
+    "submit": "Enviar solicitud",
+    "sending": "Enviando solicitud...",
+    "sent": "¡Solicitud enviada! Puedes seguirla desde tu cuenta.",
+    "codeFormat": "Usa un código ISO de 2 o 3 letras en minúscula",
+    "nameRequired": "El nombre es obligatorio",
+    "descriptionRequired": "Cuéntanos por qué debería añadirse",
+    "featureTwice": "Una característica no puede ser presente y parcial a la vez",
+    "errors": {
+      "unknown": "Error desconocido del servidor",
+      "notSignedIn": "Debes iniciar sesión",
+      "invalidData": "Algunos campos no son válidos",
+      "invalidBody": "No se pudo leer la solicitud",
+      "langExists": "Ese idioma ya está en Langdle",
+      "requestPending": "Ya hay una solicitud abierta para ese idioma",
+      "invalidFlag": "La bandera debe ser una imagen PNG, JPEG o WebP de 2 MB como máximo",
+      "flagRequired": "La bandera es obligatoria",
+      "flagType": "Usa una imagen PNG, JPEG o WebP",
+      "flagSize": "La imagen pesa más de 2 MB"
     }
   },
   "Emails": {
@@ -443,6 +490,13 @@
       "rejectedSubject": "Tu solicitud de cambio para {language} fue rechazada",
       "rejectedBody": "Hola {nickname}, tu solicitud para cambiar \"{feature}\" a \"{status}\" en {language} fue rechazada.",
       "viewRequests": "Ver todas tus solicitudes"
+    },
+    "languageRequest": {
+      "acceptedSubject": "Tu solicitud para {language} fue aceptada",
+      "acceptedBody": "Hola {nickname}, tu solicitud para añadir {language} ({code}) a Langdle fue aceptada. Aún no se puede jugar: ya puedes editar sus características y un administrador lo activará pronto. ¡Gracias por ayudar a Langdle!",
+      "rejectedSubject": "Tu solicitud para {language} fue rechazada",
+      "rejectedBody": "Hola {nickname}, tu solicitud para añadir {language} ({code}) a Langdle fue rechazada.",
+      "viewRequests": "Abrir el idioma"
     }
   },
   "Game": {

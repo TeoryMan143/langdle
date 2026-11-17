@@ -10,6 +10,10 @@
 /// `GOOGLE_SERVER_CLIENT_ID`, the web OAuth client id the API knows as
 /// `GOOGLE_CLIENT_ID` (the audience of the ID token), and on iOS
 /// `GOOGLE_IOS_CLIENT_ID`. Without them the Google button is hidden.
+///
+/// `FLAGS_BASE_URL` is the public URL of the flags bucket (the web's
+/// `NEXT_PUBLIC_FLAGS_URL`). The flags of languages added through requests
+/// live only there; without it those show the unknown flag.
 abstract final class AppConfig {
   static const _apiBaseUrl = String.fromEnvironment('API_BASE_URL');
 
@@ -28,4 +32,9 @@ abstract final class AppConfig {
 
   static String? get googleIosClientId =>
       _googleIosClientId.isNotEmpty ? _googleIosClientId : null;
+
+  static const _flagsBaseUrl = String.fromEnvironment('FLAGS_BASE_URL');
+
+  static String? get flagsBaseUrl =>
+      _flagsBaseUrl.isNotEmpty ? _flagsBaseUrl : null;
 }

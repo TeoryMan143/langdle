@@ -43,6 +43,12 @@ async function DataPage() {
         >
           {t('publicOverview')}
         </Link>
+        <Link
+          className={buttonVariants({ variant: 'neutral' })}
+          href='/data/request-language'
+        >
+          {t('requestLanguage')}
+        </Link>
         {user.admin && (
           <Link
             className={buttonVariants({ variant: 'neutral' })}

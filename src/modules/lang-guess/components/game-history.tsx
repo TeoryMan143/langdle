@@ -51,7 +51,10 @@ async function GameHistory() {
                     </p>
                     <div>
                       <LangImage code={targetLang} /> {lang.name} (
-                      {ex(targetLang)})
+                      {ex.has(targetLang)
+                        ? ex(targetLang)
+                        : (lang.exonym ?? lang.name)}
+                      )
                     </div>
                   </div>
                   <div className='space-y-1'>

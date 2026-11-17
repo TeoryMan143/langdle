@@ -2,12 +2,14 @@ import { sql } from 'drizzle-orm';
 import {
   boolean,
   date,
+  index,
   integer,
   pgEnum,
   pgTable,
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
 import { langFeatures } from '@/core/lib/features';
@@ -103,3 +105,39 @@ export const changeRequestTable = pgTable('change_request', {
   reviewedAt: timestamp('reviewed_at', { withTimezone: true, mode: 'date' }),
   reviewedBy: uuid('reviewed_by').references(() => userTable.id),
 });
+
+/** A language a user wants added to the game, waiting for an administrator. */
+export const languageRequestTable = pgTable(
+  'language_request',
+  {
+    id: uuid().defaultRandom().primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => userTable.id, { onDelete: 'cascade' }),
+    /** ISO code the language will be stored under (`lang:<code>`). */
+    code: text().notNull(),
+    name: text().notNull(),
+    exonym: text(),
+    features: featuresEnum().array().notNull().default(sql`'{}'`),
+    partial: featuresEnum().array().notNull().default(sql`'{}'`),
+    description: text().notNull(),
+    /** Bucket key of the uploaded flag while the request is open. */
+    flagKey: text('flag_key').notNull(),
+    state: changeRequestStateEnum().notNull().default('pending'),
+    rejectionReason: text('rejection_reason'),
+    /** Language of the requester, so the resolution email speaks it. */
+    locale: text().notNull().default('en'),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
+      .notNull()
+      .defaultNow(),
+    reviewedAt: timestamp('reviewed_at', { withTimezone: true, mode: 'date' }),
+    reviewedBy: uuid('reviewed_by').references(() => userTable.id),
+  },
+  t => [
+    // A language can only have one open request at a time.
+    uniqueIndex('language_request_pending_code')
+      .on(t.code)
+      .where(sql`${t.state} = 'pending'`),
+    index('language_request_user').on(t.userId),
+  ],
+);

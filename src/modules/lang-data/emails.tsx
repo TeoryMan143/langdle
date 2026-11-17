@@ -13,6 +13,14 @@ type EmailMessages = {
       | 'viewRequests',
       string
     >;
+    languageRequest: Record<
+      | 'acceptedSubject'
+      | 'acceptedBody'
+      | 'rejectedSubject'
+      | 'rejectedBody'
+      | 'viewRequests',
+      string
+    >;
   };
   ChangeRequests: {
     rejectionReason: string;
@@ -102,6 +110,59 @@ export async function sendChangeRequestResolvedEmail(
         reason={email.reason}
         linkLabel={t.viewRequests}
         linkUrl={`${process.env.NEXT_PUBLIC_BASE_URL}/account`}
+      />
+    ),
+  });
+}
+
+type LanguageRequestEmailData = {
+  to: string;
+  nickname: string;
+  locale: string;
+  langId: string;
+  langName: string;
+  /** Present when the request was rejected. */
+  reason?: string;
+};
+
+/** Tells the requester how their request for a new language was resolved. */
+export async function sendLanguageRequestResolvedEmail(
+  email: LanguageRequestEmailData,
+) {
+  const messages = await loadMessages(email.locale);
+  const t = messages.Emails.languageRequest;
+  const state = email.reason === undefined ? 'accepted' : 'rejected';
+
+  const values = {
+    nickname: email.nickname,
+    language: messages.Exonyms[email.langId] ?? email.langName,
+    code: email.langId,
+  };
+
+  const subject = fill(
+    state === 'accepted' ? t.acceptedSubject : t.rejectedSubject,
+    values,
+  );
+
+  return sendEmail({
+    to: email.to,
+    subject,
+    react: (
+      <ChangeRequestEmail
+        state={state}
+        subject={subject}
+        stateLabel={messages.ChangeRequests.state[state]}
+        title={`${values.language} (${email.langId})`}
+        body={fill(
+          state === 'accepted' ? t.acceptedBody : t.rejectedBody,
+          values,
+        )}
+        reasonLabel={messages.ChangeRequests.rejectionReason}
+        reason={email.reason}
+        linkLabel={t.viewRequests}
+        linkUrl={`${process.env.NEXT_PUBLIC_BASE_URL}/${
+          state === 'accepted' ? `data/${email.langId}` : 'account'
+        }`}
       />
     ),
   });

@@ -38,7 +38,8 @@ async function ChangeRequestCard({
     <article className='bg-secondary-background border-2 border-border rounded-base shadow-shadow p-4 space-y-3'>
       <header className='flex flex-wrap items-center justify-between gap-2'>
         <h5 className='font-heading text-lg'>
-          <LangImage code={request.lang} /> {langT(request.lang)} ·{' '}
+          <LangImage code={request.lang} />{' '}
+          {langT.has(request.lang) ? langT(request.lang) : request.lang} ·{' '}
           {featureT(request.feature)}
         </h5>
         <ChangeRequestStateBadge state={request.state} />

@@ -87,7 +87,8 @@ export default function LangSelector({
                   onClick={() => setValue(lang)}
                   className='text-sm flex gap-2 justify-center py-2 cursor-pointer bg-none realtive z-30 size-full'
                 >
-                  <LangImage code={id} /> {name} ({exo(id)})
+                  <LangImage code={id} /> {name} (
+                  {exo.has(id) ? exo(id) : (lang.exonym ?? name)})
                 </button>
               </li>
             );

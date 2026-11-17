@@ -51,7 +51,7 @@ export type ApiErrorBody<E = unknown> = {
 
 export type ApiRequestOptions = {
   method?: 'get' | 'post' | 'put' | 'patch' | 'delete';
-  /** JSON serializable payload. */
+  /** JSON serializable payload, or a `FormData` sent as multipart. */
   body?: unknown;
   /** Sends the current session token as a `Bearer` header. */
   auth?: boolean;

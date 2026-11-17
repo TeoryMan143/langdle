@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
       headers: [{ key: 'Content-Type', value: 'application/json' }],
     },
   ],
+  // Language requests carry a flag image (2 MB max) through a server action.
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '3mb',
+    },
+  },
   webpack: config => {
     config.externals.push('@node-rs/argon2', '@node-rs/bcrypt');
     return config;

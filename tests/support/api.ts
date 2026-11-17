@@ -11,6 +11,8 @@ type ApiOptions = {
   body?: unknown;
   /** Sent as is, for malformed bodies. */
   rawBody?: string;
+  /** Sent as multipart, its Content-Type (with the boundary) set by fetch. */
+  form?: FormData;
   query?: Record<string, string | string[]>;
   headers?: Record<string, string>;
 };
@@ -26,7 +28,7 @@ export type JsonBody = any;
 export async function api(
   method: Method,
   path: string,
-  { token, body, rawBody, query, headers = {} }: ApiOptions = {},
+  { token, body, rawBody, form, query, headers = {} }: ApiOptions = {},
 ) {
   const url = new URL(`/api${path}`, 'http://localhost:3000');
 
@@ -42,9 +44,9 @@ export async function api(
   const response = await handlers[method](
     new Request(url, {
       method,
-      body: payload,
+      body: form ?? payload,
       headers: {
-        ...(payload === undefined
+        ...(payload === undefined || form
           ? {}
           : { 'Content-Type': 'application/json' }),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),

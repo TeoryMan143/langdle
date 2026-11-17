@@ -93,14 +93,21 @@ export async function apiRequest<T, E = unknown>(
       headers.Authorization = `Bearer ${sessionToken}`;
     }
 
-    if (body !== undefined) {
+    // Multipart bodies set their own Content-Type, with the boundary.
+    const isForm = body instanceof FormData;
+
+    if (body !== undefined && !isForm) {
       headers['Content-Type'] = 'application/json';
     }
 
     const res = await fetch(buildUrl(path, searchParams), {
       method,
       headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: isForm
+        ? body
+        : body === undefined
+          ? undefined
+          : JSON.stringify(body),
       cache: cache ?? (method === 'get' ? undefined : 'no-cache'),
     });
 

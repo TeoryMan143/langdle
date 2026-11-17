@@ -11,6 +11,7 @@
 | REST API | hono 4, mounted inside the App Router via `hono/vercel` |
 | Relational DB | Neon Postgres through Drizzle ORM (`drizzle-kit` migrations in `drizzle/`) |
 | Key-value DB | Redis (`redis` client) with RedisJSON + RediSearch — holds the languages (`lang:<id>`), the daily language (`daylang`) and the session cache (`session:<sessionId>`) |
+| File storage | Cloudflare R2 through its S3 API (`@aws-sdk/client-s3`, wrapped by `core/lib/storage.ts`) — the flags of languages added through requests (`flags/<code>.webp`) and the uploads of open requests (`language-requests/<id>.webp`); `sharp` normalizes every upload to a 455×304 WebP (`core/lib/flags.ts`). The flags in `public/flags` stay where they are: clients look there first, then in the bucket |
 | Validation | zod 4 (+ `drizzle-zod`, `@hookform/resolvers`) |
 | Auth | Own session implementation: argon2 password hashes, opaque session tokens hashed with SHA-256, stored in Postgres and cached in Redis (see §2 *Session cache*), `arctic` for Google OAuth, `jose` for short-lived encrypted tokens |
 | Client data | TanStack Query for client fetching, server components otherwise |
@@ -222,6 +223,11 @@ with the (possibly renewed) session expiry, so clients that store the token
 | GET | `/change-requests?state=` | B + A | every request, with author and current status |
 | PUT | `/change-requests/:id/accept` | B + A | applies the change to the language and emails the author |
 | PUT | `/change-requests/:id/reject` | B + A | body `{ reason }`; rejects the request and emails the author |
+| POST | `/language-requests` | B | **multipart**, the only non-JSON body: `data` (JSON `{ code, name, exonym?, features, partial, description, locale? }`) and `flag` (PNG/JPEG/WebP ≤ 2 MB). `409 langExists` / `requestPending`, `400 invalidFlag` |
+| GET | `/language-requests/mine` | B | the caller's language requests, each with its `flagUrl` |
+| GET | `/language-requests?state=` | B + A | every language request, with author |
+| PUT | `/language-requests/:id/accept` | B + A | creates the language **inactive**, publishes the flag, gives the author edit permission and emails them |
+| PUT | `/language-requests/:id/reject` | B + A | body `{ reason }`; deletes the uploaded flag and emails the author |
 | GET | `/jobs/cleanup-tokens` | C | deletes expired permission tokens |
 
 ### `/api/guess`
@@ -255,7 +261,10 @@ Environment: `DATABASE_URL`, `REDIS_USER`, `REDIS_PASSWORD`, `REDIS_HOST`,
 `REDIS_PORT`, `JWT_SECRET` (base64url, 64 bytes), `GOOGLE_CLIENT_ID`,
 `GOOGLE_CLIENT_SECRET`, `CRON_SECRET`, `NEXT_PUBLIC_BASE_URL`, `RESEND_API_KEY`
 and `EMAIL_FROM` (a sender verified in Resend; without them emails are logged
-as failed and skipped, never thrown). Optional, for the mobile app:
+as failed and skipped, never thrown). The flags bucket: `R2_ACCOUNT_ID`,
+`R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` (an R2 API token with *Object Read &
+Write* on that bucket), `R2_BUCKET` and `NEXT_PUBLIC_FLAGS_URL` (the bucket's
+public custom domain, no trailing slash). Optional, for the mobile app:
 `GOOGLE_MOBILE_CLIENT_IDS` (comma separated iOS/Android OAuth client ids
 accepted besides `GOOGLE_CLIENT_ID` as the audience of a Google ID token) and
 `APPLE_CLIENT_IDS` (comma separated bundle/service ids; without it
@@ -274,5 +283,8 @@ them:
   `public/.well-known/assetlinks.json` (package `teo.taberna.langdle_app` +
   release signing SHA-256) let `/addpermission?token=` links open in the app.
   They must follow the bundle ids and signing keys.
+- **Cloudflare R2** — the bucket needs public read access (a custom domain in
+  production) matching `NEXT_PUBLIC_FLAGS_URL`; uploads go through the API, so
+  it needs no CORS rules.
 - **`vercel.json`** — the cron paths, today `/api/lang/jobs/cleanup-tokens` and
   `/api/guess/jobs/daily`.

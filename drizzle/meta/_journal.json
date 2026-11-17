@@ -134,6 +134,13 @@
       "when": 1791853627215,
       "tag": "0018_user_apple_id",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1794871815724,
+      "tag": "0019_language_request",
+      "breakpoints": true
     }
   ]
 }

@@ -36,6 +36,7 @@ describe('migrations', () => {
       'game_history',
       'lang_permission',
       'lang_token',
+      'language_request',
       'session',
       'user',
     ]);
