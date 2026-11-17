@@ -8,6 +8,7 @@ import {
   addGuessesHistory,
   getDailyLang,
   getGuessesHistory,
+  getHints,
   getMatching,
   getTargetLang,
   rollDailyLang,
@@ -79,7 +80,12 @@ langGuessRouter.get('/:id', async c => {
     return notFound(c, 'Language not found');
   }
 
-  return c.json(getMatching(guessedLang, target));
+  const hints = getHints(guessedLang, target);
+
+  return c.json({
+    ...getMatching(guessedLang, target),
+    ...(Object.keys(hints).length ? { hints } : {}),
+  });
 });
 
 export default langGuessRouter;

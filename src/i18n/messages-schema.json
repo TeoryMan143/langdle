@@ -267,13 +267,17 @@
                 },
                 "writingSystem": {
                   "type": "string"
+                },
+                "lexicon": {
+                  "type": "string"
                 }
               },
               "required": [
                 "wordOrder",
                 "morphology",
                 "phonology",
-                "writingSystem"
+                "writingSystem",
+                "lexicon"
               ]
             }
           },
@@ -586,6 +590,51 @@
             },
             "labialization": {
               "type": "string"
+            },
+            "uvularConsonants": {
+              "type": "string"
+            },
+            "frontRoundedVowels": {
+              "type": "string"
+            },
+            "fixedStress": {
+              "type": "string"
+            },
+            "adjectiveNoun": {
+              "type": "string"
+            },
+            "nounAdjective": {
+              "type": "string"
+            },
+            "genitiveNoun": {
+              "type": "string"
+            },
+            "nounGenitive": {
+              "type": "string"
+            },
+            "whInSitu": {
+              "type": "string"
+            },
+            "definiteArticles": {
+              "type": "string"
+            },
+            "indefiniteArticles": {
+              "type": "string"
+            },
+            "genderedPronouns": {
+              "type": "string"
+            },
+            "vigesimalNumerals": {
+              "type": "string"
+            },
+            "teaFromCha": {
+              "type": "string"
+            },
+            "teaFromTe": {
+              "type": "string"
+            },
+            "handArmSameWord": {
+              "type": "string"
             }
           },
           "required": [
@@ -663,7 +712,22 @@
             "interrogativeParticles",
             "pharyngealization",
             "aspiratedConsonants",
-            "labialization"
+            "labialization",
+            "uvularConsonants",
+            "frontRoundedVowels",
+            "fixedStress",
+            "adjectiveNoun",
+            "nounAdjective",
+            "genitiveNoun",
+            "nounGenitive",
+            "whInSitu",
+            "definiteArticles",
+            "indefiniteArticles",
+            "genderedPronouns",
+            "vigesimalNumerals",
+            "teaFromCha",
+            "teaFromTe",
+            "handArmSameWord"
           ]
         },
         "name": {
@@ -893,6 +957,51 @@
             },
             "labialization": {
               "type": "string"
+            },
+            "uvularConsonants": {
+              "type": "string"
+            },
+            "frontRoundedVowels": {
+              "type": "string"
+            },
+            "fixedStress": {
+              "type": "string"
+            },
+            "adjectiveNoun": {
+              "type": "string"
+            },
+            "nounAdjective": {
+              "type": "string"
+            },
+            "genitiveNoun": {
+              "type": "string"
+            },
+            "nounGenitive": {
+              "type": "string"
+            },
+            "whInSitu": {
+              "type": "string"
+            },
+            "definiteArticles": {
+              "type": "string"
+            },
+            "indefiniteArticles": {
+              "type": "string"
+            },
+            "genderedPronouns": {
+              "type": "string"
+            },
+            "vigesimalNumerals": {
+              "type": "string"
+            },
+            "teaFromCha": {
+              "type": "string"
+            },
+            "teaFromTe": {
+              "type": "string"
+            },
+            "handArmSameWord": {
+              "type": "string"
             }
           },
           "required": [
@@ -970,7 +1079,22 @@
             "interrogativeParticles",
             "pharyngealization",
             "aspiratedConsonants",
-            "labialization"
+            "labialization",
+            "uvularConsonants",
+            "frontRoundedVowels",
+            "fixedStress",
+            "adjectiveNoun",
+            "nounAdjective",
+            "genitiveNoun",
+            "nounGenitive",
+            "whInSitu",
+            "definiteArticles",
+            "indefiniteArticles",
+            "genderedPronouns",
+            "vigesimalNumerals",
+            "teaFromCha",
+            "teaFromTe",
+            "handArmSameWord"
           ]
         }
       },
@@ -1214,6 +1338,9 @@
         "changeRequests": {
           "type": "string"
         },
+        "reviewQueue": {
+          "type": "string"
+        },
         "requestLanguage": {
           "type": "string"
         }
@@ -1222,7 +1349,8 @@
         "langList",
         "publicOverview",
         "changeRequests",
-        "requestLanguage"
+        "requestLanguage",
+        "reviewQueue"
       ]
     },
     "PublicDataPage": {
@@ -1304,16 +1432,29 @@
             },
             "morphosyntax": {
               "type": "string"
+            },
+            "lexicon": {
+              "type": "string"
             }
           },
           "required": [
             "phonology",
             "wordOrder",
             "writingSystem",
-            "morphosyntax"
+            "morphosyntax",
+            "lexicon"
           ]
         },
         "empty": {
+          "type": "string"
+        },
+        "showing": {
+          "type": "string"
+        },
+        "showMore": {
+          "type": "string"
+        },
+        "attribution": {
           "type": "string"
         },
         "requestLanguage": {
@@ -1331,7 +1472,61 @@
         "status",
         "groups",
         "empty",
+        "showing",
+        "showMore",
+        "attribution",
         "requestLanguage"
+      ]
+    },
+    "ReviewPage": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "intro": {
+          "type": "string"
+        },
+        "searchPlaceholder": {
+          "type": "string"
+        },
+        "coverage": {
+          "type": "string"
+        },
+        "noCoverage": {
+          "type": "string"
+        },
+        "inspect": {
+          "type": "string"
+        },
+        "activate": {
+          "type": "string"
+        },
+        "activated": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "string"
+        },
+        "showing": {
+          "type": "string"
+        },
+        "showMore": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "intro",
+        "searchPlaceholder",
+        "coverage",
+        "noCoverage",
+        "inspect",
+        "activate",
+        "activated",
+        "empty",
+        "showing",
+        "showMore"
       ]
     },
     "LangData": {
@@ -1379,6 +1574,45 @@
         "morphosyntax": {
           "type": "string"
         },
+        "lexicon": {
+          "type": "string"
+        },
+        "place": {
+          "type": "string"
+        },
+        "placeIntro": {
+          "type": "string"
+        },
+        "family": {
+          "type": "string"
+        },
+        "genus": {
+          "type": "string"
+        },
+        "locations": {
+          "type": "string"
+        },
+        "noLocations": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "string"
+        },
+        "longitude": {
+          "type": "string"
+        },
+        "addLocation": {
+          "type": "string"
+        },
+        "removeLocation": {
+          "type": "string"
+        },
+        "viewOnMap": {
+          "type": "string"
+        },
+        "invalidLocation": {
+          "type": "string"
+        },
         "status": {
           "type": "string"
         }
@@ -1398,7 +1632,20 @@
         "wordOrder",
         "writingSystem",
         "morphosyntax",
-        "status"
+        "place",
+        "placeIntro",
+        "family",
+        "genus",
+        "locations",
+        "noLocations",
+        "latitude",
+        "longitude",
+        "addLocation",
+        "removeLocation",
+        "viewOnMap",
+        "invalidLocation",
+        "status",
+        "lexicon"
       ]
     },
     "AccountPage": {
@@ -1982,6 +2229,21 @@
         },
         "randomLang": {
           "type": "string"
+        },
+        "hintDirection": {
+          "type": "string"
+        },
+        "hintDistance": {
+          "type": "string"
+        },
+        "hintSameGenus": {
+          "type": "string"
+        },
+        "hintSameFamily": {
+          "type": "string"
+        },
+        "hintOtherFamily": {
+          "type": "string"
         }
       },
       "required": [
@@ -2002,7 +2264,12 @@
         "theLangWas",
         "langTried",
         "guessRandom",
-        "randomLang"
+        "randomLang",
+        "hintDirection",
+        "hintDistance",
+        "hintSameGenus",
+        "hintSameFamily",
+        "hintOtherFamily"
       ]
     },
     "Exonyms": {
@@ -2230,6 +2497,7 @@
     "AddPermissionPage",
     "ListPage",
     "PublicDataPage",
+    "ReviewPage",
     "LangData",
     "AccountPage",
     "ChangeRequests",

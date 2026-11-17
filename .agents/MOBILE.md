@@ -115,8 +115,9 @@ A widget used by more than one module moves to `core/ui/`, a model to
    never in `shared_preferences`.
 10. **Game rules match the web.** Same attempt limit (`GameController.maxAttempts`
     and `MAX_ATTEMPTS` in `use-game.tsx`), the daily language rolls at 00:00
-    UTC, and the matching order is correct, partial, then incorrect. Change both
-    clients together.
+    UTC, the matching order is correct, partial, then incorrect, and a wrong
+    guess shows the `hints` the API answers (distance, direction, relation)
+    under its name. Change both clients together.
 
 ## Auth
 

@@ -75,12 +75,13 @@
     "features": {
       "eyebrow": "What gets compared",
       "title": "Feature groups used by the game",
-      "copy": "Langdle compares typological features across the same broad categories, so every guess is judged by structure rather than vocabulary.",
+      "copy": "Langdle compares typological features across the same broad categories, so every guess is judged mostly by structure, plus a few telltale words.",
       "list": {
         "wordOrder": "Word order",
         "morphology": "Morphology",
         "phonology": "Phonology",
-        "writingSystem": "Writing system"
+        "writingSystem": "Writing system",
+        "lexicon": "Vocabulary"
       }
     },
     "footer": "Read the fingerprint, narrow the target, and keep guessing until the pattern clicks."
@@ -176,7 +177,22 @@
       "interrogativeParticles": "Morphemes used to mark a sentence as a question, often appearing at the beginning or end of a sentence",
       "pharyngealization": "Phonetic process where a consonant is pronounced with a constriction in the pharynx, giving the sound a distinct \"throaty\" quality",
       "aspiratedConsonants": "Consonants that are pronounced with a strong burst of breath",
-      "labialization": "Consonants that are pronounced with an extra labial articulation"
+      "labialization": "Consonants that are pronounced with an extra labial articulation",
+      "uvularConsonants": "Consonants made with the back of the tongue against the uvula, like the q of Arabic or the r of French",
+      "frontRoundedVowels": "Vowels pronounced with the tongue forward and the lips rounded, like German ü and ö or French u",
+      "fixedStress": "Stress always falls on the same syllable of a word, like the first one in Finnish or the second to last in Polish",
+      "adjectiveNoun": "Adjectives usually come before the noun they describe, as in English 'red house'",
+      "nounAdjective": "Adjectives usually come after the noun they describe, as in Spanish 'casa roja'",
+      "genitiveNoun": "The possessor comes before what it possesses, as in English 'John's book'",
+      "nounGenitive": "The possessor comes after what it possesses, as in Spanish 'el libro de Juan'",
+      "whInSitu": "Question words stay where the answer would go instead of moving to the front, as in Chinese 'nǐ qù nǎr' (you go where)",
+      "definiteArticles": "A word or affix that marks a noun as known or specific, like English 'the'",
+      "indefiniteArticles": "A word or affix that introduces a noun as new or unspecified, like English 'a'",
+      "genderedPronouns": "Personal pronouns change with gender, like English 'he' and 'she'",
+      "vigesimalNumerals": "Numbers are built on twenties, like French 'quatre-vingts' (four twenties) for 80",
+      "teaFromCha": "The word for tea comes from Chinese 'chá', like Portuguese 'chá' or Russian 'chay'",
+      "teaFromTe": "The word for tea comes from Min Nan Chinese 'tê', like English 'tea' or Spanish 'té'",
+      "handArmSameWord": "A single word covers both the hand and the arm, as in Russian 'ruka'"
     },
     "name": {
       "nasalization": "Nasalization",
@@ -253,7 +269,22 @@
       "interrogativeParticles": "Interrogative particles",
       "pharyngealization": "Pharyngealization",
       "aspiratedConsonants": "Aspirated consonants",
-      "labialization": "Labialization"
+      "labialization": "Labialization",
+      "uvularConsonants": "Uvular consonants",
+      "frontRoundedVowels": "Front rounded vowels",
+      "fixedStress": "Fixed stress",
+      "adjectiveNoun": "Adjective before noun",
+      "nounAdjective": "Noun before adjective",
+      "genitiveNoun": "Possessor before noun",
+      "nounGenitive": "Possessor after noun",
+      "whInSitu": "Question words in place",
+      "definiteArticles": "Definite articles",
+      "indefiniteArticles": "Indefinite articles",
+      "genderedPronouns": "Gendered pronouns",
+      "vigesimalNumerals": "Base-20 counting",
+      "teaFromCha": "'Cha' word for tea",
+      "teaFromTe": "'Te' word for tea",
+      "handArmSameWord": "Same word for hand and arm"
     }
   },
   "AuthPage": {
@@ -317,6 +348,7 @@
     "langList": "Languages list",
     "publicOverview": "Open public feature atlas",
     "changeRequests": "Review change requests",
+    "reviewQueue": "Review queue",
     "requestLanguage": "Request a language"
   },
   "PublicDataPage": {
@@ -343,10 +375,27 @@
       "phonology": "Phonology",
       "wordOrder": "Word order",
       "writingSystem": "Writing system",
-      "morphosyntax": "Morpho-syntax"
+      "morphosyntax": "Morpho-syntax",
+      "lexicon": "Vocabulary"
     },
     "empty": "No languages match your search right now.",
+    "showing": "Showing {shown} of {total} languages",
+    "showMore": "Show more",
+    "attribution": "Typological data adapted from WALS Online (Dryer & Haspelmath, 2013) and PHOIBLE 2.0 (Moran & McCloy, 2019), licensed under CC BY 4.0.",
     "requestLanguage": "Request a language"
+  },
+  "ReviewPage": {
+    "title": "Review queue",
+    "intro": "Inactive languages, best described first. Inspect a language before activating it: features without data are stored as absent.",
+    "searchPlaceholder": "Type a language name or code",
+    "coverage": "{percent}% described",
+    "noCoverage": "Not imported",
+    "inspect": "Inspect",
+    "activate": "Activate",
+    "activated": "{name} is now playable",
+    "empty": "No inactive languages left to review.",
+    "showing": "Showing {shown} of {total} languages",
+    "showMore": "Show more"
   },
   "LangData": {
     "loading": "Updating features",
@@ -363,6 +412,19 @@
     "wordOrder": "Word order",
     "writingSystem": "Writing System",
     "morphosyntax": "Morpho-Syntax",
+    "lexicon": "Vocabulary",
+    "place": "Place and family",
+    "placeIntro": "The game hints use these: the distance and direction between the closest points of two languages, and whether they share a family or a branch. Add one point per region where the language is widely spoken.",
+    "family": "Family",
+    "genus": "Branch",
+    "locations": "Locations",
+    "noLocations": "No locations yet: this language gives no distance hint.",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "addLocation": "Add location",
+    "removeLocation": "Remove location",
+    "viewOnMap": "View on map",
+    "invalidLocation": "Each location needs a latitude between -90 and 90 and a longitude between -180 and 180",
     "status": "Status"
   },
   "AccountPage": {
@@ -517,7 +579,12 @@
     "theLangWas": "The language of the day was {lang}",
     "langTried": "You have already tried this language!",
     "guessRandom": "Guess a random language",
-    "randomLang": "Random language"
+    "randomLang": "Random language",
+    "hintDirection": "Direction of the target",
+    "hintDistance": "{km} km",
+    "hintSameGenus": "Same branch",
+    "hintSameFamily": "Same family",
+    "hintOtherFamily": "Other family"
   },
   "Exonyms": {
     "ar": "Arabic",

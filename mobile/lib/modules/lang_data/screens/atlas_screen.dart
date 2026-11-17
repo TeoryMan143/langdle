@@ -58,9 +58,12 @@ class _AtlasScreenState extends State<AtlasScreen> {
             ? languages
             : languages
                   .where(
-                    (l) => '${l.id} ${l.name} ${l.exonym ?? ''}'
-                        .toLowerCase()
-                        .contains(query),
+                    (l) => [
+                      l.id,
+                      l.name,
+                      l.exonym ?? '',
+                      ...l.searchParams,
+                    ].join(' ').toLowerCase().contains(query),
                   )
                   .toList();
 
@@ -110,6 +113,11 @@ class _AtlasScreenState extends State<AtlasScreen> {
                 _LanguageCard(language: language, catalogue: catalogue),
                 const SizedBox(height: 20),
               ],
+              Text(
+                context.t('PublicDataPage.attribution'),
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 12),
+              ),
             ],
           ),
         );

@@ -1,7 +1,7 @@
 import type { z } from 'zod';
 import type { COUNTRIES } from './lib/countries';
 import type { featureStatuses, langFeatures } from './lib/features';
-import type { langDataSchema } from './schemas/lang';
+import type { langDataBodySchema, langDataSchema } from './schemas/lang';
 
 /* -------------------------------------------------------------------------- */
 /*                               Language domain                              */
@@ -11,6 +11,9 @@ export type LangFeatures = (typeof langFeatures)[number];
 export type FeatureStatus = (typeof featureStatuses)[number];
 
 export type LanguageData = z.infer<typeof langDataSchema>;
+/** What `PUT /lang/:id` accepts: `null` removes a managed field. */
+export type LanguageDataBody = z.infer<typeof langDataBodySchema>;
+export type LangLocation = NonNullable<LanguageData['locations']>[number];
 export type Language = { id: string } & LanguageData;
 
 export type SelectMenuOption = (typeof COUNTRIES)[number];

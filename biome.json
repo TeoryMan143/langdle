@@ -11,6 +11,7 @@
       "**/src/**",
       "**/messages/**",
       "**/tests/**",
+      "**/scripts/**/*.ts",
       "**/next.config.ts",
       "**/biome.config.js",
       "./vitest.*.ts",

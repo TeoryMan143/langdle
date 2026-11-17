@@ -168,7 +168,7 @@ core/
                features.ts   the catalogue of linguistic features
                countries.ts  fonts.ts  utils.ts (cn, random, dates, getErrorMessage)
   middleware/  cron.ts       guards the Vercel cron endpoints
-  schemas/     lang.ts       langDataSchema, the shape of a language
+  schemas/     lang.ts       langDataSchema, the shape of a language (and langManagedFields)
   types.ts     language domain, ActionResult, API error/request contracts
 ```
 
@@ -210,10 +210,10 @@ with the (possibly renewed) session expiry, so clients that store the token
 
 | Method | Path | Guard | Purpose |
 | --- | --- | --- | --- |
-| GET | `/` | — | all languages; `?oactive=1` for playable ones, repeated `?id=` to fetch a set |
+| GET | `/` | — | all languages, with the optional `locations`, `family`, `genus` and `coverage` of `langDataSchema`; `?oactive=1` for playable ones, repeated `?id=` to fetch a set |
 | GET | `/random` | — | a random active language |
 | GET | `/:id` | — | one language |
-| PUT | `/:id` | B + owner/A | replaces the language data |
+| PUT | `/:id` | B + owner/A | replaces the language data (`langDataBodySchema`); the `langManagedFields` (`locations`, `family`, `genus`, `coverage`) a body leaves out are kept, so a client that only edits features never erases them, and one set to `null` is removed |
 | PUT | `/:id/status?active=` | B + A | activates/deactivates a language |
 | GET | `/permissions/:userId` | — | language ids a user may edit |
 | POST | `/permissions/tokens/:lang` | B + A | mints a share token for that language |
@@ -235,7 +235,7 @@ with the (possibly renewed) session expiry, so clients that store the token
 | Method | Path | Guard | Purpose |
 | --- | --- | --- | --- |
 | GET | `/daily` | — | the language of the day |
-| GET | `/:id?target=` | — | `{ guessed }` when right, the feature matching otherwise; `target` defaults to the daily language |
+| GET | `/:id?target=` | — | `{ guessed }` when right, the feature matching otherwise, plus `hints` (`distanceKm` and `bearing` between the closest of their `locations`, `relation`: `genus` / `family` / `none`) when both languages have the data behind them; `target` defaults to the daily language |
 | GET | `/history` | B | the user's games |
 | PUT | `/history` | B | stores a finished game |
 | GET | `/jobs/daily` | C | rolls the language of the day |
@@ -255,7 +255,35 @@ with the (possibly renewed) session expiry, so clients that store the token
 | PUT | `/native-lang` | B | sets the native language |
 | PUT | `/fluent` | B | replaces the fluent languages |
 
-## 5. External configuration
+## 5. Offline data tools
+
+`scripts/` holds tools an administrator runs by hand. They are the one
+exception to "only the services touch the data", and only for bulk work the
+API has no endpoint for:
+
+- **`scripts/wals/seed-languages.ts`** writes `lang:<id>` documents straight
+  into Redis, with the exact shape `setLanguageData` stores (checked by
+  `tests/lang-data/wals-languages.test.ts` against `langDataSchema`). It only
+  creates (`JSON.SET … NX`, and never when another code of the same language
+  exists), always inactive, so it cannot overwrite what the API wrote.
+- **`scripts/wals/update-existing.ts`** patches stored languages field by
+  field (`JSON.SET lang:<id> $.features …`): it drops feature names the
+  catalogue no longer has, applies its hand corrections, and fills in what a
+  language never had (features added to the catalogue later, `locations`,
+  `family`, `genus`). It never changes a feature an editor already set, and
+  backs up every document it touches first.
+
+A change to the catalogue in `core/lib/features.ts` therefore comes with: a
+drizzle migration (the `features` Postgres enum follows it, in order),
+`Features.name` / `Features.description` translations, a WALS rule in
+`build-languages.ts` when WALS covers it, a rebuilt `languages.json` and a run
+of `update-existing.ts` once deployed.
+
+They run under Node's type stripping (`node scripts/…/x.ts`), so they cannot use
+the `@/` alias and import nothing from `src/`; whatever must agree with the app
+is enforced by a test instead.
+
+## 6. External configuration
 
 Environment: `DATABASE_URL`, `REDIS_USER`, `REDIS_PASSWORD`, `REDIS_HOST`,
 `REDIS_PORT`, `JWT_SECRET` (base64url, 64 bytes), `GOOGLE_CLIENT_ID`,

@@ -19,6 +19,7 @@ const _featureCategories = [
   'morphology',
   'phonology',
   'writingSystem',
+  'lexicon',
 ];
 
 /// How the game works (the web `/howtoplay`).

@@ -9,7 +9,7 @@ import {
   unknownError,
 } from '@/core/lib/http';
 import { cronMiddleware } from '@/core/middleware/cron';
-import { langDataSchema } from '@/core/schemas/lang';
+import { langDataBodySchema } from '@/core/schemas/lang';
 import { adminMiddleware, authMiddleware } from '@/modules/auth/middleware';
 import {
   changeRequestBodySchema,
@@ -32,6 +32,7 @@ import {
   getUserChangeRequests,
   getUserLangPermissions,
   getUserLanguageRequests,
+  keepManagedFields,
   reviewChangeRequest,
   reviewLanguageRequest,
   setLanguageData,
@@ -451,8 +452,9 @@ langDataRouter.get('/:id', async c => {
 
 langDataRouter.put('/:id', authMiddleware, async c => {
   const langId = c.req.param('id');
+  const stored = await getLanguageById(langId);
 
-  if (!(await getLanguageById(langId))) {
+  if (!stored) {
     return notFound(c, 'Language not found');
   }
 
@@ -460,13 +462,15 @@ langDataRouter.put('/:id', authMiddleware, async c => {
     return forbidden(c, 'Language not allowed');
   }
 
-  const parsed = await parseJsonBody(c, langDataSchema);
+  const parsed = await parseJsonBody(c, langDataBodySchema);
 
   if (!parsed.success) {
     return parsed.response;
   }
 
-  if (!(await setLanguageData(langId, parsed.data))) {
+  if (
+    !(await setLanguageData(langId, keepManagedFields(stored, parsed.data)))
+  ) {
     return unknownError(c, 'The language data could not be set');
   }
 

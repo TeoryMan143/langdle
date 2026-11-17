@@ -11,6 +11,11 @@ import FeatureStatusPicker, {
   fromFeatureStates,
   toFeatureStates,
 } from './feature-status-picker';
+import LangPlaceFields, {
+  fromPlaceDraft,
+  type PlaceDraft,
+  toPlaceDraft,
+} from './lang-place-fields';
 
 type Props = {
   currentData: LanguageData;
@@ -23,13 +28,23 @@ function LangFeaturesForm({ currentData, code }: Props) {
   const [states, setStates] = useState<FeatureStates>(() =>
     toFeatureStates(currentData),
   );
+  const [place, setPlace] = useState<PlaceDraft>(() =>
+    toPlaceDraft(currentData),
+  );
 
   const handleSubmitData = async () => {
+    const managed = fromPlaceDraft(place);
+
+    if (!managed) {
+      return toast.error(t('invalidLocation'));
+    }
+
     const toastId = toast.loading(`${t('loading')}...`);
 
     const { success, error } = await setLanguageData(code, {
       ...currentData,
       ...fromFeatureStates(states),
+      ...managed,
     });
 
     if (!success) {
@@ -40,7 +55,8 @@ function LangFeaturesForm({ currentData, code }: Props) {
   };
 
   return (
-    <div className='relative'>
+    <div className='relative space-y-9'>
+      <LangPlaceFields value={place} onChange={setPlace} />
       <FeatureStatusPicker
         value={states}
         onChange={(feature, state) =>

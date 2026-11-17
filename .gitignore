@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# downloaded sources of scripts/wals/build-languages.ts
+/scripts/wals/.cache/
+/scripts/wals/backups/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

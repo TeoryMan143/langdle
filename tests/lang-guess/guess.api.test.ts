@@ -130,6 +130,48 @@ describe('GET /guess/:id', () => {
     expect(res.text).not.toContain('svo');
   });
 
+  test('a wrong guess earns distance, direction and relatedness', async () => {
+    await seedLanguage('spanish', {
+      locations: [{ lat: 40, lng: -4 }],
+      family: 'Indo-European',
+      genus: 'Romance',
+    });
+    await seedLanguage('french', {
+      locations: [{ lat: 48, lng: 2 }],
+      family: 'Indo-European',
+      genus: 'Romance',
+    });
+    await seedLanguage('basque', {
+      locations: [{ lat: 43, lng: -3 }],
+      family: 'Basque',
+      genus: 'Basque',
+    });
+    await setDaily('spanish');
+
+    const french = await api('GET', '/guess/french');
+    const basque = await api('GET', '/guess/basque');
+
+    expect(french.body.hints).toMatchObject({ relation: 'genus' });
+    expect(french.body.hints.distanceKm).toBeGreaterThan(900);
+    expect(french.body.hints.distanceKm).toBeLessThan(1100);
+    // Spain is south-west of France.
+    expect(french.body.hints.bearing).toBeGreaterThan(180);
+    expect(french.body.hints.bearing).toBeLessThan(270);
+    expect(basque.body.hints).toMatchObject({ relation: 'none' });
+    expect(french.text).not.toContain('Indo-European');
+  });
+
+  test('a guess without location or family has no hints', async () => {
+    await seedLanguage('spanish', { locations: [{ lat: 40, lng: -4 }] });
+    await seedLanguage('basque');
+    await setDaily('spanish');
+
+    const res = await api('GET', '/guess/basque');
+
+    expect(res.status).toBe(200);
+    expect(res.body).not.toHaveProperty('hints');
+  });
+
   test('the right guess answers the whole target', async () => {
     await seedLanguage('spanish', { name: 'Spanish', features: ['svo'] });
     await setDaily('spanish');

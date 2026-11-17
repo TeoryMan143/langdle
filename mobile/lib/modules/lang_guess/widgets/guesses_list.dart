@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -5,6 +7,7 @@ import '../../../core/i18n/translations.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/ui/feature_chip.dart';
 import '../../../core/ui/lang_flag.dart';
+import '../../../core/ui/neo_card.dart';
 import '../game_controller.dart';
 import '../guess_models.dart';
 
@@ -87,6 +90,10 @@ class _GuessRow extends StatelessWidget {
               ),
             ],
           ),
+          if (matching.hints case final hints? when !hints.isEmpty) ...[
+            const SizedBox(height: 8),
+            _Hints(hints: hints),
+          ],
           const SizedBox(height: 12),
           Wrap(
             spacing: 10,
@@ -103,6 +110,98 @@ class _GuessRow extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Distance and direction to the target, and how related the guess is (the
+/// web `GuessHints`).
+class _Hints extends StatelessWidget {
+  const _Hints({required this.hints});
+
+  final GuessHints hints;
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
+    final distance = hints.distanceKm;
+    final bearing = hints.bearing;
+    final relation = switch (hints.relation) {
+      GuessRelation.genus => (
+        'Game.hintSameGenus',
+        Icons.check_rounded,
+        NeoColors.correct,
+      ),
+      GuessRelation.family => (
+        'Game.hintSameFamily',
+        Icons.circle,
+        NeoColors.partial,
+      ),
+      GuessRelation.none => (
+        'Game.hintOtherFamily',
+        Icons.close_rounded,
+        NeoColors.incorrect,
+      ),
+      null => null,
+    };
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        if (distance != null)
+          NeoPill(
+            color: NeoColors.featureSurface,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (bearing != null) ...[
+                  Semantics(
+                    label: context.t('Game.hintDirection'),
+                    child: Transform.rotate(
+                      angle: bearing * math.pi / 180,
+                      child: const Icon(Icons.arrow_upward_rounded, size: 16),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                ],
+                Text(
+                  context.t('Game.hintDistance', {
+                    'km': groupDigits(distance, locale),
+                  }),
+                ),
+              ],
+            ),
+          ),
+        if (relation case (final key, final icon, final color))
+          NeoPill(
+            color: NeoColors.featureSurface,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: icon == Icons.circle ? 10 : 16, color: color),
+                const SizedBox(width: 4),
+                Text(context.t(key)),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// `1,053` in English, `1.053` in Portuguese, `1053` in Spanish (which only
+/// groups from five digits), as the web's number formatting writes them.
+String groupDigits(int value, String locale) {
+  final digits = value.abs().toString();
+
+  if (locale == 'es' && digits.length < 5) return value.toString();
+
+  final separator = locale == 'en' ? ',' : '.';
+  final grouped = digits.replaceAllMapped(
+    RegExp(r'\B(?=(\d{3})+(?!\d))'),
+    (_) => separator,
+  );
+
+  return value < 0 ? '-$grouped' : grouped;
 }
 
 /// Slides a feature in after [delay], like the web stagger animation.

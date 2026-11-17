@@ -21,6 +21,9 @@ export const groupedLangFeatures = {
     'pharyngealization',
     'aspiratedConsonants',
     'labialization',
+    'uvularConsonants',
+    'frontRoundedVowels',
+    'fixedStress',
   ],
   wordOrder: [
     'svo',
@@ -32,6 +35,11 @@ export const groupedLangFeatures = {
     'v2',
     'freeWordOrder',
     'fixedWordOrder',
+    'adjectiveNoun',
+    'nounAdjective',
+    'genitiveNoun',
+    'nounGenitive',
+    'whInSitu',
   ],
   writingSystem: [
     'latinAlphabet',
@@ -73,7 +81,11 @@ export const groupedLangFeatures = {
     'auxiliaryVerbs',
     'doubleNegation',
     'interrogativeParticles',
+    'definiteArticles',
+    'indefiniteArticles',
+    'genderedPronouns',
   ],
+  lexicon: ['vigesimalNumerals', 'teaFromCha', 'teaFromTe', 'handArmSameWord'],
 } as const;
 
 export const langFeatures = [
@@ -81,6 +93,7 @@ export const langFeatures = [
   ...groupedLangFeatures.wordOrder,
   ...groupedLangFeatures.writingSystem,
   ...groupedLangFeatures.morphosyntax,
+  ...groupedLangFeatures.lexicon,
 ] as const;
 
 export const featureStatuses = ['present', 'absent', 'partial'] as const;

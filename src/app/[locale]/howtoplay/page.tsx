@@ -24,6 +24,7 @@ const FEATURE_CATEGORIES = [
   'morphology',
   'phonology',
   'writingSystem',
+  'lexicon',
 ] as const;
 
 type StatusKey = 'present' | 'partial' | 'absent';
