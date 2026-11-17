@@ -63,14 +63,16 @@ export async function getAllActiveLanguages(): Promise<
 export async function getLanguagesPage({
   limit,
   cursor,
-  onlyActives,
+  active,
+  sort,
   query,
 }: LanguagePageParams = {}): Promise<ActionResult<LanguagePage>> {
   const res = await apiRequest<LanguagePage>('/lang/page', {
     searchParams: {
       ...(limit !== undefined ? { limit } : {}),
       ...(cursor ? { cursor } : {}),
-      ...(onlyActives ? { oactive: '1' } : {}),
+      ...(active !== undefined ? { active } : {}),
+      ...(sort ? { sort } : {}),
       ...(query ? { q: query } : {}),
     },
     // A language edited or activated must show up on the next batch.

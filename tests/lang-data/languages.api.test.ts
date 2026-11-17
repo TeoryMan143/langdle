@@ -603,14 +603,41 @@ describe('GET /lang/page', () => {
     expect(res.body.total).toBe(30);
   });
 
-  test('keeps only the playable languages with ?oactive=1', async () => {
+  test('keeps the playable or the unplayable languages with ?active=', async () => {
     await seedLanguage('spanish');
     await seedLanguage('basque', { active: false });
 
-    const res = await api('GET', '/lang/page', { query: { oactive: '1' } });
+    const playable = await api('GET', '/lang/page', {
+      query: { active: 'true' },
+    });
+    const unplayable = await api('GET', '/lang/page', {
+      query: { active: 'false' },
+    });
 
-    expect(ids(res.body)).toEqual(['spanish']);
-    expect(res.body.total).toBe(1);
+    expect(ids(playable.body)).toEqual(['spanish']);
+    expect(playable.body.total).toBe(1);
+    expect(ids(unplayable.body)).toEqual(['basque']);
+  });
+
+  test('lists the best described languages first with ?sort=coverage', async () => {
+    await seedLanguage('ainu', { coverage: 0.2 });
+    await seedLanguage('basque', { coverage: 0.9 });
+    await seedLanguage('cree');
+    await seedLanguage('dogon', { coverage: 0.2 });
+
+    const first = await api('GET', '/lang/page', {
+      query: { sort: 'coverage', limit: '2' },
+    });
+    const second = await api('GET', '/lang/page', {
+      query: { sort: 'coverage', limit: '2', cursor: first.body.nextCursor },
+    });
+
+    expect([...ids(first.body), ...ids(second.body)]).toEqual([
+      'basque',
+      'ainu',
+      'dogon',
+      'cree',
+    ]);
   });
 
   test('keeps the languages whose id or names contain ?q=', async () => {
@@ -636,6 +663,58 @@ describe('GET /lang/page', () => {
     expect(ids(byId.body)).toEqual(['catalan']);
   });
 
+  test('matches ?q= without accents', async () => {
+    await seedLanguage('catalan', { name: 'Catalan', exonym: 'Català' });
+    await seedLanguage('spanish', { name: 'Spanish', exonym: 'Español' });
+
+    const res = await api('GET', '/lang/page', { query: { q: 'espanol' } });
+
+    expect(ids(res.body)).toEqual(['spanish']);
+  });
+
+  test('lists the best matches of ?q= first, and pages through them', async () => {
+    await seedLanguage('aleut', { name: 'Aleut' });
+    await seedLanguage('ale', { name: 'Ale' });
+    await seedLanguage('kale', { name: 'Kale' });
+    await seedLanguage('old-ale', { name: 'Old Ale' });
+    await seedLanguage('zulu', { name: 'Zulu' });
+
+    const first = await api('GET', '/lang/page', {
+      query: { q: 'ale', limit: '2' },
+    });
+    const second = await api('GET', '/lang/page', {
+      query: { q: 'ale', limit: '2', cursor: first.body.nextCursor },
+    });
+
+    expect(first.body.total).toBe(4);
+    expect([...ids(first.body), ...ids(second.body)]).toEqual([
+      'ale',
+      'aleut',
+      'old-ale',
+      'kale',
+    ]);
+    expect(second.body.nextCursor).toBeNull();
+  });
+
+  test('sees a language edited through the API at once', async () => {
+    await seedLanguage('spanish', { active: false });
+    const { token } = await createTestAdmin();
+
+    const before = await api('GET', '/lang/page', {
+      query: { active: 'false' },
+    });
+    await api('PUT', '/lang/spanish/status', {
+      token,
+      query: { active: 'true' },
+    });
+    const after = await api('GET', '/lang/page', {
+      query: { active: 'false' },
+    });
+
+    expect(ids(before.body)).toEqual(['spanish']);
+    expect(ids(after.body)).toEqual([]);
+  });
+
   test('rejects a cursor it did not make', async () => {
     const res = await api('GET', '/lang/page', {
       query: { cursor: 'not-a-cursor' },
@@ -645,8 +724,14 @@ describe('GET /lang/page', () => {
     expect(res.body.key).toBe('invalidCursor');
   });
 
-  test.each(['0', '101', 'many'])('rejects ?limit=%s', async limit => {
-    const res = await api('GET', '/lang/page', { query: { limit } });
+  test.each<Record<string, string>>([
+    { limit: '0' },
+    { limit: '101' },
+    { limit: 'many' },
+    { active: '1' },
+    { sort: 'random' },
+  ])('rejects %o', async query => {
+    const res = await api('GET', '/lang/page', { query });
 
     expect(res.status).toBe(400);
     expect(res.body.key).toBe('invalidData');
@@ -670,5 +755,18 @@ describe('GET /lang/summary', () => {
       activeFeatures: 3,
       partialFeatures: 1,
     });
+  });
+});
+
+describe('GET /lang/page?q= with typos', () => {
+  test('finds a language despite a typo, after the exact matches', async () => {
+    await seedLanguage('spanish', { name: 'Spanish' });
+    await seedLanguage('spanglish', { name: 'Spanglish' });
+
+    const res = await api('GET', '/lang/page', { query: { q: 'spanich' } });
+
+    expect(res.body.items.map((lang: { id: string }) => lang.id)).toEqual([
+      'spanish',
+    ]);
   });
 });

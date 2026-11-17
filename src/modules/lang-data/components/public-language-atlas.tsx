@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useDebounceValue } from 'usehooks-ts';
 import Loading from '@/core/components/icons/loading';
 import FeatureToolTip from '@/core/components/main/feature-tooltip';
@@ -47,7 +47,15 @@ function FeatureChip({
   );
 }
 
-function LanguageCard({ language }: { language: Language }) {
+/**
+ * Memoized: each loaded batch adds cards, and the ones already on screen (a
+ * dialog per feature each) must not render again for it.
+ */
+const LanguageCard = memo(function LanguageCard({
+  language,
+}: {
+  language: Language;
+}) {
   const t = useTranslations('PublicDataPage');
 
   const presentFeatures = new Set(language.features);
@@ -146,7 +154,7 @@ function LanguageCard({ language }: { language: Language }) {
       </div>
     </article>
   );
-}
+});
 
 function PublicLanguageAtlas({ initialPage, pageSize }: Props) {
   const t = useTranslations('PublicDataPage');

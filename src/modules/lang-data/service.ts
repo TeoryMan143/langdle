@@ -21,6 +21,7 @@ import {
 } from '@/core/database/relational/tables';
 import { normalizeFlag } from '@/core/lib/flags';
 import { flagKey, requestFlagKey } from '@/core/lib/flags-config';
+import { matchRank, normalizeSearchText, searchTerms } from '@/core/lib/search';
 import {
   copyObject,
   deleteObject,
@@ -48,8 +49,10 @@ import type {
   ChangeRequestReview,
   CreateLanguageRequestResult,
   FeatureChangeRequest,
+  LanguageName,
   LanguagePageOptions,
   LanguagePageResult,
+  LanguagePageSort,
   LanguageRequestDTO,
   LanguageRequestValues,
   LanguagesSummary,
@@ -164,26 +167,16 @@ async function searchAllDocs(
   return [first, ...rest].flatMap(results => results.documents);
 }
 
-/** Where a language sits in the catalogue: `[name, id]`. */
-type LanguageSortKey = readonly [name: string, id: string];
-
 const nameCollator = new Intl.Collator();
 
-/**
- * The catalogue order: by name, case-insensitive, then by id so two languages
- * with the same name still have a strict order (keyset paging relies on it).
- */
-function compareSortKeys(a: LanguageSortKey, b: LanguageSortKey) {
-  const byName = nameCollator.compare(
-    a[0].toLocaleLowerCase(),
-    b[0].toLocaleLowerCase(),
+/** Case-insensitive name order, then the id: a strict order of languages. */
+function compareNames(a: Pick<Language, 'name' | 'id'>, b: typeof a) {
+  return (
+    nameCollator.compare(
+      a.name.toLocaleLowerCase(),
+      b.name.toLocaleLowerCase(),
+    ) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)
   );
-
-  if (byName !== 0) {
-    return byName;
-  }
-
-  return a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0;
 }
 
 export async function getAllLanguages(onlyActives = false) {
@@ -192,9 +185,112 @@ export async function getAllLanguages(onlyActives = false) {
     LANG_FIELDS,
   );
 
+  return documents.map(docToLanguage).sort(compareNames);
+}
+
+/* ------------------------------ Search index ------------------------------ */
+
+/** What paging and search need of a language: no features, no places. */
+type IndexedLanguage = LanguageName & {
+  active: boolean;
+  coverage?: number;
+  /** Its id and names, through `searchTerms`. */
+  terms: string[];
+};
+
+/**
+ * How long an instance reuses the index before reading Redis again. Writes
+ * through this service drop it at once; other instances, and the offline
+ * scripts that write Redis directly, are seen within this delay.
+ */
+const LANGUAGE_INDEX_TTL_MS = 30_000;
+
+let languageIndex: {
+  expiresAt: number;
+  entries: Promise<IndexedLanguage[]>;
+} | null = null;
+
+async function loadLanguageIndex(): Promise<IndexedLanguage[]> {
+  const documents = await searchAllDocs('*', [
+    '$.name',
+    '$.exonym',
+    '$.searchParams',
+    '$.active',
+    '$.coverage',
+  ]);
+
   return documents
-    .map(docToLanguage)
-    .sort((a, b) => compareSortKeys([a.name, a.id], [b.name, b.id]));
+    .map(({ id: key, value }) => {
+      const coverage = parsedField<number>(value['$.coverage']);
+      const exonym = value['$.exonym'] as string | undefined;
+      const language: LanguageName = {
+        id: key.slice(LANG_GROUP.length + 1),
+        name: (value['$.name'] as string | undefined) ?? '',
+        ...(exonym ? { exonym } : {}),
+        searchParams: parsedField<string[]>(value['$.searchParams']) ?? [],
+      };
+
+      return {
+        ...language,
+        active: value['$.active'] === '1',
+        ...(coverage !== undefined ? { coverage } : {}),
+        terms: searchTerms(language),
+      };
+    })
+    .sort(compareNames);
+}
+
+/** The index of every language, shared by the requests of this instance. */
+function getLanguageIndex() {
+  if (!languageIndex || languageIndex.expiresAt <= Date.now()) {
+    const cached = {
+      expiresAt: Date.now() + LANGUAGE_INDEX_TTL_MS,
+      entries: loadLanguageIndex(),
+    };
+
+    languageIndex = cached;
+    // A failed read must not be served until it expires.
+    cached.entries.catch(() => {
+      if (languageIndex === cached) {
+        languageIndex = null;
+      }
+    });
+  }
+
+  return languageIndex.entries;
+}
+
+/** Forgets the index, so the next read sees the latest languages. */
+export function clearLanguageIndex() {
+  languageIndex = null;
+}
+
+/* ---------------------------------- Paging --------------------------------- */
+
+/**
+ * Where a language sits in one listing: `[rank, order, name, id]`. `rank` is
+ * the search match (`0` without a query), `order` the sort's own number (`0`
+ * by name, minus the coverage by coverage); name and id break the ties, so the
+ * order is strict, which keyset paging relies on.
+ */
+type LanguageSortKey = readonly [
+  rank: number,
+  order: number,
+  name: string,
+  id: string,
+];
+
+function compareSortKeys(a: LanguageSortKey, b: LanguageSortKey) {
+  return (
+    a[0] - b[0] ||
+    a[1] - b[1] ||
+    compareNames({ name: a[2], id: a[3] }, { name: b[2], id: b[3] })
+  );
+}
+
+function sortOrder(language: IndexedLanguage, sort: LanguagePageSort) {
+  // Best described first; languages never imported (no coverage) go last.
+  return sort === 'coverage' ? -(language.coverage ?? -1) : 0;
 }
 
 export function encodeLanguageCursor(key: LanguageSortKey) {
@@ -232,22 +328,6 @@ function indexAfter(keys: LanguageSortKey[], after: LanguageSortKey) {
   return low;
 }
 
-/** The same match the atlas did in the browser: a substring of any name. */
-function docMatches(doc: Doc, normalizedQuery: string) {
-  const { value } = doc;
-  const searchParams = parsedField<string[]>(value['$.searchParams']) ?? [];
-
-  return [
-    doc.id.slice(LANG_GROUP.length + 1),
-    value['$.name'] ?? '',
-    value['$.exonym'] ?? '',
-    ...searchParams,
-  ]
-    .join(' ')
-    .toLowerCase()
-    .includes(normalizedQuery);
-}
-
 /** The stored languages of `ids`, in that order, skipping missing ones. */
 async function getStoredLanguages(ids: string[]): Promise<Language[]> {
   if (ids.length === 0) {
@@ -266,15 +346,17 @@ async function getStoredLanguages(ids: string[]): Promise<Language[]> {
 }
 
 /**
- * One batch of the catalogue in its name order, after the language the
- * `cursor` points at (keyset paging, so a language added or removed between
- * two calls never shifts the batches). Only names are scanned to place the
- * cursor; the full documents are read for the batch alone.
+ * One batch of a listing of the catalogue, after the language the `cursor`
+ * points at (keyset paging: a language added or removed between two calls
+ * never shifts the batches). With a `query`, only the languages matching it,
+ * best matches first. The listing is computed on the cached index; the full
+ * documents are read for the batch alone.
  */
 export async function getLanguagesPage({
   limit,
   cursor,
-  onlyActives = false,
+  active,
+  sort = 'name',
   query,
 }: LanguagePageOptions): Promise<LanguagePageResult> {
   const after = cursor === undefined ? undefined : decodeLanguageCursor(cursor);
@@ -283,23 +365,31 @@ export async function getLanguagesPage({
     return { success: false, key: 'invalidCursor' };
   }
 
-  const normalizedQuery = query?.trim().toLowerCase();
+  const normalizedQuery = query ? normalizeSearchText(query) : '';
 
   try {
-    const documents = await searchAllDocs(
-      onlyActives ? ACTIVE_LANGS_QUERY : '*',
-      normalizedQuery ? ['$.name', '$.exonym', '$.searchParams'] : ['$.name'],
-    );
+    const keys: LanguageSortKey[] = [];
 
-    const keys = documents
-      .filter(doc => !normalizedQuery || docMatches(doc, normalizedQuery))
-      .map(
-        (doc): LanguageSortKey => [
-          (doc.value['$.name'] as string | undefined) ?? '',
-          doc.id.slice(LANG_GROUP.length + 1),
-        ],
-      )
-      .sort(compareSortKeys);
+    for (const language of await getLanguageIndex()) {
+      if (active !== undefined && language.active !== active) {
+        continue;
+      }
+
+      const rank = normalizedQuery
+        ? matchRank(language.terms, normalizedQuery)
+        : 0;
+
+      if (rank !== null) {
+        keys.push([
+          rank,
+          sortOrder(language, sort),
+          language.name,
+          language.id,
+        ]);
+      }
+    }
+
+    keys.sort(compareSortKeys);
 
     const start = after ? indexAfter(keys, after) : 0;
     const batch = keys.slice(start, start + limit);
@@ -308,7 +398,7 @@ export async function getLanguagesPage({
     return {
       success: true,
       page: {
-        items: await getStoredLanguages(batch.map(([, id]) => id)),
+        items: await getStoredLanguages(batch.map(key => key[3])),
         nextCursor:
           last && start + limit < keys.length
             ? encodeLanguageCursor(last)
@@ -424,12 +514,14 @@ export function keepManagedFields(
 
 export async function setLanguageData(id: string, data: LanguageData) {
   const res = await setObjectToKey(LANG_GROUP, id, data);
+  clearLanguageIndex();
   return res === 'OK';
 }
 
 export async function setLanguageStatus(id: string, active: boolean) {
   const client = await getClient();
   const res = await client.json.set(`${LANG_GROUP}:${id}`, '$.active', active);
+  clearLanguageIndex();
   return res === 'OK';
 }
 

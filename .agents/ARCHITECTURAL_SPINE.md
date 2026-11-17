@@ -154,6 +154,28 @@ added at the module root without a reason recorded here.
 - Expiry and renewal are checked on the cached copy exactly as on the row, so a
   cached session never outlives `expiresAt`.
 
+### Language index
+
+`getLanguagesPage` (`GET /lang/page`) never scans Redis per request. Each
+instance keeps an index of every language (id, name, active, coverage and the
+normalized search terms: no features) for `LANGUAGE_INDEX_TTL_MS` (30 s), sorts
+and filters it in memory, and reads the full documents of the batch alone with
+one `JSON.MGET`.
+
+- **Writes drop it.** `setLanguageData` and `setLanguageStatus` call
+  `clearLanguageIndex`, so the instance that wrote sees the change at once.
+  Other instances, and the offline scripts that write Redis directly, are seen
+  when the TTL runs out.
+- **Cursors are sort keys, not offsets** (`[rank, order, name, id]`), so a
+  language added, removed or activated between two batches never makes one
+  repeat or skip.
+- **One ranking.** `core/lib/search.ts` (`normalizeSearchText`, `searchTerms`,
+  `matchRank`) decides what `?q=` finds and in which order:
+  whole term, start of a term, start of a word, anywhere, then a few typos
+  (one per four letters).
+- The API tests empty Redis before each test, so `tests/support/setup.ts`
+  clears the index with it.
+
 ### What `core` holds
 
 ```
@@ -212,7 +234,7 @@ with the (possibly renewed) session expiry, so clients that store the token
 | --- | --- | --- | --- |
 | GET | `/` | — | all languages, with the optional `locations`, `family`, `genus` and `coverage` of `langDataSchema`; `?oactive=1` for playable ones, repeated `?id=` to fetch a set |
 | GET | `/random` | — | a random active language |
-| GET | `/page?limit=&cursor=&oactive=&q=` | — | one batch of the catalogue by name (keyset paging): `{ items, nextCursor, total }`; `limit` 1–100 (default 24), the previous `nextCursor` as `cursor` (`null` on the last batch, `400 invalidCursor` for a forged one), `q` keeps the languages whose id, names or search params contain it; `total` counts every match. What a client that lists the catalogue should use instead of `/` |
+| GET | `/page?limit=&cursor=&active=&sort=&q=` | — | one batch of a listing of the catalogue (keyset paging): `{ items, nextCursor, total }`; `limit` 1–100 (default 24), the previous `nextCursor` as `cursor` (`null` on the last batch, `400 invalidCursor` for a forged one), `active=true\|false` for the playable or unplayable languages, `sort=name` (default) or `coverage` (best described first), `q` keeps the languages whose id, names or search params contain it, accents ignored, best matches first; `total` counts every match. What a client that lists or searches the catalogue should use instead of `/` |
 | GET | `/summary` | — | `{ languages, activeLanguages, activeFeatures, partialFeatures }`: the atlas counters |
 | GET | `/:id` | — | one language |
 | PUT | `/:id` | B + owner/A | replaces the language data (`langDataBodySchema`); the `langManagedFields` (`locations`, `family`, `genus`, `coverage`) a body leaves out are kept, so a client that only edits features never erases them, and one set to `null` is removed |

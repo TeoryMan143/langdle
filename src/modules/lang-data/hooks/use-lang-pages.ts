@@ -11,28 +11,41 @@ type Options = Omit<LanguagePageParams, 'cursor'> & {
   initialPage?: LanguagePage;
 };
 
+/** The cache key of one listing: what `setQueryData` needs to edit it. */
+export function langPagesKey({
+  limit,
+  active,
+  sort,
+  query,
+}: Omit<LanguagePageParams, 'cursor'>) {
+  return [
+    'langs',
+    'pages',
+    { limit, active, sort, query: query?.trim() || undefined },
+  ] as const;
+}
+
 /**
  * The catalogue batch by batch (`GET /lang/page`): `data.pages` holds what was
  * loaded so far, `fetchNextPage` asks for the batch after the last one.
  */
 export function useLangPages({
   limit,
-  onlyActives,
+  active,
+  sort,
   query,
   initialPage,
 }: Options = {}) {
-  const normalizedQuery = query?.trim() || undefined;
+  const queryKey = langPagesKey({ limit, active, sort, query });
+  const normalizedQuery = queryKey[2].query;
 
   return useInfiniteQuery({
-    queryKey: [
-      'langs',
-      'pages',
-      { limit, onlyActives, query: normalizedQuery },
-    ],
+    queryKey,
     queryFn: async ({ pageParam }) => {
       const { success, error, result } = await getLanguagesPage({
         limit,
-        onlyActives,
+        active,
+        sort,
         query: normalizedQuery,
         cursor: pageParam ?? undefined,
       });

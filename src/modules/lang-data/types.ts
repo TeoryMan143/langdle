@@ -141,11 +141,25 @@ export type ReviewLanguageRequestResult =
 /*                              Catalogue paging                              */
 /* -------------------------------------------------------------------------- */
 
+/** A language as pickers search it (`GET /lang/names`): no features. */
+export type LanguageName = {
+  id: string;
+  name: string;
+  exonym?: string;
+  searchParams: string[];
+};
+
+/** The orders `GET /lang/page` lists the catalogue in (`?sort=`). */
+export const languagePageSorts = ['name', 'coverage'] as const;
+export type LanguagePageSort = (typeof languagePageSorts)[number];
+
 /** Which batch to read: the parsed `GET /lang/page` query, cursor still opaque. */
 export type LanguagePageOptions = {
   limit: number;
   cursor?: string;
-  onlyActives?: boolean;
+  /** Only the playable (`true`) or the unplayable (`false`) languages. */
+  active?: boolean;
+  sort?: LanguagePageSort;
   query?: string;
 };
 

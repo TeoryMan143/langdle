@@ -3,8 +3,11 @@ import { getTranslations } from 'next-intl/server';
 import { dongle } from '@/core/lib/fonts';
 import { withNext } from '@/core/lib/redirect';
 import { auth } from '@/modules/auth/actions';
-import { getAllLanguages } from '@/modules/lang-data/actions';
+import { getLanguagesPage } from '@/modules/lang-data/actions';
 import ReviewQueue from '@/modules/lang-data/components/review-queue';
+
+/** Rows per batch of the queue. */
+const PAGE_SIZE = 50;
 
 async function ReviewPage() {
   const { session, user } = await auth();
@@ -18,10 +21,14 @@ async function ReviewPage() {
   }
 
   const t = await getTranslations('ReviewPage');
-  const languagesRes = await getAllLanguages();
+  const pageRes = await getLanguagesPage({
+    limit: PAGE_SIZE,
+    active: false,
+    sort: 'coverage',
+  });
 
-  if (!languagesRes.success) {
-    console.error(languagesRes.error);
+  if (!pageRes.success) {
+    console.error(pageRes.error);
   }
 
   return (
@@ -31,7 +38,12 @@ async function ReviewPage() {
       </h2>
       <p className='text-center text-foreground/80'>{t('intro')}</p>
       <ReviewQueue
-        languages={languagesRes.success ? languagesRes.result : []}
+        initialPage={
+          pageRes.success
+            ? pageRes.result
+            : { items: [], nextCursor: null, total: 0 }
+        }
+        pageSize={PAGE_SIZE}
       />
     </main>
   );

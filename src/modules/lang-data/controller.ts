@@ -150,9 +150,10 @@ langDataRouter.get('/random', async c => {
 });
 
 /**
- * The catalogue one batch at a time, by name: `?limit=` (1–100, default 24),
- * the `nextCursor` of the previous batch as `?cursor=`, `?oactive=1` for
- * playable languages only and `?q=` to keep those whose names contain it.
+ * The catalogue one batch at a time: `?limit=` (1–100, default 24), the
+ * `nextCursor` of the previous batch as `?cursor=`, `?active=true|false` to
+ * keep the playable or the unplayable languages, `?sort=name|coverage` and
+ * `?q=` to keep the languages matching it, best matches first.
  */
 langDataRouter.get('/page', async c => {
   const parsed = languagePageQuerySchema.safeParse(c.req.query());
@@ -167,13 +168,8 @@ langDataRouter.get('/page', async c => {
     );
   }
 
-  const { limit, cursor, oactive, q } = parsed.data;
-  const result = await getLanguagesPage({
-    limit,
-    cursor,
-    onlyActives: oactive === '1',
-    query: q,
-  });
+  const { q, ...options } = parsed.data;
+  const result = await getLanguagesPage({ ...options, query: q });
 
   if (!result.success) {
     return result.key === 'invalidCursor'
