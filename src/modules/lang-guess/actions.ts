@@ -1,6 +1,5 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
 import { actionError, actionSuccess } from '@/core/lib/action';
 import { apiRequest } from '@/core/lib/api-client';
 import type { ActionResult, Language } from '@/core/types';
@@ -32,13 +31,12 @@ export async function addGameHistory(
     body: historyData,
   });
 
-  if (!res.success) {
-    return actionError(res.error.key);
-  }
-
-  revalidatePath('/account');
-
-  return actionSuccess(res.result);
+  // No revalidatePath: /account is dynamic and reads the history fresh, and
+  // revalidating would re-render the page that called this, where /random
+  // picks a new language mid-game.
+  return res.success
+    ? actionSuccess(res.result)
+    : actionError(res.error.key);
 }
 
 export async function getGameHistory(): Promise<

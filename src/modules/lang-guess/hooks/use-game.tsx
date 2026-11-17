@@ -48,13 +48,18 @@ const MAX_ATTEMPTS = 5;
 
 export const GameProvider = ({
   children,
-  targetLang,
+  targetLang: initialTargetLang,
   type,
 }: {
   children: React.ReactNode;
   targetLang: Language;
   type: 'daily' | 'random';
 }) => {
+  // A game keeps the language it started with. The page re-renders whenever a
+  // server action revalidates or touches cookies, and /random draws a new
+  // language on every render: following the prop would swap the target under
+  // a game in progress (a win dialog showing another language).
+  const [targetLang] = useState(initialTargetLang);
   // Ranked in the browser on a list read once: no debounce, no round trip.
   const [query, setQuery] = useState('');
   const langSearchData = useLangSearch({ query });
