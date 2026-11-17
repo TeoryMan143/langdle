@@ -9,7 +9,7 @@ import { Input } from '@/core/components/ui/input';
 import { groupedLangFeatures } from '@/core/lib/features';
 import type { LangFeatures, Language } from '@/core/types';
 import ChangeRequestDialog from '@/modules/lang-data/components/change-request-dialog';
-import { useLangPages } from '../hooks/use-lang-pages';
+import { LANG_SEARCH_DEBOUNCE_MS, useLangPages } from '../hooks/use-lang-pages';
 import type { LanguagePage } from '../types';
 import LangImage from './lang-image';
 import LoadMore from './load-more';
@@ -23,9 +23,6 @@ type Props = {
   initialPage: LanguagePage;
   pageSize: number;
 };
-
-/** Wait for a pause in the typing before asking the API. */
-const SEARCH_DEBOUNCE_MS = 300;
 
 const groupedEntries = Object.entries(groupedLangFeatures) as Array<
   [keyof typeof groupedLangFeatures, readonly LangFeatures[]]
@@ -159,7 +156,7 @@ const LanguageCard = memo(function LanguageCard({
 function PublicLanguageAtlas({ initialPage, pageSize }: Props) {
   const t = useTranslations('PublicDataPage');
   const [input, setInput] = useState('');
-  const [query, setQuery] = useDebounceValue('', SEARCH_DEBOUNCE_MS);
+  const [query, setQuery] = useDebounceValue('', LANG_SEARCH_DEBOUNCE_MS);
 
   const {
     data,

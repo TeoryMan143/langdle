@@ -368,7 +368,9 @@
     "changeRequests": "Revisar solicitudes de cambio",
     "reviewQueue": "Cola de revisión",
     "requestLanguage": "Solicitar un idioma",
-    "showMore": "Mostrar más"
+    "showMore": "Mostrar más",
+    "searchPlaceholder": "Escribe un nombre o código de idioma",
+    "noMatches": "No hay idiomas que coincidan con tu búsqueda."
   },
   "PublicDataPage": {
     "eyebrow": "Atlas público",

@@ -368,7 +368,9 @@
     "changeRequests": "Review change requests",
     "reviewQueue": "Review queue",
     "requestLanguage": "Request a language",
-    "showMore": "Show more"
+    "showMore": "Show more",
+    "searchPlaceholder": "Type a language name or code",
+    "noMatches": "No languages match your search right now."
   },
   "PublicDataPage": {
     "eyebrow": "Public atlas",

@@ -2,6 +2,9 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { getLanguagesPage } from '../actions';
 import type { LanguagePage, LanguagePageParams } from '../types';
 
+/** How long a search box waits for a pause in the typing before asking. */
+export const LANG_SEARCH_DEBOUNCE_MS = 300;
+
 type Options = Omit<LanguagePageParams, 'cursor'> & {
   /**
    * The first batch, already read by the server component, so the list paints

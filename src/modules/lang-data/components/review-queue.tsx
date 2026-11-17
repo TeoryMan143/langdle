@@ -11,13 +11,14 @@ import { Input } from '@/core/components/ui/input';
 import type { Language } from '@/core/types';
 import { Link } from '@/i18n/navigation';
 import { setLangStatus } from '../actions';
-import { langPagesKey, useLangPages } from '../hooks/use-lang-pages';
+import {
+  LANG_SEARCH_DEBOUNCE_MS,
+  langPagesKey,
+  useLangPages,
+} from '../hooks/use-lang-pages';
 import type { LanguagePage } from '../types';
 import LangImage from './lang-image';
 import LoadMore from './load-more';
-
-/** Wait for a pause in the typing before asking the API. */
-const SEARCH_DEBOUNCE_MS = 300;
 
 type Props = {
   /** The first batch of the queue, read by the server. */
@@ -36,7 +37,7 @@ function ReviewQueue({ initialPage, pageSize }: Props) {
   const queryClient = useQueryClient();
 
   const [input, setInput] = useState('');
-  const [query, setQuery] = useDebounceValue('', SEARCH_DEBOUNCE_MS);
+  const [query, setQuery] = useDebounceValue('', LANG_SEARCH_DEBOUNCE_MS);
   const [activating, setActivating] = useState<string | null>(null);
 
   const listing = {

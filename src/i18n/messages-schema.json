@@ -1408,6 +1408,12 @@
         },
         "showMore": {
           "type": "string"
+        },
+        "searchPlaceholder": {
+          "type": "string"
+        },
+        "noMatches": {
+          "type": "string"
         }
       },
       "required": [
@@ -1416,6 +1422,8 @@
         "changeRequests",
         "requestLanguage",
         "showMore",
+        "searchPlaceholder",
+        "noMatches",
         "reviewQueue"
       ]
     },
