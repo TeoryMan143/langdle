@@ -8,7 +8,6 @@ import Edit from '@/core/components/icons/edit';
 import Loading from '@/core/components/icons/loading';
 import Xcancel from '@/core/components/icons/x';
 import { Button } from '@/core/components/ui/button';
-import { Language } from '@/core/types';
 import { useRouter } from '@/i18n/navigation';
 import LangImage from '@/modules/lang-data/components/lang-image';
 import LangSelector from '@/modules/lang-data/components/lang-selector';
