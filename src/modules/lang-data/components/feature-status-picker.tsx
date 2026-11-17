@@ -46,7 +46,7 @@ function FeatureGroup({
   const t = useTranslations('LangData');
 
   return (
-    <section className='flex flex-col h-[30rem] w-full max-w-[32rem] bg-background border-2 border-border rounded-base shadow-shadow overflow-hidden'>
+    <section className='flex flex-col h-120 w-full max-w-lg bg-background border-2 border-border rounded-base shadow-shadow overflow-hidden'>
       <h3 className='text-center text-2xl font-heading py-3 bg-secondary-background border-b-2 border-border'>
         {t(group)}
       </h3>
