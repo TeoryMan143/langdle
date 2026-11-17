@@ -7,7 +7,7 @@ import '../../../core/search/search.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/ui/lang_flag.dart';
 
-/// The web `LangSelector`: a sheet listing [languages], ranked by the same
+/// The web `LangPickerDialog`: a sheet listing [languages], ranked by the same
 /// search as the game. Answers the picked language, `null` if dismissed.
 Future<LanguageName?> showLanguagePicker(
   BuildContext context, {

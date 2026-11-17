@@ -1,5 +1,6 @@
 import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { dongle } from '@/core/lib/fonts';
 import { withNext } from '@/core/lib/redirect';
 import { auth } from '@/modules/auth/actions';
 import DeleteAccountButton from '@/modules/auth/components/delete-account-button';
@@ -19,21 +20,37 @@ async function AccountPage() {
   const t = await getTranslations('AccountPage');
 
   return (
-    <div className='min-h-full space-y-7'>
-      <h1 className='text-4xl text-center'>{t('title')}</h1>
-      <div className='flex flex-col justify-center items-center gap-3'>
-        <div className='flex gap-5 flex-col md:flex-row'>
-          <AccountData user={user} />
-          <GameHistory />
+    <main className='mx-auto w-full max-w-6xl space-y-6 px-4 pt-2 pb-8'>
+      <h1 className={`${dongle.className} text-6xl text-center`}>
+        {t('title')}
+      </h1>
+      {/*
+       * Two columns from lg: the profile and the requests on the left, the
+       * history over the whole right side (rows 1 and 2), scrolling inside
+       * itself so it is as tall as the left column. One column below that, in
+       * the app's order: profile, history, requests.
+       */}
+      <div className='grid gap-6 lg:grid-cols-2'>
+        <div className='lg:col-start-1 lg:row-start-1'>
+          <AccountData
+            user={user}
+            actions={
+              <>
+                <SignOutButton />
+                <DeleteAccountButton />
+              </>
+            }
+          />
         </div>
-        <MyChangeRequests />
-        <MyLanguageRequests />
-        <div className='flex justify-center gap-3'>
-          <SignOutButton />
-          <DeleteAccountButton />
+        <div className='relative lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:min-h-144'>
+          <GameHistory className='max-h-[70dvh] lg:absolute lg:inset-0 lg:max-h-none' />
+        </div>
+        <div className='space-y-6 lg:col-start-1 lg:row-start-2'>
+          <MyChangeRequests />
+          <MyLanguageRequests />
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

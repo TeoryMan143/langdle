@@ -1756,6 +1756,12 @@
         "addFluentLang": {
           "type": "string"
         },
+        "edit": {
+          "type": "string"
+        },
+        "remove": {
+          "type": "string"
+        },
         "gameHistory": {
           "type": "string"
         },
@@ -1772,6 +1778,12 @@
           "type": "string"
         },
         "noGames": {
+          "type": "string"
+        },
+        "daily": {
+          "type": "string"
+        },
+        "random": {
           "type": "string"
         },
         "updating": {
@@ -1833,12 +1845,16 @@
         "fluentLang",
         "addNativeLang",
         "addFluentLang",
+        "edit",
+        "remove",
         "gameHistory",
         "gameType",
         "target",
         "guessed",
         "guesses",
         "noGames",
+        "daily",
+        "random",
         "updating",
         "selectLang",
         "unknownError",
@@ -11610,12 +11626,6 @@
         },
         "finishSignup": {
           "type": "string"
-        },
-        "edit": {
-          "type": "string"
-        },
-        "remove": {
-          "type": "string"
         }
       },
       "required": [
@@ -11635,9 +11645,7 @@
         "oauthFailed",
         "showPassword",
         "hidePassword",
-        "finishSignup",
-        "edit",
-        "remove"
+        "finishSignup"
       ]
     }
   },

@@ -459,12 +459,16 @@
     "fluentLang": "Fluido/a en",
     "addNativeLang": "añadir idioma nativo",
     "addFluentLang": "añadir idioma fluido",
+    "edit": "Editar",
+    "remove": "Quitar",
     "gameHistory": "Historial de juego",
     "gameType": "Tipo de juego",
     "target": "Objetivo",
     "guessed": "Adivinado",
     "guesses": "Intentos",
     "noGames": "Aún no hay partidas",
+    "daily": "Diario",
+    "random": "Aleatorio",
     "updating": "Actualizando",
     "selectLang": "Selecciona un idioma",
     "unknownError": "Error del servidor",
@@ -2927,8 +2931,6 @@
     "oauthFailed": "No se pudo iniciar sesión con esa cuenta. Inténtalo de nuevo.",
     "showPassword": "Mostrar contraseña",
     "hidePassword": "Ocultar contraseña",
-    "finishSignup": "Elige un nombre de usuario y tu país para terminar de crear tu cuenta.",
-    "edit": "Editar",
-    "remove": "Quitar"
+    "finishSignup": "Elige un nombre de usuario y tu país para terminar de crear tu cuenta."
   }
 }

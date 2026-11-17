@@ -12,7 +12,7 @@ import '../profile_controller.dart';
 import 'language_picker.dart';
 
 /// The native and fluent languages of the account, editable (the web
-/// `NativeLang` and `FluentLangs`). Needs a [ProfileController] above it.
+/// `ProfileLanguages`). Needs a [ProfileController] above it.
 class ProfileLanguages extends StatelessWidget {
   const ProfileLanguages({super.key});
 
@@ -124,7 +124,7 @@ class ProfileLanguages extends StatelessWidget {
             id: nativeId,
             language: profile.language(nativeId),
             icon: Icons.edit_rounded,
-            semanticLabel: context.t('Mobile.edit'),
+            semanticLabel: context.t('AccountPage.edit'),
             onPressed: busy ? null : () => _pickNative(context),
           ),
         const SizedBox(height: 16),
@@ -135,7 +135,7 @@ class ProfileLanguages extends StatelessWidget {
             id: id,
             language: profile.language(id),
             icon: Icons.close_rounded,
-            semanticLabel: context.t('Mobile.remove'),
+            semanticLabel: context.t('AccountPage.remove'),
             onPressed: busy
                 ? null
                 : () => _edit(

@@ -7,8 +7,11 @@ import type { LangSearchResult } from '../types';
 
 type Options = {
   query: string;
-  /** Only the playable languages (the default), the unplayable or all. */
-  active?: boolean;
+  /**
+   * Only the playable languages (`true`, the default), the unplayable ones
+   * (`false`) or every language (`'all'`, for the profile's pickers).
+   */
+  active?: boolean | 'all';
 };
 
 /**
@@ -26,7 +29,9 @@ export function useLangSearch({
     // The translated exonyms make the list depend on the locale.
     queryKey: ['langs', 'names', { active, locale }],
     queryFn: async () => {
-      const { success, error, result } = await getLanguageNames({ active });
+      const { success, error, result } = await getLanguageNames({
+        active: active === 'all' ? undefined : active,
+      });
 
       if (!success) {
         throw new Error(error);
