@@ -56,6 +56,10 @@ function LangImage({
       width={455}
       height={304}
       alt={`${code} flag`}
+      // Lists show thousands of languages, most without a flag of their own:
+      // only the visible rows should walk the fallback chain.
+      loading='lazy'
+      decoding='async'
       onError={() => fallBack(step)}
       className={clsx(className, 'w-6 h-5 rounded-xs inline-block')}
     />

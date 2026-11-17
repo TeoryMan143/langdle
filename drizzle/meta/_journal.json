@@ -141,6 +141,13 @@
       "when": 1794871815724,
       "tag": "0019_language_request",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1794885675848,
+      "tag": "0020_wals_features",
+      "breakpoints": true
     }
   ]
 }

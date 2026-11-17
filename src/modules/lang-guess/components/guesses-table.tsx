@@ -13,6 +13,7 @@ import {
 import LangImage from '@/modules/lang-data/components/lang-image';
 import { useGame } from '../hooks/use-game';
 import Feature from './feature';
+import GuessHints from './guess-hints';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -52,6 +53,7 @@ function GuessesTable() {
           <TableRow key={id}>
             <TableCell className='md:w-36 text-center border-r border-soft-det'>
               <LangImage code={id} /> {name} {exonym && `(${exonym})`}
+              <GuessHints hints={matching.hints} />
             </TableCell>
             <TableCell>
               <motion.div

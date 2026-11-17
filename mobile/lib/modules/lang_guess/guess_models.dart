@@ -5,12 +5,45 @@ enum GameType { daily, random }
 List<String> _strings(Object? value) =>
     value is List ? value.whereType<String>().toList() : const [];
 
+/// How a guess is related to the target: same branch, same family only, or
+/// another family.
+enum GuessRelation { genus, family, none }
+
+/// Clues from where the guess and the target are spoken and how they are
+/// related (`hints` of `GET /api/guess/:id`). Each one may be missing.
+class GuessHints {
+  const GuessHints({this.distanceKm, this.bearing, this.relation});
+
+  factory GuessHints.fromJson(Map<String, dynamic> json) => GuessHints(
+    distanceKm: (json['distanceKm'] as num?)?.round(),
+    bearing: (json['bearing'] as num?)?.toDouble(),
+    relation: GuessRelation.values.asNameMap()[json['relation']],
+  );
+
+  /// Great-circle distance from the guess to the target.
+  final int? distanceKm;
+
+  /// Direction from the guess towards the target, degrees clockwise from
+  /// north. Missing when both are spoken at the same point.
+  final double? bearing;
+  final GuessRelation? relation;
+
+  bool get isEmpty => distanceKm == null && relation == null;
+
+  Map<String, dynamic> toJson() => {
+    'distanceKm': ?distanceKm,
+    'bearing': ?bearing,
+    'relation': ?relation?.name,
+  };
+}
+
 /// How the features of a guess compare with the target language.
 class LanguageMatching {
   const LanguageMatching({
     required this.correct,
     required this.partial,
     required this.incorrect,
+    this.hints,
   });
 
   factory LanguageMatching.fromJson(Map<String, dynamic> json) =>
@@ -18,16 +51,23 @@ class LanguageMatching {
         correct: _strings(json['correct']),
         partial: _strings(json['partial']),
         incorrect: _strings(json['incorrect']),
+        hints: json['hints'] is Map<String, dynamic>
+            ? GuessHints.fromJson(json['hints'] as Map<String, dynamic>)
+            : null,
       );
 
   final List<String> correct;
   final List<String> partial;
   final List<String> incorrect;
 
+  /// Answered by servers that know where the languages are spoken.
+  final GuessHints? hints;
+
   Map<String, dynamic> toJson() => {
     'correct': correct,
     'partial': partial,
     'incorrect': incorrect,
+    'hints': ?hints?.toJson(),
   };
 }
 

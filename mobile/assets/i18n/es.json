@@ -30,7 +30,7 @@
       "dailyLabel": "Modo diario",
       "dailyValue": "Un objetivo compartido",
       "guessesLabel": "Límite de intentos",
-      "guessesValue": "Seis intentos",
+      "guessesValue": "Cinco intentos",
       "modesLabel": "Versiones del juego",
       "modesValue": "Diario y aleatorio"
     },
@@ -38,7 +38,7 @@
       "eyebrow": "Una ronda en práctica",
       "title": "Cómo se ve un intento",
       "copy": "Cada intento se divide rasgo por rasgo. El tablero muestra si coincidiste exactamente, si fue una coincidencia parcial o si no aparece.",
-      "attempt": "Intento 1 de 6",
+      "attempt": "Intento 1 de 5",
       "note": "El mismo patrón de respuesta aparece tanto en el modo diario como en el modo aleatorio."
     },
     "status": {
@@ -72,15 +72,34 @@
         "cta": "Empezar una ronda aleatoria"
       }
     },
+    "hints": {
+      "eyebrow": "Más allá de los rasgos",
+      "title": "Pistas en cada intento fallido",
+      "copy": "Debajo de cada intento fallido, el tablero también te dice dónde se habla el idioma objetivo y qué tan emparentado está con tu intento.",
+      "distance": {
+        "label": "Distancia y dirección",
+        "copy": "Cuántos kilómetros separan tu intento del objetivo, y una flecha que apunta hacia él. Un idioma puede hablarse en varios lugares, así que la distancia se mide entre los dos puntos más cercanos de ambos idiomas: el portugués y el español están cerca por Portugal y España, aunque los dos también se hablan en toda América."
+      },
+      "places": {
+        "label": "Dónde se ubica un idioma",
+        "copy": "Cada idioma tiene uno o más puntos en el mapa. Parten del World Atlas of Language Structures (WALS), que ubica cada idioma donde se habla tradicionalmente. Luego se suman los países donde es oficial y el idioma principal (el español en Latinoamérica, el portugués en Brasil), y los editores pueden añadir regiones a mano. Un país cuenta desde su centro, así que las distancias son aproximadas."
+      },
+      "relation": {
+        "label": "Familia y rama",
+        "copy": "Si tu intento está en la misma rama que el objetivo (el español y el italiano son lenguas romances), solo en la misma familia (el español y el alemán son indoeuropeos) o en otra familia. Las familias y ramas vienen de WALS."
+      }
+    },
     "features": {
       "eyebrow": "Qué se compara",
       "title": "Grupos de rasgos que usa el juego",
-      "copy": "Langdle compara rasgos tipológicos dentro de las mismas categorías amplias, así que cada intento se juzga por su estructura y no por vocabulario.",
+      "copy": "Langdle compara rasgos tipológicos dentro de las mismas categorías amplias, así que cada intento se juzga sobre todo por su estructura, más unas pocas palabras reveladoras.",
+      "sources": "La mayoría de los rasgos vienen de WALS y de los inventarios de sonidos de PHOIBLE, revisados después por los editores. Cuando ninguna fuente dice nada sobre un rasgo, aparece como no presente: si ves un error, sugiere un cambio desde el atlas público.",
       "list": {
         "wordOrder": "Orden de palabras",
         "morphology": "Morfología",
         "phonology": "Fonología",
-        "writingSystem": "Sistema de escritura"
+        "writingSystem": "Sistema de escritura",
+        "lexicon": "Vocabulario"
       }
     },
     "footer": "Lee la huella, acota el objetivo y sigue intentando hasta que el patrón encaje."
@@ -176,7 +195,22 @@
       "interrogativeParticles": "Morfemas usados para marcar una oración como pregunta, a menudo al principio o al final de la misma",
       "pharyngealization": "Proceso fonético donde una consonante se articula con una constricción en la faringe, dando un sonido áspero",
       "aspiratedConsonants": "Consotantes que se pronuncian con una explosión de aire adicional",
-      "labialization": "Consonantes que se pronuncian con una articulación labial extra"
+      "labialization": "Consonantes que se pronuncian con una articulación labial extra",
+      "uvularConsonants": "Consonantes articuladas con el dorso de la lengua contra la úvula, como la q del árabe o la r del francés",
+      "frontRoundedVowels": "Vocales pronunciadas con la lengua adelantada y los labios redondeados, como la ü y la ö del alemán o la u del francés",
+      "fixedStress": "El acento siempre cae en la misma sílaba de la palabra, como la primera en finés o la penúltima en polaco",
+      "adjectiveNoun": "Los adjetivos suelen ir antes del sustantivo que describen, como en inglés 'red house'",
+      "nounAdjective": "Los adjetivos suelen ir después del sustantivo que describen, como en 'casa roja'",
+      "genitiveNoun": "El poseedor va antes de lo poseído, como en inglés 'John's book'",
+      "nounGenitive": "El poseedor va después de lo poseído, como en 'el libro de Juan'",
+      "whInSitu": "Las palabras interrogativas se quedan donde iría la respuesta en vez de ir al principio, como en chino 'nǐ qù nǎr' (tú vas dónde)",
+      "definiteArticles": "Una palabra o afijo que marca un sustantivo como conocido o específico, como 'el' o 'la'",
+      "indefiniteArticles": "Una palabra o afijo que presenta un sustantivo como nuevo o no específico, como 'un' o 'una'",
+      "genderedPronouns": "Los pronombres personales cambian según el género, como 'él' y 'ella'",
+      "vigesimalNumerals": "Los números se forman con veintenas, como el francés 'quatre-vingts' (cuatro veintes) para 80",
+      "teaFromCha": "La palabra para el té viene del chino 'chá', como el portugués 'chá' o el ruso 'chay'",
+      "teaFromTe": "La palabra para el té viene del min nan 'tê', como el inglés 'tea' o el español 'té'",
+      "handArmSameWord": "Una sola palabra designa la mano y el brazo, como el ruso 'ruka'"
     },
     "name": {
       "nasalization": "Nasalización",
@@ -253,7 +287,22 @@
       "interrogativeParticles": "Partículas interrogativas",
       "pharyngealization": "Faringalización",
       "aspiratedConsonants": "Consonantes aspiradas",
-      "labialization": "Labialización"
+      "labialization": "Labialización",
+      "uvularConsonants": "Consonantes uvulares",
+      "frontRoundedVowels": "Vocales anteriores redondeadas",
+      "fixedStress": "Acento fijo",
+      "adjectiveNoun": "Adjetivo antes del sustantivo",
+      "nounAdjective": "Sustantivo antes del adjetivo",
+      "genitiveNoun": "Poseedor antes del sustantivo",
+      "nounGenitive": "Poseedor después del sustantivo",
+      "whInSitu": "Interrogativos in situ",
+      "definiteArticles": "Artículos definidos",
+      "indefiniteArticles": "Artículos indefinidos",
+      "genderedPronouns": "Pronombres con género",
+      "vigesimalNumerals": "Numeración en base 20",
+      "teaFromCha": "Té de raíz 'cha'",
+      "teaFromTe": "Té de raíz 'te'",
+      "handArmSameWord": "Misma palabra para mano y brazo"
     }
   },
   "AuthPage": {
@@ -317,6 +366,7 @@
     "langList": "Lista de idiomas",
     "publicOverview": "Abrir atlas público de rasgos",
     "changeRequests": "Revisar solicitudes de cambio",
+    "reviewQueue": "Cola de revisión",
     "requestLanguage": "Solicitar un idioma"
   },
   "PublicDataPage": {
@@ -343,10 +393,27 @@
       "phonology": "Fonología",
       "wordOrder": "Orden de palabras",
       "writingSystem": "Sistema de escritura",
-      "morphosyntax": "Morfosintaxis"
+      "morphosyntax": "Morfosintaxis",
+      "lexicon": "Vocabulario"
     },
     "empty": "No hay idiomas que coincidan con tu búsqueda.",
+    "showing": "Mostrando {shown} de {total} idiomas",
+    "showMore": "Mostrar más",
+    "attribution": "Datos tipológicos adaptados de WALS Online (Dryer y Haspelmath, 2013) y PHOIBLE 2.0 (Moran y McCloy, 2019), con licencia CC BY 4.0.",
     "requestLanguage": "Solicitar un idioma"
+  },
+  "ReviewPage": {
+    "title": "Cola de revisión",
+    "intro": "Idiomas inactivos, primero los mejor descritos. Revisa cada idioma antes de activarlo: los rasgos sin datos se guardan como ausentes.",
+    "searchPlaceholder": "Escribe un nombre o código de idioma",
+    "coverage": "{percent}% descrito",
+    "noCoverage": "No importado",
+    "inspect": "Revisar",
+    "activate": "Activar",
+    "activated": "{name} ya se puede jugar",
+    "empty": "No quedan idiomas inactivos por revisar.",
+    "showing": "Mostrando {shown} de {total} idiomas",
+    "showMore": "Mostrar más"
   },
   "LangData": {
     "loading": "Actualizando características",
@@ -363,6 +430,19 @@
     "wordOrder": "Orden de palabra",
     "writingSystem": "Sistema de estritura",
     "morphosyntax": "Morfo-Sintaxis",
+    "lexicon": "Vocabulario",
+    "place": "Lugar y familia",
+    "placeIntro": "Las pistas del juego los usan: la distancia y la dirección entre los puntos más cercanos de dos idiomas, y si comparten familia o rama. Añade un punto por cada región donde el idioma se hable ampliamente.",
+    "family": "Familia",
+    "genus": "Rama",
+    "locations": "Ubicaciones",
+    "noLocations": "Todavía no hay ubicaciones: este idioma no da pista de distancia.",
+    "latitude": "Latitud",
+    "longitude": "Longitud",
+    "addLocation": "Añadir ubicación",
+    "removeLocation": "Quitar ubicación",
+    "viewOnMap": "Ver en el mapa",
+    "invalidLocation": "Cada ubicación necesita una latitud entre -90 y 90 y una longitud entre -180 y 180",
     "status": "Estatus"
   },
   "AccountPage": {
@@ -517,7 +597,12 @@
     "theLangWas": "El idioma del día era {lang}",
     "langTried": "¡Ya intentaste con este idioma!",
     "guessRandom": "Adivina un idioma aleatorio",
-    "randomLang": "Idioma aleatorio"
+    "randomLang": "Idioma aleatorio",
+    "hintDirection": "Dirección del objetivo",
+    "hintDistance": "{km} km",
+    "hintSameGenus": "Misma rama",
+    "hintSameFamily": "Misma familia",
+    "hintOtherFamily": "Otra familia"
   },
   "Exonyms": {
     "ar": "árabe",

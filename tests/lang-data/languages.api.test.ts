@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import { getClient } from '@/core/database/redis/config';
 import { api } from '../support/api';
 import {
   createTestAdmin,
@@ -38,6 +39,53 @@ describe('GET /lang', () => {
       'basque',
       'zulu',
     ]);
+  });
+
+  test('lists every language past a single search page', async () => {
+    const ids = Array.from(
+      { length: 1050 },
+      (_, i) => `l${String(i).padStart(4, '0')}`,
+    );
+
+    const client = await getClient();
+    await Promise.all(
+      ids.map(id =>
+        client.json.set(`lang:${id}`, '$', {
+          name: id,
+          active: false,
+          features: [],
+          partial: [],
+          searchParams: [],
+        }),
+      ),
+    );
+
+    const res = await api('GET', '/lang');
+
+    expect(res.status).toBe(200);
+    expect(res.body.map((lang: { id: string }) => lang.id)).toEqual(ids);
+  });
+
+  test('lists the place, family and coverage of a language', async () => {
+    await seedLanguage('basque', {
+      locations: [{ lat: 43, lng: -3 }],
+      family: 'Basque',
+      genus: 'Basque',
+      coverage: 0.8,
+    });
+    await seedLanguage('spanish');
+
+    const res = await api('GET', '/lang');
+
+    expect(res.body[0]).toMatchObject({
+      id: 'basque',
+      locations: [{ lat: 43, lng: -3 }],
+      family: 'Basque',
+      genus: 'Basque',
+      coverage: 0.8,
+    });
+    expect(res.body[1]).not.toHaveProperty('locations');
+    expect(res.body[1]).not.toHaveProperty('coverage');
   });
 
   test('lists the id and the data of each language', async () => {
@@ -211,6 +259,74 @@ describe('PUT /lang/:id', () => {
     expect(res.status).toBe(200);
     expect(res.body.key).toBe('success');
     expect(await getStoredLanguage('spanish')).toEqual(newData);
+  });
+
+  test('keeps the stored place, family and coverage a body leaves out', async () => {
+    const managed = {
+      locations: [{ lat: 40, lng: -4 }],
+      family: 'Indo-European',
+      genus: 'Romance',
+      coverage: 0.5,
+    };
+    await seedLanguage('spanish', managed);
+    const { token } = await createTestAdmin();
+
+    const res = await api('PUT', '/lang/spanish', { token, body: newData });
+
+    expect(res.status).toBe(200);
+    expect(await getStoredLanguage('spanish')).toEqual({
+      ...newData,
+      ...managed,
+    });
+  });
+
+  test('removes the place and family a body sets to null', async () => {
+    await seedLanguage('spanish', {
+      locations: [{ lat: 40, lng: -4 }],
+      family: 'Indo-European',
+      genus: 'Romance',
+      coverage: 0.5,
+    });
+    const { token } = await createTestAdmin();
+
+    const res = await api('PUT', '/lang/spanish', {
+      token,
+      body: { ...newData, locations: null, family: null, genus: null },
+    });
+
+    expect(res.status).toBe(200);
+    expect(await getStoredLanguage('spanish')).toEqual({
+      ...newData,
+      coverage: 0.5,
+    });
+  });
+
+  test('rejects a location off the globe', async () => {
+    await seedLanguage('spanish');
+    const { token } = await createTestAdmin();
+
+    const res = await api('PUT', '/lang/spanish', {
+      token,
+      body: { ...newData, locations: [{ lat: 91, lng: 0 }] },
+    });
+
+    expect(res.status).toBe(400);
+  });
+
+  test('replaces the place and family a body sends', async () => {
+    await seedLanguage('spanish', { family: 'Wrong', genus: 'Wrong' });
+    const { token } = await createTestAdmin();
+
+    const res = await api('PUT', '/lang/spanish', {
+      token,
+      body: { ...newData, family: 'Indo-European', genus: 'Romance' },
+    });
+
+    expect(res.status).toBe(200);
+    expect(await getStoredLanguage('spanish')).toMatchObject({
+      family: 'Indo-European',
+      genus: 'Romance',
+    });
   });
 
   test('lets a user with permission replace that language', async () => {

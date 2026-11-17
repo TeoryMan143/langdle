@@ -23,6 +23,7 @@ behind the API's back except the services the API itself uses.
 | `messages/` | `en`, `es`, `pt` translations, shared by the web and the mobile app. |
 | `tests/` | Vitest tests, mirroring the module names. |
 | `mobile/` | The Flutter app (iOS + Android): same API, translations, flags and design. |
+| `scripts/` | Offline data tools run by hand, never by the app: `scripts/wals/` imports the WALS languages (see its README). |
 
 ## Commands
 
@@ -34,6 +35,10 @@ pnpm test:unit      # pure logic only, no Docker
 pnpm test:api       # REST API against throwaway Postgres + Redis containers
 npx biome check --write src tests   # format + lint fixes
 npx tsc --noEmit    # typecheck only
+pnpm wals:build     # regenerate scripts/wals/languages.json from WALS
+pnpm wals:seed --dry-run   # add those languages to Redis, inactive (drop --dry-run to write)
+pnpm wals:update --dry-run # fix and backfill the languages already in Redis (backs up first)
+pnpm wals:flags --dry-run  # render every language's flag; drop --dry-run to upload them to R2
 
 # mobile app, from mobile/
 flutter run                        # against pnpm dev (Android: adb reverse tcp:3000 tcp:3000)

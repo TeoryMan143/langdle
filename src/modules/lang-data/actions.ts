@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { actionError, actionSuccess } from '@/core/lib/action';
 import { apiRequest } from '@/core/lib/api-client';
-import type { ActionResult, Language, LanguageData } from '@/core/types';
+import type { ActionResult, Language, LanguageDataBody } from '@/core/types';
 import type {
   AdminChangeRequestDTO,
   AdminLanguageRequestDTO,
@@ -81,7 +81,7 @@ export async function getRandomLanguage(): Promise<ActionResult<Language>> {
 
 export async function setLanguageData(
   code: string,
-  data: LanguageData,
+  data: LanguageDataBody,
 ): Promise<ActionResult<string>> {
   const res = await apiRequest(`/lang/${code}`, {
     method: 'put',

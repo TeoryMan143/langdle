@@ -28,11 +28,13 @@ import {
   putObject,
 } from '@/core/lib/storage';
 import { pickRandom } from '@/core/lib/utils';
+import { langManagedFields } from '@/core/schemas/lang';
 import type {
   FeatureStatus,
   LangFeatures,
   Language,
   LanguageData,
+  LanguageDataBody,
 } from '@/core/types';
 import {
   sendChangeRequestResolvedEmail,
@@ -65,6 +67,10 @@ const LANG_FIELDS = [
   '$.active',
   '$.partial',
   '$.searchParams',
+  '$.locations',
+  '$.family',
+  '$.genus',
+  '$.coverage',
 ] as const;
 
 interface SearchDocumentValue {
@@ -81,15 +87,32 @@ type Doc = {
   value: SearchDocumentValue;
 };
 
+/** A returned JSON path that is not a plain string: an object or a number. */
+function parsedField<T>(value: Doc['value'][string] | undefined) {
+  if (value === undefined || value === null) {
+    return undefined;
+  }
+
+  return (typeof value === 'string' ? JSON.parse(value) : value) as T;
+}
+
 function docToLanguage(doc: Doc): Language {
+  const { value } = doc;
+  const locations = parsedField<Language['locations']>(value['$.locations']);
+  const coverage = parsedField<number>(value['$.coverage']);
+
   return {
     id: doc.id.slice(LANG_GROUP.length + 1),
-    name: doc.value['$.name'] as string,
-    exonym: doc.value['$.exonym'] as string,
-    features: JSON.parse((doc.value['$.features'] as string) ?? '[]'),
-    active: doc.value['$.active'] === '1',
-    partial: JSON.parse((doc.value['$.partial'] as string) ?? '[]'),
-    searchParams: JSON.parse((doc.value['$.searchParams'] as string) ?? '[]'),
+    name: value['$.name'] as string,
+    exonym: value['$.exonym'] as string,
+    features: JSON.parse((value['$.features'] as string) ?? '[]'),
+    active: value['$.active'] === '1',
+    partial: JSON.parse((value['$.partial'] as string) ?? '[]'),
+    searchParams: JSON.parse((value['$.searchParams'] as string) ?? '[]'),
+    ...(locations?.length ? { locations } : {}),
+    ...(value['$.family'] ? { family: value['$.family'] as string } : {}),
+    ...(value['$.genus'] ? { genus: value['$.genus'] as string } : {}),
+    ...(coverage !== undefined ? { coverage } : {}),
   };
 }
 
@@ -107,19 +130,34 @@ export async function getLanguageById(
   return { id, ...data };
 }
 
+/** FT.SEARCH answers one page at a time; the catalogue spans several. */
+const LANG_PAGE_SIZE = 1000;
+
 export async function getAllLanguages(onlyActives = false) {
   const client = await getClient();
+  const documents: Doc[] = [];
 
-  const results = await client.ft.search(
-    LANG_INDEX,
-    onlyActives ? '@active:{true}' : '*',
-    {
-      RETURN: [...LANG_FIELDS],
-      LIMIT: { from: 0, size: 50 },
-    },
-  );
+  for (let from = 0; ; from += LANG_PAGE_SIZE) {
+    const results = await client.ft.search(
+      LANG_INDEX,
+      onlyActives ? '@active:{true}' : '*',
+      {
+        RETURN: [...LANG_FIELDS],
+        LIMIT: { from, size: LANG_PAGE_SIZE },
+      },
+    );
 
-  return results.documents
+    documents.push(...results.documents);
+
+    if (
+      results.documents.length < LANG_PAGE_SIZE ||
+      documents.length >= results.total
+    ) {
+      break;
+    }
+  }
+
+  return documents
     .map(docToLanguage)
     .sort((a, b) =>
       a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase()),
@@ -168,6 +206,28 @@ export function applyFeatureStatus(
 export async function getRandomActiveLanguage() {
   const langs = await getAllLanguages(true);
   return langs.length === 0 ? undefined : pickRandom(langs);
+}
+
+/**
+ * The language a `PUT` body describes: a managed field (locations, family,
+ * genus, coverage) it leaves out keeps its stored value, one it sets to `null`
+ * is removed.
+ */
+export function keepManagedFields(
+  stored: LanguageData,
+  body: LanguageDataBody,
+): LanguageData {
+  const data: Record<string, unknown> = { ...body };
+
+  for (const field of langManagedFields) {
+    if (body[field] === undefined && stored[field] !== undefined) {
+      data[field] = stored[field];
+    } else if (body[field] === null) {
+      delete data[field];
+    }
+  }
+
+  return data as LanguageData;
 }
 
 export async function setLanguageData(id: string, data: LanguageData) {

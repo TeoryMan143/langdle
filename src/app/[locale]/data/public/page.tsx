@@ -89,6 +89,10 @@ async function PublicDataPage() {
       <div className='mt-6'>
         <PublicLanguageAtlas languages={languages} />
       </div>
+
+      <p className='mt-8 text-center text-xs text-foreground/70'>
+        {t('attribution')}
+      </p>
     </main>
   );
 }
