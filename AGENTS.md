@@ -39,6 +39,7 @@ pnpm wals:build     # regenerate scripts/wals/languages.json from WALS
 pnpm wals:seed --dry-run   # add those languages to Redis, inactive (drop --dry-run to write)
 pnpm wals:update --dry-run # fix and backfill the languages already in Redis (backs up first)
 pnpm wals:flags --dry-run  # render every language's flag; drop --dry-run to upload them to R2
+pnpm wals:exonyms          # add the languages' en/es/pt names to messages/ (then sync_shared.dart)
 
 # mobile app, from mobile/
 flutter run                        # against pnpm dev (Android: adb reverse tcp:3000 tcp:3000)

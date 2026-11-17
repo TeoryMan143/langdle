@@ -216,6 +216,8 @@ const ENGLISH_NAME: Record<string, string> = {
   apc: 'Levantine Arabic',
   shu: 'Chadian Arabic',
   swh: 'Swahili',
+  // Wikidata's English label is a person's name.
+  crq: "Iyo'wujwa Chorote",
 };
 
 /**
@@ -1110,6 +1112,65 @@ const withoutLanguageWord = (name: string) =>
     .replace(/^(língua|idioma|lengua|dialecto|dialeto)\s+/i, '')
     .trim();
 
+const fold = (text: string) =>
+  text.normalize('NFD').replace(/\p{M}/gu, '').toLocaleLowerCase();
+
+/**
+ * A Spanish or Portuguese Wikidata label as the `Exonyms` messages write
+ * names: without the word for "language", and lowercase like "árabe" or
+ * "zapoteco del Istmo", unless the name itself is a proper noun ("Montana
+ * Salish", "Romaní Sinti"). A label for a group ("lenguas akánicas") does not
+ * name the language.
+ */
+function localName(label: string | undefined) {
+  if (!label || /^(lenguas|línguas|idiomas)\s/i.test(label)) return undefined;
+
+  const name = withoutLanguageWord(
+    label
+      .replace(/\s*\((idioma|lengua|língua|dialecto|dialeto|lenguaje)\)$/i, '')
+      .replace(/^lenguaje\s+/i, ''),
+  );
+  const [first, second = ''] = name.split(' ');
+
+  return /^\p{Lu}/u.test(second) || /^\p{Lu}{2}/u.test(first)
+    ? name
+    : name.charAt(0).toLocaleLowerCase() + name.slice(1);
+}
+
+/**
+ * "Língua bielorrussa" → "bielorrusso". A Portuguese label names the language
+ * with an adjective agreeing with "língua"; the messages name it like the
+ * other exonyms do, with the masculine noun ("o bielorrusso", "o albanês").
+ * The Spanish name tells such an adjective (bielorruso, word by word) from a
+ * name that only ends in -a (korana, quíchua).
+ */
+function portugueseName(label: string | undefined, spanish?: string) {
+  const name = localName(label);
+
+  if (!name || !/^língua\s/i.test(label ?? '')) return name;
+
+  const es = spanish?.split(' ') ?? [];
+
+  return name
+    .split(' ')
+    .map((word, i) => {
+      if (/\p{L}{2}esa$/u.test(word)) return word.replace(/esa$/, 'ês');
+
+      // Same start, and the same length or an adjective's ending: "oluta
+      // popoluca" (Oluta is a town; Spanish says "oluteco") stays.
+      const other = es[i] ?? '';
+      const adjective =
+        word.endsWith('a') &&
+        /o$/.test(other) &&
+        fold(word.slice(0, 2)) === fold(other.slice(0, 2)) &&
+        (Math.abs(word.length - other.length) <= 1 ||
+          /(an|en|in|i|ic|ac|ec)a$/.test(word));
+
+      return adjective ? `${word.slice(0, -1)}o` : word;
+    })
+    .join(' ');
+}
+
 /** "Arabic (Egyptian)" → "Egyptian Arabic", the way WALS names varieties. */
 function readableWalsName(name: string) {
   const match = name.match(/^(.+?) \(([^)]+)\)$/);
@@ -1497,13 +1558,26 @@ const cldrScripts = cldrLanguageData.supplemental.languageData as Record<
 const features = catalogueFeatures();
 
 /**
- * Codes the catalogue already has: the translated exonyms and the shipped
- * flags. The seed script also refuses any code already stored in Redis.
+ * The languages a previous run added: `write-exonyms.ts` gives them exonyms
+ * too, which does not make them part of the catalogue they were added to.
+ */
+const previousRun = new Set<string>(
+  existsSync(OUTPUT)
+    ? JSON.parse(readFileSync(OUTPUT, 'utf8')).languages.map(
+        (entry: { id: string }) => entry.id,
+      )
+    : [],
+);
+
+/**
+ * Codes the catalogue already has: the translated exonyms (other than the
+ * ones this script added) and the shipped flags. The seed script also refuses
+ * any code already stored in Redis.
  */
 const existing = new Set([
   ...Object.keys(
     JSON.parse(readFileSync(join(ROOT, 'messages/en.json'), 'utf8')).Exonyms,
-  ),
+  ).filter(code => !previousRun.has(code)),
   ...readdirSync(join(ROOT, 'public/flags'))
     .filter(file => file.endsWith('.webp') && file !== 'unknown.webp')
     .map(file => file.replace('.webp', '')),
@@ -1679,6 +1753,14 @@ type Entry = {
     known: number;
     /** Features a source could answer but did not, for this language. */
     unknown: Feature[];
+    /**
+     * Its name in each locale, for the `Exonyms` messages (`write-exonyms.ts`
+     * copies them). Wikidata has no Spanish or Portuguese label for about
+     * half of them: those keep the English name.
+     */
+    exonyms: { en: string; es: string; pt: string };
+    /** The locales whose name above comes from a source, not the fallback. */
+    translated: Array<'es' | 'pt'>;
   };
 };
 
@@ -1860,6 +1942,12 @@ for (const group of [...groups.values()].sort((a, b) =>
 
   const known = features.filter(feature => statuses[feature] !== undefined);
 
+  const spanish = localName(name?.es);
+  const portuguese = portugueseName(name?.pt, spanish);
+  // A few English labels are lowercase ("akan").
+  const englishExonym =
+    english.charAt(0).toLocaleUpperCase() + english.slice(1);
+
   ids.set(id, label);
   entries.push({
     id,
@@ -1887,6 +1975,14 @@ for (const group of [...groups.values()].sort((a, b) =>
       known: known.length,
       unknown: features.filter(
         feature => RULES[feature] && statuses[feature] === undefined,
+      ),
+      exonyms: {
+        en: englishExonym,
+        es: spanish ?? englishExonym,
+        pt: portuguese ?? englishExonym,
+      },
+      translated: [spanish && 'es', portuguese && 'pt'].filter(
+        (locale): locale is 'es' | 'pt' => Boolean(locale),
       ),
     },
   });

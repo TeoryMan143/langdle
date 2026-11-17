@@ -12,6 +12,7 @@ with `PUT /api/lang/:id/status?active=true`.
 | `seed-languages.ts` | writes the new languages into Redis, never overwriting one |
 | `update-existing.ts` | fixes and completes the languages already in Redis, never overriding an editor |
 | `upload-flags.ts` | renders each language's flag and uploads it to the R2 bucket (`flags/<code>.webp`) |
+| `write-exonyms.ts` | writes each language's English, Spanish and Portuguese name into the `Exonyms` messages |
 
 ```bash
 pnpm wals:build                      # regenerate languages.json (--offline: cached sources only)
@@ -31,6 +32,9 @@ pnpm wals:update --restore=scripts/wals/backups/<file>.json
 
 pnpm wals:flags --dry-run            # render the flags into .cache/flags-preview, upload nothing
 pnpm wals:flags                      # upload the missing ones (--force replaces, --only=arz,eu)
+
+pnpm wals:exonyms --dry-run          # how many names it would add to messages/
+pnpm wals:exonyms                    # add the missing ones (then sync_shared.dart in mobile/)
 ```
 
 **Order on a deploy that changes the catalogue:** deploy the code first (the
@@ -50,7 +54,9 @@ file that would store invalid data, or that is stale, fails `pnpm test:unit`.
   "languages": [
     { "id": "arz", "codes": ["arz"], "data": { …what lang:arz stores… },
       "meta": { "wals": ["aeg"], "glottocode": "egyp1253", "phoible": true,
-                "known": 51, "unknown": ["tones", …] } } ],
+                "known": 51, "unknown": ["tones", …],
+                "exonyms": { "en": "Egyptian Arabic", "es": "árabe egipcio",
+                             "pt": "árabe egípcio" }, "translated": ["es", "pt"] } } ],
   "existing": [
     { "id": "es", "codes": ["es", "spa"], "data": { features, partial,
       locations, family, genus }, "meta": { "wals": ["spa"], "unknown": […] } } ] }
@@ -100,7 +106,7 @@ WALS is the authority; the others only fill what it does not cover.
 | Retroflex, aspirated, palatalized, labialized, pharyngealized consonants, creaky voice, lateral fricatives | PHOIBLE (WALS has no chapter) |
 | Writing system | CLDR, else Wikidata (WALS does not cover it) |
 | Location, family, genus | WALS |
-| Endonym, English name, Spanish and Portuguese names (`searchParams`) | Wikidata, ISO 639-3 |
+| Endonym, English name, Spanish and Portuguese names (`searchParams`, `meta.exonyms`) | Wikidata, ISO 639-3 |
 
 - WALS entries sharing an ISO 639-3 code are merged (the Swiss German dialects
   become `gsw`); varieties with their own code stay separate languages, which is
@@ -123,6 +129,32 @@ WALS is the authority; the others only fill what it does not cover.
   any language can be completed by hand in the editor (`/data/<code>`).
 - WALS codes are kept even where they surprise: Japanese has "uvular
   continuants" in 6A (its moraic nasal), Swahili a definite article in 37A.
+
+## Names in every locale
+
+`meta.exonyms` is what the `Exonyms` messages call the language, and
+`write-exonyms.ts` copies it into `messages/{en,es,pt}.json` and declares the
+keys in `src/i18n/messages-schema.json`. It never replaces a name already
+there, so a name corrected by hand in the messages stays. Run it after a build
+that adds languages, then `dart run tool/sync_shared.dart` from `mobile/`; a
+test fails while a language has no name in some locale.
+
+- English is the name the language is stored under (`exonym`, or `name` when
+  that is already English).
+- Spanish and Portuguese are Wikidata's labels, written like the other
+  exonyms: without "idioma" or "língua", lowercase unless the name is a proper
+  noun ("zapoteco del Istmo", "Montana Salish"), and in Portuguese with the
+  masculine noun rather than the adjective agreeing with "língua" ("língua
+  bielorrussa" → "bielorrusso", "língua albanesa" → "albanês"; the Spanish
+  label tells such an adjective from a name ending in -a). A label for a
+  group ("lenguas akánicas") is not used.
+- Wikidata has no Spanish or Portuguese label for about half the languages
+  (`meta.translated` lists the locales that have one): they get the English
+  name, which is also what the app showed without a message.
+
+The `Exonyms` keys used to be the list of languages the catalogue had before
+WALS. The build now leaves out of that list the ids its previous output added,
+so a rebuild does not take its own languages for existing ones.
 
 ## Flags
 
