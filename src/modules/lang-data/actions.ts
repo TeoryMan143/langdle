@@ -10,7 +10,10 @@ import type {
   AdminLanguageRequestDTO,
   ChangeRequestDTO,
   ChangeRequestFormValues,
+  LanguagePage,
+  LanguagePageParams,
   LanguageRequestDTO,
+  LanguagesSummary,
 } from './types';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -51,6 +54,40 @@ export async function getAllActiveLanguages(): Promise<
         : lang.searchParams,
     })),
   );
+}
+
+/**
+ * One batch of the catalogue; pass the previous batch's `nextCursor` to get
+ * the next one.
+ */
+export async function getLanguagesPage({
+  limit,
+  cursor,
+  onlyActives,
+  query,
+}: LanguagePageParams = {}): Promise<ActionResult<LanguagePage>> {
+  const res = await apiRequest<LanguagePage>('/lang/page', {
+    searchParams: {
+      ...(limit !== undefined ? { limit } : {}),
+      ...(cursor ? { cursor } : {}),
+      ...(onlyActives ? { oactive: '1' } : {}),
+      ...(query ? { q: query } : {}),
+    },
+    // A language edited or activated must show up on the next batch.
+    cache: 'no-store',
+  });
+
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
+}
+
+export async function getLanguagesSummary(): Promise<
+  ActionResult<LanguagesSummary>
+> {
+  const res = await apiRequest<LanguagesSummary>('/lang/summary', {
+    cache: 'no-store',
+  });
+
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
 }
 
 export async function getLanguagesByIds(

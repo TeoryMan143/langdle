@@ -1405,6 +1405,9 @@
         },
         "requestLanguage": {
           "type": "string"
+        },
+        "showMore": {
+          "type": "string"
         }
       },
       "required": [
@@ -1412,6 +1415,7 @@
         "publicOverview",
         "changeRequests",
         "requestLanguage",
+        "showMore",
         "reviewQueue"
       ]
     },
@@ -1603,6 +1607,9 @@
         "notFounds": {
           "type": "string"
         },
+        "invalidCursor": {
+          "type": "string"
+        },
         "notSignedIn": {
           "type": "string"
         },
@@ -1683,6 +1690,7 @@
         "loading",
         "notFound",
         "notFounds",
+        "invalidCursor",
         "notSignedIn",
         "notAllowed",
         "invalidData",

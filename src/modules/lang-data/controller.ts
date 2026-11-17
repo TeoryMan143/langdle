@@ -16,6 +16,7 @@ import {
   changeRequestStateSchema,
   rejectChangeRequestSchema,
 } from './schemas/change-request';
+import { languagePageQuerySchema } from './schemas/language-page';
 import { languageRequestBodySchema } from './schemas/language-request';
 import {
   canEditLanguage,
@@ -28,6 +29,8 @@ import {
   getLanguageById,
   getLanguageRequests,
   getLanguagesByIds,
+  getLanguagesPage,
+  getLanguagesSummary,
   getRandomActiveLanguage,
   getUserChangeRequests,
   getUserLangPermissions,
@@ -144,6 +147,52 @@ langDataRouter.get('/random', async c => {
   }
 
   return c.json(lang);
+});
+
+/**
+ * The catalogue one batch at a time, by name: `?limit=` (1–100, default 24),
+ * the `nextCursor` of the previous batch as `?cursor=`, `?oactive=1` for
+ * playable languages only and `?q=` to keep those whose names contain it.
+ */
+langDataRouter.get('/page', async c => {
+  const parsed = languagePageQuerySchema.safeParse(c.req.query());
+
+  if (!parsed.success) {
+    return apiError(
+      c,
+      400,
+      'invalidData',
+      'Invalid paging query',
+      parsed.error.flatten(),
+    );
+  }
+
+  const { limit, cursor, oactive, q } = parsed.data;
+  const result = await getLanguagesPage({
+    limit,
+    cursor,
+    onlyActives: oactive === '1',
+    query: q,
+  });
+
+  if (!result.success) {
+    return result.key === 'invalidCursor'
+      ? apiError(c, 400, 'invalidCursor', 'The cursor is not valid')
+      : unknownError(c, 'The languages could not be read');
+  }
+
+  return c.json(result.page);
+});
+
+/** How many languages and features the catalogue holds. */
+langDataRouter.get('/summary', async c => {
+  const summary = await getLanguagesSummary();
+
+  if (!summary) {
+    return unknownError(c, 'The summary could not be computed');
+  }
+
+  return c.json(summary);
 });
 
 /* -------------------------------------------------------------------------- */

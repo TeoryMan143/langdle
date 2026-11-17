@@ -105,7 +105,10 @@ already.
   redirect on failure. No data shaping or `fetch` in a page.
 - Client data goes through TanStack Query, and for languages specifically
   through the `useLang` hook of `lang-data` instead of calling the actions
-  directly.
+  directly. A list of the whole catalogue never loads it at once: it reads it
+  batch by batch with `useLangPages` (`GET /lang/page`), with the first batch
+  read by the server component and handed over as `initialPage`, and the
+  `LoadMore` component at its end.
 - Shared UI comes from `core/components/ui`, which is shadcn-style: `cva`
   variants, `cn()` for class merging, `React.ComponentProps<'x'>` for props.
   Icons are small components in `core/components/icons`.

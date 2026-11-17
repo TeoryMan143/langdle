@@ -367,7 +367,8 @@
     "publicOverview": "Abrir atlas público de recursos",
     "changeRequests": "Revisar pedidos de alteração",
     "reviewQueue": "Fila de revisão",
-    "requestLanguage": "Solicitar um idioma"
+    "requestLanguage": "Solicitar um idioma",
+    "showMore": "Mostrar mais"
   },
   "PublicDataPage": {
     "eyebrow": "Atlas público",
@@ -419,6 +420,7 @@
     "loading": "Atualizando características",
     "notFound": "Idioma não encontrado",
     "notFounds": "Idiomas não encontrados",
+    "invalidCursor": "A lista de idiomas não pôde continuar, recarregue a página",
     "notSignedIn": "É necessário estar logado",
     "notAllowed": "Você não tem permissão para acessar este idioma",
     "invalidData": "Dados do idioma inválidos",

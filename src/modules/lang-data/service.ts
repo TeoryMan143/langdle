@@ -40,6 +40,7 @@ import {
   sendChangeRequestResolvedEmail,
   sendLanguageRequestResolvedEmail,
 } from './emails';
+import { languageCursorSchema } from './schemas/language-page';
 import type {
   AdminChangeRequestDTO,
   AdminLanguageRequestDTO,
@@ -47,8 +48,11 @@ import type {
   ChangeRequestReview,
   CreateLanguageRequestResult,
   FeatureChangeRequest,
+  LanguagePageOptions,
+  LanguagePageResult,
   LanguageRequestDTO,
   LanguageRequestValues,
+  LanguagesSummary,
   ReviewChangeRequestResult,
   ReviewLanguageRequestResult,
   SetPermissionResult,
@@ -131,37 +135,225 @@ export async function getLanguageById(
 }
 
 /** FT.SEARCH answers one page at a time; the catalogue spans several. */
-const LANG_PAGE_SIZE = 1000;
+const LANG_SEARCH_BATCH = 1000;
+const ACTIVE_LANGS_QUERY = '@active:{true}';
+
+/**
+ * Every document matching `query`, with only the `fields` asked for. The first
+ * batch tells how many there are, the rest are fetched in parallel.
+ */
+async function searchAllDocs(
+  query: string,
+  fields: readonly string[],
+): Promise<Doc[]> {
+  const client = await getClient();
+  const search = (from: number) =>
+    client.ft.search(LANG_INDEX, query, {
+      RETURN: [...fields],
+      LIMIT: { from, size: LANG_SEARCH_BATCH },
+    });
+
+  const first = await search(0);
+  const batches = Math.ceil(first.total / LANG_SEARCH_BATCH);
+  const rest = await Promise.all(
+    Array.from({ length: Math.max(0, batches - 1) }, (_, i) =>
+      search((i + 1) * LANG_SEARCH_BATCH),
+    ),
+  );
+
+  return [first, ...rest].flatMap(results => results.documents);
+}
+
+/** Where a language sits in the catalogue: `[name, id]`. */
+type LanguageSortKey = readonly [name: string, id: string];
+
+const nameCollator = new Intl.Collator();
+
+/**
+ * The catalogue order: by name, case-insensitive, then by id so two languages
+ * with the same name still have a strict order (keyset paging relies on it).
+ */
+function compareSortKeys(a: LanguageSortKey, b: LanguageSortKey) {
+  const byName = nameCollator.compare(
+    a[0].toLocaleLowerCase(),
+    b[0].toLocaleLowerCase(),
+  );
+
+  if (byName !== 0) {
+    return byName;
+  }
+
+  return a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0;
+}
 
 export async function getAllLanguages(onlyActives = false) {
-  const client = await getClient();
-  const documents: Doc[] = [];
-
-  for (let from = 0; ; from += LANG_PAGE_SIZE) {
-    const results = await client.ft.search(
-      LANG_INDEX,
-      onlyActives ? '@active:{true}' : '*',
-      {
-        RETURN: [...LANG_FIELDS],
-        LIMIT: { from, size: LANG_PAGE_SIZE },
-      },
-    );
-
-    documents.push(...results.documents);
-
-    if (
-      results.documents.length < LANG_PAGE_SIZE ||
-      documents.length >= results.total
-    ) {
-      break;
-    }
-  }
+  const documents = await searchAllDocs(
+    onlyActives ? ACTIVE_LANGS_QUERY : '*',
+    LANG_FIELDS,
+  );
 
   return documents
     .map(docToLanguage)
-    .sort((a, b) =>
-      a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase()),
+    .sort((a, b) => compareSortKeys([a.name, a.id], [b.name, b.id]));
+}
+
+export function encodeLanguageCursor(key: LanguageSortKey) {
+  return Buffer.from(JSON.stringify(key)).toString('base64url');
+}
+
+/** `null` when the cursor was not made by `encodeLanguageCursor`. */
+export function decodeLanguageCursor(cursor: string): LanguageSortKey | null {
+  try {
+    const parsed = languageCursorSchema.safeParse(
+      JSON.parse(Buffer.from(cursor, 'base64url').toString('utf8')),
     );
+
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Index of the first key strictly after `after` in the sorted `keys`. */
+function indexAfter(keys: LanguageSortKey[], after: LanguageSortKey) {
+  let low = 0;
+  let high = keys.length;
+
+  while (low < high) {
+    const middle = (low + high) >> 1;
+
+    if (compareSortKeys(keys[middle], after) <= 0) {
+      low = middle + 1;
+    } else {
+      high = middle;
+    }
+  }
+
+  return low;
+}
+
+/** The same match the atlas did in the browser: a substring of any name. */
+function docMatches(doc: Doc, normalizedQuery: string) {
+  const { value } = doc;
+  const searchParams = parsedField<string[]>(value['$.searchParams']) ?? [];
+
+  return [
+    doc.id.slice(LANG_GROUP.length + 1),
+    value['$.name'] ?? '',
+    value['$.exonym'] ?? '',
+    ...searchParams,
+  ]
+    .join(' ')
+    .toLowerCase()
+    .includes(normalizedQuery);
+}
+
+/** The stored languages of `ids`, in that order, skipping missing ones. */
+async function getStoredLanguages(ids: string[]): Promise<Language[]> {
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const client = await getClient();
+  const stored = (await client.json.mGet(
+    ids.map(id => `${LANG_GROUP}:${id}`),
+    '$',
+  )) as unknown as Array<[LanguageData] | null>;
+
+  return stored.flatMap((data, i) =>
+    data?.[0] ? [{ id: ids[i], ...data[0] }] : [],
+  );
+}
+
+/**
+ * One batch of the catalogue in its name order, after the language the
+ * `cursor` points at (keyset paging, so a language added or removed between
+ * two calls never shifts the batches). Only names are scanned to place the
+ * cursor; the full documents are read for the batch alone.
+ */
+export async function getLanguagesPage({
+  limit,
+  cursor,
+  onlyActives = false,
+  query,
+}: LanguagePageOptions): Promise<LanguagePageResult> {
+  const after = cursor === undefined ? undefined : decodeLanguageCursor(cursor);
+
+  if (after === null) {
+    return { success: false, key: 'invalidCursor' };
+  }
+
+  const normalizedQuery = query?.trim().toLowerCase();
+
+  try {
+    const documents = await searchAllDocs(
+      onlyActives ? ACTIVE_LANGS_QUERY : '*',
+      normalizedQuery ? ['$.name', '$.exonym', '$.searchParams'] : ['$.name'],
+    );
+
+    const keys = documents
+      .filter(doc => !normalizedQuery || docMatches(doc, normalizedQuery))
+      .map(
+        (doc): LanguageSortKey => [
+          (doc.value['$.name'] as string | undefined) ?? '',
+          doc.id.slice(LANG_GROUP.length + 1),
+        ],
+      )
+      .sort(compareSortKeys);
+
+    const start = after ? indexAfter(keys, after) : 0;
+    const batch = keys.slice(start, start + limit);
+    const last = batch.at(-1);
+
+    return {
+      success: true,
+      page: {
+        items: await getStoredLanguages(batch.map(([, id]) => id)),
+        nextCursor:
+          last && start + limit < keys.length
+            ? encodeLanguageCursor(last)
+            : null,
+        total: keys.length,
+      },
+    };
+  } catch (e) {
+    console.error(e);
+    return { success: false, key: 'unknown' };
+  }
+}
+
+/** The atlas counters, without sending the catalogue anywhere. */
+export async function getLanguagesSummary(): Promise<LanguagesSummary | null> {
+  try {
+    const documents = await searchAllDocs('*', [
+      '$.active',
+      '$.features',
+      '$.partial',
+    ]);
+
+    return documents.reduce<LanguagesSummary>(
+      (summary, { value }) => ({
+        languages: summary.languages + 1,
+        activeLanguages:
+          summary.activeLanguages + (value['$.active'] === '1' ? 1 : 0),
+        activeFeatures:
+          summary.activeFeatures +
+          (parsedField<string[]>(value['$.features'])?.length ?? 0),
+        partialFeatures:
+          summary.partialFeatures +
+          (parsedField<string[]>(value['$.partial'])?.length ?? 0),
+      }),
+      {
+        languages: 0,
+        activeLanguages: 0,
+        activeFeatures: 0,
+        partialFeatures: 0,
+      },
+    );
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 }
 
 export async function getLanguagesByIds(ids: string[]): Promise<Language[]> {

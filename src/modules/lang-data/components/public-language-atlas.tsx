@@ -1,24 +1,31 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
+import { useDebounceValue } from 'usehooks-ts';
+import Loading from '@/core/components/icons/loading';
 import FeatureToolTip from '@/core/components/main/feature-tooltip';
-import { Button } from '@/core/components/ui/button';
 import { Input } from '@/core/components/ui/input';
 import { groupedLangFeatures } from '@/core/lib/features';
 import type { LangFeatures, Language } from '@/core/types';
 import ChangeRequestDialog from '@/modules/lang-data/components/change-request-dialog';
+import { useLangPages } from '../hooks/use-lang-pages';
+import type { LanguagePage } from '../types';
 import LangImage from './lang-image';
+import LoadMore from './load-more';
 
 type Props = {
-  languages: Language[];
+  /**
+   * The first batch, read by the server. The catalogue holds thousands of
+   * languages and each card carries a dialog per feature, so the next batches
+   * (of the same size) are only read as the user scrolls.
+   */
+  initialPage: LanguagePage;
+  pageSize: number;
 };
 
-/**
- * Cards rendered at a time: the catalogue holds thousands of languages and each
- * card carries a dialog per feature, so they are revealed page by page.
- */
-const PAGE_SIZE = 24;
+/** Wait for a pause in the typing before asking the API. */
+const SEARCH_DEBOUNCE_MS = 300;
 
 const groupedEntries = Object.entries(groupedLangFeatures) as Array<
   [keyof typeof groupedLangFeatures, readonly LangFeatures[]]
@@ -141,81 +148,71 @@ function LanguageCard({ language }: { language: Language }) {
   );
 }
 
-function PublicLanguageAtlas({ languages }: Props) {
+function PublicLanguageAtlas({ initialPage, pageSize }: Props) {
   const t = useTranslations('PublicDataPage');
-  const [query, setQuery] = useState('');
-  const [visible, setVisible] = useState(PAGE_SIZE);
+  const [input, setInput] = useState('');
+  const [query, setQuery] = useDebounceValue('', SEARCH_DEBOUNCE_MS);
 
-  const filteredLanguages = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
+  const {
+    data,
+    isError,
+    isPlaceholderData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useLangPages({ limit: pageSize, query, initialPage });
 
-    if (!normalized) {
-      return languages;
-    }
-
-    return languages.filter(language => {
-      const haystack = [
-        language.id,
-        language.name,
-        language.exonym ?? '',
-        ...language.searchParams,
-      ]
-        .join(' ')
-        .toLowerCase();
-
-      return haystack.includes(normalized);
-    });
-  }, [languages, query]);
-
-  const shownLanguages = filteredLanguages.slice(0, visible);
+  const languages = data?.pages.flatMap(page => page.items) ?? [];
+  const total = data?.pages[0]?.total ?? 0;
+  const searching = input.trim() !== query.trim() || isPlaceholderData;
 
   return (
     <section className='space-y-4'>
       <div className='rounded-2xl border-2 border-border bg-background p-4 shadow-shadow'>
         <label
-          className='mb-2 block text-sm font-medium'
+          className='mb-2 flex items-center gap-2 text-sm font-medium'
           htmlFor='public-lang-search'
         >
           {t('search.label')}
+          {searching && <Loading className='size-4' />}
         </label>
         <Input
           id='public-lang-search'
-          value={query}
+          value={input}
           onChange={event => {
+            setInput(event.target.value);
             setQuery(event.target.value);
-            setVisible(PAGE_SIZE);
           }}
           placeholder={t('search.placeholder')}
         />
       </div>
 
-      {filteredLanguages.length === 0 ? (
+      {isError && !data ? (
+        <div className='rounded-2xl border-2 border-border bg-background p-8 text-center shadow-shadow'>
+          <p className='text-lg font-medium'>{t('loadError')}</p>
+        </div>
+      ) : languages.length === 0 && !searching ? (
         <div className='rounded-2xl border-2 border-border bg-background p-8 text-center shadow-shadow'>
           <p className='text-lg font-medium'>{t('empty')}</p>
         </div>
       ) : (
         <>
           <div className='grid gap-5 xl:grid-cols-2'>
-            {shownLanguages.map(language => (
+            {languages.map(language => (
               <LanguageCard key={language.id} language={language} />
             ))}
           </div>
 
           <div className='flex flex-col items-center gap-3'>
             <p className='text-sm text-foreground/70'>
-              {t('showing', {
-                shown: shownLanguages.length,
-                total: filteredLanguages.length,
-              })}
+              {t('showing', { shown: languages.length, total })}
             </p>
-            {shownLanguages.length < filteredLanguages.length && (
-              <Button
-                variant='neutral'
-                onClick={() => setVisible(count => count + PAGE_SIZE)}
-              >
-                {t('showMore')}
-              </Button>
-            )}
+            <LoadMore
+              hasNextPage={hasNextPage && !isPlaceholderData}
+              isFetchingNextPage={isFetchingNextPage}
+              onLoadMore={() => fetchNextPage()}
+              label={t('showMore')}
+            />
           </div>
         </>
       )}

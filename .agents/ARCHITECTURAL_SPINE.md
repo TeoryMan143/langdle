@@ -212,6 +212,8 @@ with the (possibly renewed) session expiry, so clients that store the token
 | --- | --- | --- | --- |
 | GET | `/` | — | all languages, with the optional `locations`, `family`, `genus` and `coverage` of `langDataSchema`; `?oactive=1` for playable ones, repeated `?id=` to fetch a set |
 | GET | `/random` | — | a random active language |
+| GET | `/page?limit=&cursor=&oactive=&q=` | — | one batch of the catalogue by name (keyset paging): `{ items, nextCursor, total }`; `limit` 1–100 (default 24), the previous `nextCursor` as `cursor` (`null` on the last batch, `400 invalidCursor` for a forged one), `q` keeps the languages whose id, names or search params contain it; `total` counts every match. What a client that lists the catalogue should use instead of `/` |
+| GET | `/summary` | — | `{ languages, activeLanguages, activeFeatures, partialFeatures }`: the atlas counters |
 | GET | `/:id` | — | one language |
 | PUT | `/:id` | B + owner/A | replaces the language data (`langDataBodySchema`); the `langManagedFields` (`locations`, `family`, `genus`, `coverage`) a body leaves out are kept, so a client that only edits features never erases them, and one set to `null` is removed |
 | PUT | `/:id/status?active=` | B + A | activates/deactivates a language |
