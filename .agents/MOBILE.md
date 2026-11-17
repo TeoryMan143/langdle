@@ -11,7 +11,7 @@ for it.
 
 | Concern | Choice |
 | --- | --- |
-| Framework | Flutter 3.47 (Dart 3.13), Material 3 as the base, restyled |
+| Framework | Flutter 3.47 (Dart 3.13), Material 3 as the base, restyled. CI pins the exact version (`flutter-version` in `.github/workflows/tests.yaml`): from 3.48 `package:flutter/material.dart` is deprecated for `material_ui`, so upgrading means migrating those imports too |
 | State | `provider` + `ChangeNotifier` |
 | Navigation | `go_router` (`StatefulShellRoute` for the tab bar) |
 | HTTP | `http`, wrapped by `core/api/api_client.dart` |
