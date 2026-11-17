@@ -121,7 +121,7 @@ void main() {
     Future<(_FakeApi, GameController)> play({required bool signIn}) async {
       final api = _FakeApi({
         'GET /api/lang/random': (_) => _languages[2],
-        'GET /api/lang': (_) => _languages,
+        'GET /api/lang/names': (_) => _languages,
         'GET /api/guess/de': (_) => {
           'correct': <String>[],
           'partial': <String>[],
@@ -219,7 +219,7 @@ void main() {
   group('profile', () {
     test('edits send the whole list and update the signed in user', () async {
       final api = _FakeApi({
-        'GET /api/lang': (_) => _languages,
+        'GET /api/lang/names': (_) => _languages,
         'PUT /api/user/fluent': (r) => {
           'updated': {
             ..._user,

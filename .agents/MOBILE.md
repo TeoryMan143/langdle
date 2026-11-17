@@ -43,12 +43,16 @@ mobile/
                      showNeoConfirm, LangFlag, FeatureResult, FeatureStatusChip,
                      NeoLoading, NeoError
       shell/         header, locale picker, bottom tab bar
-      models/        types shared across modules (Language, Country)
+      models/        types shared across modules (LanguageName, Language,
+                     Country)
+      search/        the language search ranking, ported from the web, and
+                     its generated accent table (search_fold.g.dart)
     modules/<name>/  one feature, named after the web module in snake_case
                      (auth, user_profile, lang_guess, lang_data, meta,
                      how_to_play)
   assets/i18n, assets/flags   generated: copied from the web, never edited here
   tool/sync_shared.dart       the script that copies them
+  tool/build_search_fold.mjs  generates core/search/search_fold.g.dart (Node)
   test/                       flutter test
 ```
 
@@ -71,8 +75,8 @@ A widget used by more than one module moves to `core/ui/`, a model to
    `ApiClient`, from a repository. Widgets and controllers never build URLs or
    call `http` directly. The app does not reimplement what the API decides:
    guess matching, permissions and validation stay on the server. Client-side
-   logic is limited to presentation (the search ranking, which mirrors
-   `useLang`'s Levenshtein ranking on the web).
+   logic is limited to presentation (the pickers' search ranking, a port of
+   the web's `core/lib/search.ts`, see *Language lists and search*).
 2. **No hardcoded user-facing text.** Every string comes from the messages:
    `context.t('Group.key')` inside `build`,
    `context.read<LocaleController>().t(...)` in callbacks and async code
@@ -212,6 +216,27 @@ in `ios/Flutter/Debug.xcconfig` and `Release.xcconfig` (an Associated Domains
 entitlement, also a paid team capability). That host must serve
 `public/.well-known/` with the real Team ID and release SHA-256 in place of
 their placeholders, or the OS will not verify the links.
+
+## Language lists and search
+
+The pickers never load the catalogue with its features. Like the web:
+
+- **The pickers search names.** The game's pool and the profile's language
+  picker read `GET /lang/names` once (`LangRepository.names`, cached for the
+  life of the app) and rank it on every keystroke with `LanguageSearch`,
+  which adds the exonym translated in the current locale (the web action does
+  the same). The game offers the playable languages, the profile every one.
+- **One ranking.** `core/search/search.dart` is a port of the web's
+  `src/core/lib/search.ts` and the API's `?q=` ranking: same accent folding,
+  ranks and typo distance, and the same cases in `test/search_test.dart` as
+  in the web's `tests/core/search.test.ts`. Change them together.
+- **Accents without NFD.** Dart has no Unicode normalization, so
+  `normalizeSearchText` folds precomposed characters through
+  `search_fold.g.dart`, a table generated from JavaScript's own
+  `normalize('NFD')` (`node tool/build_search_fold.mjs`), then strips `\p{M}`
+  as the web does.
+- A guess keeps the `LanguageName` it was made with; saves that still carry a
+  whole language read the same.
 
 ## Shared assets
 

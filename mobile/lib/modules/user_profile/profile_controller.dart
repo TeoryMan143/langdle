@@ -24,14 +24,15 @@ class ProfileController extends ChangeNotifier {
   final LangRepository _langs;
   final ProfileRepository _profile;
 
-  List<Language>? _languages;
+  List<LanguageName>? _languages;
+  Map<String, LanguageName> _byId = const {};
   Object? _error;
   bool _saving = false;
   bool _disposed = false;
 
-  /// Every language of the catalogue, what the pickers offer. `null` while
-  /// loading.
-  List<Language>? get languages => _languages;
+  /// The names of every language of the catalogue, what the pickers offer.
+  /// `null` while loading.
+  List<LanguageName>? get languages => _languages;
   Object? get error => _error;
 
   /// An edit is being sent.
@@ -47,15 +48,16 @@ class ProfileController extends ChangeNotifier {
       if (id.isNotEmpty) id,
   ];
 
-  Language? language(String id) =>
-      _languages?.where((lang) => lang.id == id).firstOrNull;
+  LanguageName? language(String id) => _byId[id];
 
   Future<void> load() async {
     _error = null;
     _notify();
 
     try {
-      _languages = await _langs.all();
+      final languages = await _langs.names();
+      _languages = languages;
+      _byId = {for (final language in languages) language.id: language};
     } catch (e) {
       _error = e;
     }
@@ -63,10 +65,10 @@ class ProfileController extends ChangeNotifier {
     _notify();
   }
 
-  Future<void> setNative(Language language) =>
+  Future<void> setNative(LanguageName language) =>
       _save(() => _profile.setNativeLanguage(language.id));
 
-  Future<void> addFluent(Language language) {
+  Future<void> addFluent(LanguageName language) {
     final ids = fluentIds;
 
     return ids.contains(language.id)

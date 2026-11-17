@@ -4,27 +4,6 @@ import 'package:langdle_app/modules/lang_guess/guess_models.dart';
 import 'package:langdle_app/modules/lang_guess/guess_repository.dart';
 
 void main() {
-  group('Language.search', () {
-    const languages = [
-      Language(id: 'es', name: 'Español', searchParams: ['spanish', 'español']),
-      Language(id: 'de', name: 'Deutsch', searchParams: ['german', 'deutsch']),
-      Language(id: 'pt', name: 'Português', searchParams: ['portuguese']),
-    ];
-
-    test('answers every language for an empty query', () {
-      expect(Language.search(languages, ''), languages);
-    });
-
-    test('ranks by the closest search param', () {
-      final ids = Language.search(languages, 'germen').map((l) => l.id);
-      expect(ids.first, 'de');
-    });
-
-    test('matches any of the params', () {
-      expect(Language.search(languages, 'español').first.id, 'es');
-    });
-  });
-
   group('GuessResult.fromJson', () {
     test('a right guess carries the target', () {
       final result = GuessResult.fromJson({
@@ -69,6 +48,27 @@ void main() {
     expect(copy.date, save.date);
     expect(copy.guesses.single.language.id, 'de');
     expect(copy.guesses.single.matching.correct, ['svo']);
+  });
+
+  test('a guess saved with the whole language still reads', () {
+    final guess = LanguageGuess.fromJson({
+      'language': {
+        'id': 'de',
+        'name': 'Deutsch',
+        'features': ['svo'],
+        'partial': <String>[],
+        'searchParams': ['german'],
+        'active': true,
+      },
+      'matching': {
+        'correct': <String>[],
+        'partial': <String>[],
+        'incorrect': <String>[],
+      },
+    });
+
+    expect(guess.language.id, 'de');
+    expect(guess.language.searchParams, ['german']);
   });
 
   test('utcDateString uses the UTC day', () {

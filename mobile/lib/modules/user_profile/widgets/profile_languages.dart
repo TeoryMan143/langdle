@@ -167,7 +167,7 @@ class _LanguageRow extends StatelessWidget {
   final String id;
 
   /// `null` when the language left the catalogue: the id is shown instead.
-  final Language? language;
+  final LanguageName? language;
   final IconData icon;
   final String semanticLabel;
   final VoidCallback? onPressed;

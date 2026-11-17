@@ -175,7 +175,9 @@ one `JSON.MGET`.
   (one per four letters; a letter added, removed or replaced, or two
   neighbours swapped, each count as one: `typoDistance`). The API ranks `?q=`
   with it and the pickers rank `/names` with it in the browser, so both find
-  the same languages.
+  the same languages. The mobile app ports it to
+  `mobile/lib/core/search/search.dart` with the same tests
+  (`mobile/test/search_test.dart`): a change to one is a change to both.
 - The API tests empty Redis before each test, so `tests/support/setup.ts`
   clears the index with it.
 

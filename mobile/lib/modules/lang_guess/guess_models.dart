@@ -76,13 +76,15 @@ class LanguageGuess {
   const LanguageGuess({required this.language, required this.matching});
 
   factory LanguageGuess.fromJson(Map<String, dynamic> json) => LanguageGuess(
-    language: Language.fromJson(json['language'] as Map<String, dynamic>),
+    // Saves made before the guesses kept names only carry a whole language;
+    // its names are all that is read.
+    language: LanguageName.fromJson(json['language'] as Map<String, dynamic>),
     matching: LanguageMatching.fromJson(
       json['matching'] as Map<String, dynamic>,
     ),
   );
 
-  final Language language;
+  final LanguageName language;
   final LanguageMatching matching;
 
   Map<String, dynamic> toJson() => {

@@ -18,22 +18,24 @@ class FeatureCatalogue {
   final Map<String, List<String>> groups;
 }
 
-/// Reads the language catalogue (`/api/lang`, `/api/meta`). The playable
-/// languages and the feature catalogue barely change, so they are cached for
-/// the life of the app.
+/// Reads the language catalogue (`/api/lang`, `/api/meta`). The names the
+/// pickers search and the feature catalogue barely change, so they are cached
+/// for the life of the app.
 class LangRepository {
   LangRepository(this._api);
 
   final ApiClient _api;
 
-  Future<List<Language>>? _active;
+  final Map<bool?, Future<List<LanguageName>>> _names = {};
   Future<FeatureCatalogue>? _catalogue;
 
   /// Every language, playable or not (the public atlas).
   Future<List<Language>> all() async => _parseList(await _api.get('/lang'));
 
-  /// The playable languages, the pool the guess search draws from.
-  Future<List<Language>> active() => _active ??= _loadActive();
+  /// The names of every language by name (`GET /lang/names`), or only the
+  /// playable ([active] `true`) or unplayable ones: what a picker searches.
+  Future<List<LanguageName>> names({bool? active}) =>
+      _names[active] ??= _loadNames(active);
 
   Future<Language> random() async =>
       Language.fromJson(await _api.get('/lang/random') as Map<String, dynamic>);
@@ -79,11 +81,16 @@ class LangRepository {
 
   Future<FeatureCatalogue> catalogue() => _catalogue ??= _loadCatalogue();
 
-  Future<List<Language>> _loadActive() async {
+  Future<List<LanguageName>> _loadNames(bool? active) async {
     try {
-      return _parseList(await _api.get('/lang', query: {'oactive': '1'}));
+      final json = await _api.get('/lang/names', query: {'active': ?active});
+
+      return [
+        for (final item in json as List)
+          if (item is Map<String, dynamic>) LanguageName.fromJson(item),
+      ];
     } catch (_) {
-      _active = null;
+      _names.remove(active);
       rethrow;
     }
   }

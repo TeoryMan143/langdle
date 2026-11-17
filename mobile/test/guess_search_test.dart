@@ -35,7 +35,7 @@ ApiClient _fakeApi() => ApiClient(
   client: MockClient((request) async {
     final body = switch (request.url.path) {
       '/api/lang/random' => _languages.first,
-      '/api/lang' => _languages,
+      '/api/lang/names' => _languages,
       _ => null,
     };
 
@@ -95,7 +95,7 @@ void main() {
 
     expect(find.text('Language 0'), findsOneWidget);
 
-    await tester.drag(find.text('Language 10'), const Offset(0, -150));
+    await tester.drag(find.text('Language 3'), const Offset(0, -150));
     await tester.pumpAndSettle();
 
     final field = tester.widget<TextField>(find.byType(TextField));

@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/i18n/translations.dart';
 import '../../../core/models/language.dart';
+import '../../../core/search/search.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/ui/lang_flag.dart';
 
 /// The web `LangSelector`: a sheet listing [languages], ranked by the same
 /// search as the game. Answers the picked language, `null` if dismissed.
-Future<Language?> showLanguagePicker(
+Future<LanguageName?> showLanguagePicker(
   BuildContext context, {
   required String title,
-  required List<Language> languages,
+  required List<LanguageName> languages,
   Set<String> excluded = const {},
 }) {
-  return showModalBottomSheet<Language>(
+  return showModalBottomSheet<LanguageName>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
@@ -32,18 +34,24 @@ class _LanguageSheet extends StatefulWidget {
   const _LanguageSheet({required this.title, required this.languages});
 
   final String title;
-  final List<Language> languages;
+  final List<LanguageName> languages;
 
   @override
   State<_LanguageSheet> createState() => _LanguageSheetState();
 }
 
 class _LanguageSheetState extends State<_LanguageSheet> {
+  /// Built once per sheet: the terms of thousands of languages are not
+  /// computed again on every keystroke.
+  late final _search = LanguageSearch(
+    widget.languages,
+    locale: context.read<LocaleController>(),
+  );
   String _query = '';
 
   @override
   Widget build(BuildContext context) {
-    final matches = Language.search(widget.languages, _query);
+    final matches = _search.rank(_query);
 
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
@@ -68,8 +76,7 @@ class _LanguageSheetState extends State<_LanguageSheet> {
                     color: NeoColors.foreground,
                   ),
                 ),
-                onChanged: (value) =>
-                    setState(() => _query = value.toLowerCase().trim()),
+                onChanged: (value) => setState(() => _query = value),
               ),
               const SizedBox(height: 12),
               Expanded(

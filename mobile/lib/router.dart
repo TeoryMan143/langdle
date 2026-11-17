@@ -142,6 +142,7 @@ Widget _game(GameType type) => ChangeNotifierProvider(
     guesses: context.read<GuessRepository>(),
     saves: context.read<DailySaveStore>(),
     auth: context.read<AuthController>(),
+    locale: context.read<LocaleController>(),
   ),
   child: const GameView(),
 );
