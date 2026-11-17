@@ -12,8 +12,17 @@ type Entry = {
     features: string[];
     partial: string[];
   };
-  meta: { known: number; unknown: string[] };
+  meta: {
+    known: number;
+    unknown: string[];
+    exonyms: Record<Locale, string>;
+    translated: Locale[];
+  };
 };
+
+const locales = ['en', 'es', 'pt'] as const;
+
+type Locale = (typeof locales)[number];
 
 const { header, languages, existing } = JSON.parse(
   readFileSync('scripts/wals/languages.json', 'utf8'),
@@ -23,9 +32,20 @@ const { header, languages, existing } = JSON.parse(
   existing: Entry[];
 };
 
-const exonyms = Object.keys(
-  JSON.parse(readFileSync('messages/en.json', 'utf8')).Exonyms,
-);
+const messages = Object.fromEntries(
+  locales.map(locale => [
+    locale,
+    JSON.parse(readFileSync(`messages/${locale}.json`, 'utf8')).Exonyms,
+  ]),
+) as Record<Locale, Record<string, string>>;
+
+const schema = JSON.parse(readFileSync('src/i18n/messages-schema.json', 'utf8'))
+  .properties.Exonyms as { properties: object; required: string[] };
+
+// The languages the catalogue had before WALS: write-exonyms.ts gave the WALS
+// ones exonyms too.
+const ids = new Set(languages.map(({ id }) => id));
+const catalogue = Object.keys(messages.en).filter(code => !ids.has(code));
 
 describe('the WALS languages dataset', () => {
   test('has languages', () => {
@@ -74,7 +94,36 @@ describe('the WALS languages dataset', () => {
   test('never replaces a language the catalogue already has', () => {
     const codes = languages.flatMap(({ codes }) => codes);
 
-    expect(codes.filter(code => exonyms.includes(code))).toEqual([]);
+    expect(catalogue.length).toBeGreaterThan(0);
+    expect(codes.filter(code => catalogue.includes(code))).toEqual([]);
+  });
+
+  test('names every language in every locale', () => {
+    const unnamed = languages.filter(({ meta }) =>
+      locales.some(locale => !meta.exonyms[locale]?.trim()),
+    );
+
+    expect(unnamed.map(({ id }) => id)).toEqual([]);
+  });
+
+  // pnpm wals:exonyms, after a build that adds languages.
+  test('has its names in the Exonyms messages', () => {
+    for (const locale of locales) {
+      expect(
+        languages.filter(({ id }) => !messages[locale][id]).map(({ id }) => id),
+      ).toEqual([]);
+    }
+
+    expect(languages.filter(({ id }) => !schema.required.includes(id))).toEqual(
+      [],
+    );
+  });
+
+  test('keeps the Exonyms messages of every locale in sync', () => {
+    for (const locale of locales) {
+      expect(Object.keys(messages[locale])).toEqual(schema.required);
+      expect(Object.keys(schema.properties)).toEqual(schema.required);
+    }
   });
 
   test('adds every language inactive', () => {

@@ -14,7 +14,8 @@
     "wals:build": "node scripts/wals/build-languages.ts",
     "wals:seed": "node --env-file=.env scripts/wals/seed-languages.ts",
     "wals:update": "node --env-file=.env scripts/wals/update-existing.ts",
-    "wals:flags": "node --env-file=.env scripts/wals/upload-flags.ts"
+    "wals:flags": "node --env-file=.env scripts/wals/upload-flags.ts",
+    "wals:exonyms": "node scripts/wals/write-exonyms.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1169.0",
