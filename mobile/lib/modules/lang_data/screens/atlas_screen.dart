@@ -7,13 +7,14 @@ import '../../../core/theme/tokens.dart';
 import '../../../core/ui/async_view.dart';
 import '../../../core/ui/feature_chip.dart';
 import '../../../core/ui/lang_flag.dart';
+import '../../../core/ui/neo_button.dart';
 import '../../../core/ui/neo_card.dart';
+import '../atlas_controller.dart';
+import '../lang_models.dart';
 import '../lang_repository.dart';
 
-typedef _AtlasData = ({List<Language> languages, FeatureCatalogue catalogue});
-
 /// The public atlas: every language with the features marked for it (the web
-/// `/data/public`). Read only.
+/// `/data/public`). Read only, loaded batch by batch as the user scrolls.
 class AtlasScreen extends StatefulWidget {
   const AtlasScreen({super.key});
 
@@ -22,131 +23,217 @@ class AtlasScreen extends StatefulWidget {
 }
 
 class _AtlasScreenState extends State<AtlasScreen> {
-  late Future<_AtlasData> _data = _load();
-  String _query = '';
+  /// Owned here: the search card leaves the list when scrolled far away and
+  /// must find its text again when it comes back.
+  late final _search = TextEditingController(
+    text: context.read<AtlasController>().query,
+  );
 
-  Future<_AtlasData> _load() async {
-    final repo = context.read<LangRepository>();
-    final languages = repo.all();
-    final catalogue = repo.catalogue();
-    await Future.wait([languages, catalogue]);
-    return (languages: await languages, catalogue: await catalogue);
-  }
+  /// How close to the end (in pixels) the next batch starts loading.
+  static const _loadAhead = 1500.0;
 
-  Future<void> _reload() {
-    final next = _load();
-    setState(() => _data = next);
-    return next.then((_) {}, onError: (_) {});
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _data,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return NeoError(error: snapshot.error!, onRetry: _reload);
-        }
+    final atlas = context.watch<AtlasController>();
+    final summary = atlas.summary;
+    final catalogue = atlas.catalogue;
 
-        if (!snapshot.hasData) {
-          return const NeoLoading();
-        }
+    if (atlas.loading) {
+      return const NeoLoading();
+    }
 
-        final (:languages, :catalogue) = snapshot.data!;
-        final query = _query.trim().toLowerCase();
-        final filtered = query.isEmpty
-            ? languages
-            : languages
-                  .where(
-                    (l) => [
-                      l.id,
-                      l.name,
-                      l.exonym ?? '',
-                      ...l.searchParams,
-                    ].join(' ').toLowerCase().contains(query),
-                  )
-                  .toList();
+    if (summary == null || catalogue == null) {
+      return NeoError(error: atlas.error!, onRetry: atlas.retry);
+    }
 
-        return RefreshIndicator(
-          color: NeoColors.foreground,
-          backgroundColor: NeoColors.main,
-          onRefresh: _reload,
-          child: ListView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
-            children: [
-              _Intro(languages: languages),
-              const SizedBox(height: 20),
-              NeoCard(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      context.t('PublicDataPage.search.label'),
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      autocorrect: false,
-                      onChanged: (value) => setState(() => _query = value),
-                      decoration: InputDecoration(
-                        hintText: context.t(
-                          'PublicDataPage.search.placeholder',
-                        ),
-                        prefixIcon: const Icon(Icons.search_rounded),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              if (filtered.isEmpty)
-                NeoCard(
-                  child: Text(
-                    context.t('PublicDataPage.empty'),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
-              for (final language in filtered) ...[
-                _LanguageCard(language: language, catalogue: catalogue),
-                const SizedBox(height: 20),
-              ],
-              Text(
-                context.t('PublicDataPage.attribution'),
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 12),
-              ),
-            ],
+    final languages = atlas.languages;
+    final body = <Widget>[
+      if (atlas.error != null)
+        NeoError(error: atlas.error!, onRetry: atlas.retry)
+      else if (languages.isEmpty && !atlas.searching)
+        NeoCard(
+          child: Text(
+            context.t('PublicDataPage.empty'),
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16),
           ),
-        );
-      },
+        ),
+    ];
+    final header = [
+      _Intro(summary: summary),
+      _SearchCard(
+        controller: _search,
+        searching: atlas.searching,
+        onChanged: atlas.search,
+      ),
+    ];
+    final cards = body.isEmpty ? languages.length : 0;
+
+    return RefreshIndicator(
+      color: NeoColors.foreground,
+      backgroundColor: NeoColors.main,
+      onRefresh: atlas.load,
+      // Scrolling near the end loads the next batch; so does a layout that
+      // leaves the end in reach (a batch too short to fill the screen).
+      child: NotificationListener<Notification>(
+        onNotification: (notification) {
+          final metrics = switch (notification) {
+            ScrollNotification(:final metrics) => metrics,
+            ScrollMetricsNotification(:final metrics) => metrics,
+            _ => null,
+          };
+
+          if (metrics != null && metrics.extentAfter < _loadAhead) {
+            atlas.loadMore();
+          }
+          return false;
+        },
+        child: ListView.separated(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
+          itemCount: header.length + body.length + cards + 1,
+          separatorBuilder: (_, _) => const SizedBox(height: 20),
+          itemBuilder: (context, index) {
+            if (index < header.length) {
+              return header[index];
+            }
+
+            index -= header.length;
+
+            if (index < body.length) {
+              return body[index];
+            }
+
+            index -= body.length;
+
+            if (index < cards) {
+              return _LanguageCard(
+                key: ValueKey(languages[index].id),
+                language: languages[index],
+                catalogue: catalogue,
+              );
+            }
+
+            return _Footer(atlas: atlas);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _SearchCard extends StatelessWidget {
+  const _SearchCard({
+    required this.controller,
+    required this.searching,
+    required this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final bool searching;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return NeoCard(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            context.t('PublicDataPage.search.label'),
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            autocorrect: false,
+            onChanged: onChanged,
+            decoration: InputDecoration(
+              hintText: context.t('PublicDataPage.search.placeholder'),
+              prefixIcon: const Icon(Icons.search_rounded),
+              suffixIcon: searching
+                  ? const Padding(
+                      padding: EdgeInsets.all(14),
+                      child: SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2.5),
+                      ),
+                    )
+                  : null,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The end of the list: the next batch loading (or its retry), how many are
+/// shown, and the attribution.
+class _Footer extends StatelessWidget {
+  const _Footer({required this.atlas});
+
+  final AtlasController atlas;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (atlas.loadingMore)
+          const Padding(
+            padding: EdgeInsets.only(bottom: 16),
+            child: CircularProgressIndicator(strokeWidth: 3),
+          )
+        else if (atlas.moreError != null && atlas.hasMore)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: NeoButton(
+              variant: NeoButtonVariant.neutral,
+              onPressed: atlas.loadMore,
+              child: Text(context.t('PublicDataPage.showMore')),
+            ),
+          ),
+        if (atlas.error == null && atlas.languages.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Text(
+              context.t('PublicDataPage.showing', {
+                'shown': atlas.languages.length,
+                'total': atlas.total,
+              }),
+              textAlign: TextAlign.center,
+              style: NeoText.muted,
+            ),
+          ),
+        Text(
+          context.t('PublicDataPage.attribution'),
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 12),
+        ),
+      ],
     );
   }
 }
 
 class _Intro extends StatelessWidget {
-  const _Intro({required this.languages});
+  const _Intro({required this.summary});
 
-  final List<Language> languages;
+  final LanguagesSummary summary;
 
   @override
   Widget build(BuildContext context) {
     final stats = [
-      ('PublicDataPage.summary.languages', languages.length),
-      (
-        'PublicDataPage.summary.activeLanguages',
-        languages.where((l) => l.active).length,
-      ),
-      (
-        'PublicDataPage.summary.activeFeatures',
-        languages.fold(0, (sum, l) => sum + l.features.length),
-      ),
-      (
-        'PublicDataPage.summary.partialFeatures',
-        languages.fold(0, (sum, l) => sum + l.partial.length),
-      ),
+      ('PublicDataPage.summary.languages', summary.languages),
+      ('PublicDataPage.summary.activeLanguages', summary.activeLanguages),
+      ('PublicDataPage.summary.activeFeatures', summary.activeFeatures),
+      ('PublicDataPage.summary.partialFeatures', summary.partialFeatures),
     ];
 
     return Column(
@@ -196,7 +283,11 @@ class _Intro extends StatelessWidget {
 }
 
 class _LanguageCard extends StatelessWidget {
-  const _LanguageCard({required this.language, required this.catalogue});
+  const _LanguageCard({
+    super.key,
+    required this.language,
+    required this.catalogue,
+  });
 
   final Language language;
   final FeatureCatalogue catalogue;

@@ -219,8 +219,15 @@ their placeholders, or the OS will not verify the links.
 
 ## Language lists and search
 
-The pickers never load the catalogue with its features. Like the web:
+The app never loads the whole catalogue with its features. Like the web:
 
+- **The atlas pages it.** `AtlasController` reads `GET /lang/page` in batches
+  of `LangRepository.pageSize` (24), the next one as the end of the list comes
+  within reach (`ScrollNotification` or, for a batch too short to fill the
+  screen, `ScrollMetricsNotification`), and its counters from
+  `GET /lang/summary`. A search asks the API (`?q=`) once the typing pauses
+  for `AtlasController.searchDebounce` (300 ms); answers for an older query
+  are dropped.
 - **The pickers search names.** The game's pool and the profile's language
   picker read `GET /lang/names` once (`LangRepository.names`, cached for the
   life of the app) and rank it on every keystroke with `LanguageSearch`,

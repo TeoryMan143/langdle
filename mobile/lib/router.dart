@@ -12,6 +12,7 @@ import 'modules/auth/screens/oauth_signup_screen.dart';
 import 'modules/auth/screens/signin_screen.dart';
 import 'modules/auth/screens/signup_screen.dart';
 import 'modules/how_to_play/how_to_play_screen.dart';
+import 'modules/lang_data/atlas_controller.dart';
 import 'modules/lang_data/lang_repository.dart';
 import 'modules/lang_data/permission_controller.dart';
 import 'modules/lang_data/screens/add_permission_screen.dart';
@@ -89,7 +90,11 @@ GoRouter buildRouter(AuthController auth) => GoRouter(
           routes: [
             GoRoute(
               path: '/data/public',
-              builder: (_, _) => const AtlasScreen(),
+              builder: (_, _) => ChangeNotifierProvider(
+                create: (context) =>
+                    AtlasController(langs: context.read<LangRepository>()),
+                child: const AtlasScreen(),
+              ),
             ),
           ],
         ),
