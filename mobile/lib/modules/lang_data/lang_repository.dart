@@ -1,5 +1,6 @@
 import '../../core/api/api_client.dart';
 import '../../core/models/language.dart';
+import 'lang_models.dart';
 
 /// The feature catalogue (`GET /api/meta/features`): feature ids by group, in
 /// the order the web shows them.
@@ -18,22 +19,46 @@ class FeatureCatalogue {
   final Map<String, List<String>> groups;
 }
 
-/// Reads the language catalogue (`/api/lang`, `/api/meta`). The playable
-/// languages and the feature catalogue barely change, so they are cached for
-/// the life of the app.
+/// Reads the language catalogue (`/api/lang`, `/api/meta`). The names the
+/// pickers search and the feature catalogue barely change, so they are cached
+/// for the life of the app; the catalogue itself is read batch by batch.
 class LangRepository {
   LangRepository(this._api);
 
+  /// Languages per atlas batch, as on the web.
+  static const pageSize = 24;
+
   final ApiClient _api;
 
-  Future<List<Language>>? _active;
+  final Map<bool?, Future<List<LanguageName>>> _names = {};
   Future<FeatureCatalogue>? _catalogue;
 
-  /// Every language, playable or not (the public atlas).
-  Future<List<Language>> all() async => _parseList(await _api.get('/lang'));
+  /// The names of every language by name (`GET /lang/names`), or only the
+  /// playable ([active] `true`) or unplayable ones: what a picker searches.
+  Future<List<LanguageName>> names({bool? active}) =>
+      _names[active] ??= _loadNames(active);
 
-  /// The playable languages, the pool the guess search draws from.
-  Future<List<Language>> active() => _active ??= _loadActive();
+  /// One batch of the catalogue by name, after [cursor] (the previous batch's
+  /// `nextCursor`), keeping the languages that match [query] when given.
+  Future<LanguagePage> page({
+    String? cursor,
+    String? query,
+    int limit = pageSize,
+  }) async => LanguagePage.fromJson(
+    await _api.get(
+      '/lang/page',
+      query: {
+        'limit': limit,
+        'cursor': ?cursor,
+        if (query != null && query.trim().isNotEmpty) 'q': query.trim(),
+      },
+    ) as Map<String, dynamic>,
+  );
+
+  /// How many languages and features the catalogue holds.
+  Future<LanguagesSummary> summary() async => LanguagesSummary.fromJson(
+    await _api.get('/lang/summary') as Map<String, dynamic>,
+  );
 
   Future<Language> random() async =>
       Language.fromJson(await _api.get('/lang/random') as Map<String, dynamic>);
@@ -79,11 +104,16 @@ class LangRepository {
 
   Future<FeatureCatalogue> catalogue() => _catalogue ??= _loadCatalogue();
 
-  Future<List<Language>> _loadActive() async {
+  Future<List<LanguageName>> _loadNames(bool? active) async {
     try {
-      return _parseList(await _api.get('/lang', query: {'oactive': '1'}));
+      final json = await _api.get('/lang/names', query: {'active': ?active});
+
+      return [
+        for (final item in json as List)
+          if (item is Map<String, dynamic>) LanguageName.fromJson(item),
+      ];
     } catch (_) {
-      _active = null;
+      _names.remove(active);
       rethrow;
     }
   }
@@ -98,9 +128,4 @@ class LangRepository {
       rethrow;
     }
   }
-
-  static List<Language> _parseList(Object? json) => [
-    for (final item in (json as List).cast<Map<String, dynamic>>())
-      Language.fromJson(item),
-  ]..sort((a, b) => a.name.compareTo(b.name));
 }

@@ -367,7 +367,10 @@
     "publicOverview": "Open public feature atlas",
     "changeRequests": "Review change requests",
     "reviewQueue": "Review queue",
-    "requestLanguage": "Request a language"
+    "requestLanguage": "Request a language",
+    "showMore": "Show more",
+    "searchPlaceholder": "Type a language name or code",
+    "noMatches": "No languages match your search right now."
   },
   "PublicDataPage": {
     "eyebrow": "Public atlas",
@@ -419,6 +422,7 @@
     "loading": "Updating features",
     "notFound": "Language not found",
     "notFounds": "Languages not found",
+    "invalidCursor": "The language list could not continue, reload the page",
     "notSignedIn": "Must be signed in",
     "notAllowed": "You do not have permission to access this language",
     "invalidData": "Invalid language data",

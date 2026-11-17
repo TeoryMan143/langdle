@@ -1405,6 +1405,15 @@
         },
         "requestLanguage": {
           "type": "string"
+        },
+        "showMore": {
+          "type": "string"
+        },
+        "searchPlaceholder": {
+          "type": "string"
+        },
+        "noMatches": {
+          "type": "string"
         }
       },
       "required": [
@@ -1412,6 +1421,9 @@
         "publicOverview",
         "changeRequests",
         "requestLanguage",
+        "showMore",
+        "searchPlaceholder",
+        "noMatches",
         "reviewQueue"
       ]
     },
@@ -1603,6 +1615,9 @@
         "notFounds": {
           "type": "string"
         },
+        "invalidCursor": {
+          "type": "string"
+        },
         "notSignedIn": {
           "type": "string"
         },
@@ -1683,6 +1698,7 @@
         "loading",
         "notFound",
         "notFounds",
+        "invalidCursor",
         "notSignedIn",
         "notAllowed",
         "invalidData",

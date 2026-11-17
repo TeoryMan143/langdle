@@ -491,3 +491,335 @@ describe('PUT /lang/:id/status', () => {
     expect(random.body.id).toBe('basque');
   });
 });
+
+describe('GET /lang/page', () => {
+  const ids = (body: { items: Array<{ id: string }> }) =>
+    body.items.map(lang => lang.id);
+
+  test('answers an empty last batch while the catalogue is empty', async () => {
+    const res = await api('GET', '/lang/page');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ items: [], nextCursor: null, total: 0 });
+  });
+
+  test('walks the catalogue by name, batch by batch', async () => {
+    for (const [id, name] of [
+      ['zulu', 'Zulu'],
+      ['arabic', 'arabic'],
+      ['basque', 'Basque'],
+      ['catalan', 'Catalan'],
+      ['dutch', 'Dutch'],
+    ]) {
+      await seedLanguage(id, { name });
+    }
+
+    const first = await api('GET', '/lang/page', { query: { limit: '2' } });
+    expect(first.status).toBe(200);
+    expect(ids(first.body)).toEqual(['arabic', 'basque']);
+    expect(first.body.total).toBe(5);
+    expect(first.body.nextCursor).toEqual(expect.any(String));
+
+    const second = await api('GET', '/lang/page', {
+      query: { limit: '2', cursor: first.body.nextCursor },
+    });
+    expect(ids(second.body)).toEqual(['catalan', 'dutch']);
+
+    const last = await api('GET', '/lang/page', {
+      query: { limit: '2', cursor: second.body.nextCursor },
+    });
+    expect(ids(last.body)).toEqual(['zulu']);
+    expect(last.body.nextCursor).toBeNull();
+  });
+
+  test('sends whole languages, features and place included', async () => {
+    await seedLanguage('basque', {
+      features: ['sov'],
+      partial: ['tense'],
+      locations: [{ lat: 43, lng: -3 }],
+      family: 'Basque',
+    });
+
+    const res = await api('GET', '/lang/page');
+
+    expect(res.body.items[0]).toMatchObject({
+      id: 'basque',
+      features: ['sov'],
+      partial: ['tense'],
+      locations: [{ lat: 43, lng: -3 }],
+      family: 'Basque',
+    });
+  });
+
+  test('a language added or removed before the cursor never shifts the next batch', async () => {
+    for (const id of ['b', 'd', 'f', 'h']) {
+      await seedLanguage(id);
+    }
+
+    const first = await api('GET', '/lang/page', { query: { limit: '2' } });
+    expect(ids(first.body)).toEqual(['b', 'd']);
+
+    await seedLanguage('a');
+    await (await getClient()).del('lang:b');
+
+    const second = await api('GET', '/lang/page', {
+      query: { limit: '2', cursor: first.body.nextCursor },
+    });
+    expect(ids(second.body)).toEqual(['f', 'h']);
+  });
+
+  test('orders languages with the same name by id', async () => {
+    await seedLanguage('quechua-b', { name: 'Quechua' });
+    await seedLanguage('quechua-a', { name: 'Quechua' });
+
+    const first = await api('GET', '/lang/page', { query: { limit: '1' } });
+    const second = await api('GET', '/lang/page', {
+      query: { limit: '1', cursor: first.body.nextCursor },
+    });
+
+    expect([...ids(first.body), ...ids(second.body)]).toEqual([
+      'quechua-a',
+      'quechua-b',
+    ]);
+  });
+
+  test('sends 24 languages per batch by default', async () => {
+    const client = await getClient();
+    await Promise.all(
+      Array.from({ length: 30 }, (_, i) =>
+        client.json.set(`lang:l${String(i).padStart(2, '0')}`, '$', {
+          name: `l${String(i).padStart(2, '0')}`,
+          active: false,
+          features: [],
+          partial: [],
+          searchParams: [],
+        }),
+      ),
+    );
+
+    const res = await api('GET', '/lang/page');
+
+    expect(res.body.items).toHaveLength(24);
+    expect(res.body.total).toBe(30);
+  });
+
+  test('keeps the playable or the unplayable languages with ?active=', async () => {
+    await seedLanguage('spanish');
+    await seedLanguage('basque', { active: false });
+
+    const playable = await api('GET', '/lang/page', {
+      query: { active: 'true' },
+    });
+    const unplayable = await api('GET', '/lang/page', {
+      query: { active: 'false' },
+    });
+
+    expect(ids(playable.body)).toEqual(['spanish']);
+    expect(playable.body.total).toBe(1);
+    expect(ids(unplayable.body)).toEqual(['basque']);
+  });
+
+  test('lists the best described languages first with ?sort=coverage', async () => {
+    await seedLanguage('ainu', { coverage: 0.2 });
+    await seedLanguage('basque', { coverage: 0.9 });
+    await seedLanguage('cree');
+    await seedLanguage('dogon', { coverage: 0.2 });
+
+    const first = await api('GET', '/lang/page', {
+      query: { sort: 'coverage', limit: '2' },
+    });
+    const second = await api('GET', '/lang/page', {
+      query: { sort: 'coverage', limit: '2', cursor: first.body.nextCursor },
+    });
+
+    expect([...ids(first.body), ...ids(second.body)]).toEqual([
+      'basque',
+      'ainu',
+      'dogon',
+      'cree',
+    ]);
+  });
+
+  test('keeps the languages whose id or names contain ?q=', async () => {
+    await seedLanguage('spanish', { name: 'Spanish', exonym: 'Español' });
+    await seedLanguage('basque', {
+      name: 'Basque',
+      exonym: 'Euskara',
+      searchParams: ['vasco'],
+    });
+    await seedLanguage('catalan', { name: 'Catalan', exonym: 'Català' });
+
+    const byExonym = await api('GET', '/lang/page', {
+      query: { q: 'ESPA' },
+    });
+    const bySearchParam = await api('GET', '/lang/page', {
+      query: { q: 'vasc' },
+    });
+    const byId = await api('GET', '/lang/page', { query: { q: 'catal' } });
+
+    expect(ids(byExonym.body)).toEqual(['spanish']);
+    expect(byExonym.body.total).toBe(1);
+    expect(ids(bySearchParam.body)).toEqual(['basque']);
+    expect(ids(byId.body)).toEqual(['catalan']);
+  });
+
+  test('matches ?q= without accents', async () => {
+    await seedLanguage('catalan', { name: 'Catalan', exonym: 'Català' });
+    await seedLanguage('spanish', { name: 'Spanish', exonym: 'Español' });
+
+    const res = await api('GET', '/lang/page', { query: { q: 'espanol' } });
+
+    expect(ids(res.body)).toEqual(['spanish']);
+  });
+
+  test('lists the best matches of ?q= first, and pages through them', async () => {
+    await seedLanguage('aleut', { name: 'Aleut' });
+    await seedLanguage('ale', { name: 'Ale' });
+    await seedLanguage('kale', { name: 'Kale' });
+    await seedLanguage('old-ale', { name: 'Old Ale' });
+    await seedLanguage('zulu', { name: 'Zulu' });
+
+    const first = await api('GET', '/lang/page', {
+      query: { q: 'ale', limit: '2' },
+    });
+    const second = await api('GET', '/lang/page', {
+      query: { q: 'ale', limit: '2', cursor: first.body.nextCursor },
+    });
+
+    expect(first.body.total).toBe(4);
+    expect([...ids(first.body), ...ids(second.body)]).toEqual([
+      'ale',
+      'aleut',
+      'old-ale',
+      'kale',
+    ]);
+    expect(second.body.nextCursor).toBeNull();
+  });
+
+  test('sees a language edited through the API at once', async () => {
+    await seedLanguage('spanish', { active: false });
+    const { token } = await createTestAdmin();
+
+    const before = await api('GET', '/lang/page', {
+      query: { active: 'false' },
+    });
+    await api('PUT', '/lang/spanish/status', {
+      token,
+      query: { active: 'true' },
+    });
+    const after = await api('GET', '/lang/page', {
+      query: { active: 'false' },
+    });
+
+    expect(ids(before.body)).toEqual(['spanish']);
+    expect(ids(after.body)).toEqual([]);
+  });
+
+  test('rejects a cursor it did not make', async () => {
+    const res = await api('GET', '/lang/page', {
+      query: { cursor: 'not-a-cursor' },
+    });
+
+    expect(res.status).toBe(400);
+    expect(res.body.key).toBe('invalidCursor');
+  });
+
+  test.each<Record<string, string>>([
+    { limit: '0' },
+    { limit: '101' },
+    { limit: 'many' },
+    { active: '1' },
+    { sort: 'random' },
+  ])('rejects %o', async query => {
+    const res = await api('GET', '/lang/page', { query });
+
+    expect(res.status).toBe(400);
+    expect(res.body.key).toBe('invalidData');
+  });
+});
+
+describe('GET /lang/summary', () => {
+  test('counts the languages and their features', async () => {
+    await seedLanguage('spanish', {
+      features: ['svo', 'tense'],
+      partial: ['aspect'],
+    });
+    await seedLanguage('basque', { active: false, features: ['sov'] });
+
+    const res = await api('GET', '/lang/summary');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      languages: 2,
+      activeLanguages: 1,
+      activeFeatures: 3,
+      partialFeatures: 1,
+    });
+  });
+});
+
+describe('GET /lang/names', () => {
+  test('lists the names of every language by name, without features', async () => {
+    await seedLanguage('spanish', {
+      name: 'Spanish',
+      exonym: 'Español',
+      features: ['svo'],
+      searchParams: ['castellano'],
+    });
+    await seedLanguage('basque', { name: 'Basque', active: false });
+
+    const res = await api('GET', '/lang/names');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual([
+      { id: 'basque', name: 'Basque', exonym: 'basque', searchParams: [] },
+      {
+        id: 'spanish',
+        name: 'Spanish',
+        exonym: 'Español',
+        searchParams: ['castellano'],
+      },
+    ]);
+  });
+
+  test('keeps the playable languages with ?active=true', async () => {
+    await seedLanguage('spanish');
+    await seedLanguage('basque', { active: false });
+
+    const res = await api('GET', '/lang/names', { query: { active: 'true' } });
+
+    expect(res.body.map((lang: { id: string }) => lang.id)).toEqual([
+      'spanish',
+    ]);
+  });
+
+  test('rejects ?active=1', async () => {
+    const res = await api('GET', '/lang/names', { query: { active: '1' } });
+
+    expect(res.status).toBe(400);
+    expect(res.body.key).toBe('invalidData');
+  });
+});
+
+describe('GET /lang/page?q= with typos', () => {
+  test('finds a language despite a typo, after the exact matches', async () => {
+    await seedLanguage('spanish', { name: 'Spanish' });
+    await seedLanguage('spanglish', { name: 'Spanglish' });
+
+    const res = await api('GET', '/lang/page', { query: { q: 'spanich' } });
+
+    expect(res.body.items.map((lang: { id: string }) => lang.id)).toEqual([
+      'spanish',
+    ]);
+  });
+
+  test('takes two letters swapped for a single typo', async () => {
+    await seedLanguage('spanish', { name: 'Spanish' });
+
+    const res = await api('GET', '/lang/page', { query: { q: 'spanihs' } });
+
+    expect(res.body.items.map((lang: { id: string }) => lang.id)).toEqual([
+      'spanish',
+    ]);
+  });
+});

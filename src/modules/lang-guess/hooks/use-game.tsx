@@ -1,6 +1,5 @@
 'use client';
 
-import { type UseQueryResult } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import {
   createContext,
@@ -13,14 +12,11 @@ import {
   useState,
 } from 'react';
 import { toast } from 'sonner';
-import {
-  type DebouncedState,
-  useDebounceValue,
-  useLocalStorage,
-} from 'usehooks-ts';
+import { useLocalStorage } from 'usehooks-ts';
 import { getUTCDateString } from '@/core/lib/utils';
 import { Language } from '@/core/types';
-import { useLang } from '@/modules/lang-data/hooks/use-lang';
+import { useLangSearch } from '@/modules/lang-data/hooks/use-lang-search';
+import type { LangSearchResult, LanguageName } from '@/modules/lang-data/types';
 import { addGameHistory, checkGuess } from '../actions';
 import { LanguageGuess } from '../types';
 
@@ -31,16 +27,16 @@ type SavedGuesses = {
 };
 
 type UseGameProps = {
-  langSearchData: UseQueryResult<Language[]>;
+  langSearchData: LangSearchResult;
   targetLang: Language;
   guesses: LanguageGuess[];
   query: string;
-  setQuery: DebouncedState<(value: string) => void>;
+  setQuery: Dispatch<SetStateAction<string>>;
   queryError: string | null;
   handleGuess: () => Promise<string | number | undefined>;
   MAX_ATTEMPTS: number;
-  setSelectedLang: Dispatch<SetStateAction<Language | null>>;
-  selectedLang: Language | null;
+  setSelectedLang: Dispatch<SetStateAction<LanguageName | null>>;
+  selectedLang: LanguageName | null;
   inputRef: RefObject<HTMLInputElement | null>;
   hasGuessed: boolean;
   type: 'daily' | 'random';
@@ -59,12 +55,9 @@ export const GameProvider = ({
   targetLang: Language;
   type: 'daily' | 'random';
 }) => {
-  const [query, setQuery] = useDebounceValue('', 400);
-
-  const langSearchData = useLang({
-    action: 'search',
-    query,
-  });
+  // Ranked in the browser on a list read once: no debounce, no round trip.
+  const [query, setQuery] = useState('');
+  const langSearchData = useLangSearch({ query });
 
   const [localGuesses, setLocalGuesses] = useLocalStorage<SavedGuesses>(
     'day-save',
@@ -74,7 +67,7 @@ export const GameProvider = ({
   const t = useTranslations('Game');
 
   const [guesses, setGuesses] = useState<LanguageGuess[]>([]);
-  const [selectedLang, setSelectedLang] = useState<Language | null>(null);
+  const [selectedLang, setSelectedLang] = useState<LanguageName | null>(null);
   const [queryError, setQueryError] = useState<string | null>(null);
   const [hasGuessed, setHasGuessed] = useState(false);
 
@@ -185,7 +178,8 @@ export const GameProvider = ({
       });
     }
 
-    setGuesses(prev => [...prev, { ...selectedLang, matching }]);
+    const { id, name, exonym } = selectedLang;
+    setGuesses(prev => [...prev, { id, name, exonym, matching }]);
     setSelectedLang(null);
     if (inputRef.current) {
       inputRef.current.value = '';

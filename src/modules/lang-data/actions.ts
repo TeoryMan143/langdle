@@ -10,7 +10,11 @@ import type {
   AdminLanguageRequestDTO,
   ChangeRequestDTO,
   ChangeRequestFormValues,
+  LanguageName,
+  LanguagePage,
+  LanguagePageParams,
   LanguageRequestDTO,
+  LanguagesSummary,
 } from './types';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -51,6 +55,74 @@ export async function getAllActiveLanguages(): Promise<
         : lang.searchParams,
     })),
   );
+}
+
+/**
+ * The names a picker searches, with the exonym translated in the current
+ * locale added to each language's search params: the game shows that name, so
+ * the user types it.
+ */
+export async function getLanguageNames({
+  active,
+}: {
+  active?: boolean;
+} = {}): Promise<ActionResult<LanguageName[]>> {
+  const res = await apiRequest<LanguageName[]>('/lang/names', {
+    searchParams: active === undefined ? {} : { active },
+    cache: 'no-store',
+  });
+
+  if (!res.success) {
+    return actionError(res.error.key);
+  }
+
+  const t = await getTranslations('Exonyms');
+
+  return actionSuccess(
+    res.result.map(lang => ({
+      ...lang,
+      // Languages added through requests have no translated exonym yet.
+      searchParams: t.has(lang.id)
+        ? [...lang.searchParams, t(lang.id)]
+        : lang.searchParams,
+    })),
+  );
+}
+
+/**
+ * One batch of the catalogue; pass the previous batch's `nextCursor` to get
+ * the next one.
+ */
+export async function getLanguagesPage({
+  limit,
+  cursor,
+  active,
+  sort,
+  query,
+}: LanguagePageParams = {}): Promise<ActionResult<LanguagePage>> {
+  const res = await apiRequest<LanguagePage>('/lang/page', {
+    searchParams: {
+      ...(limit !== undefined ? { limit } : {}),
+      ...(cursor ? { cursor } : {}),
+      ...(active !== undefined ? { active } : {}),
+      ...(sort ? { sort } : {}),
+      ...(query ? { q: query } : {}),
+    },
+    // A language edited or activated must show up on the next batch.
+    cache: 'no-store',
+  });
+
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
+}
+
+export async function getLanguagesSummary(): Promise<
+  ActionResult<LanguagesSummary>
+> {
+  const res = await apiRequest<LanguagesSummary>('/lang/summary', {
+    cache: 'no-store',
+  });
+
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
 }
 
 export async function getLanguagesByIds(

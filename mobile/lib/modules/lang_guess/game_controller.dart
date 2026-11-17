@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
+import '../../core/i18n/translations.dart';
 import '../../core/models/language.dart';
+import '../../core/search/search.dart';
 import '../auth/auth_controller.dart';
 import '../lang_data/lang_repository.dart';
 import 'guess_models.dart';
@@ -22,6 +24,7 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
     required GuessRepository guesses,
     required this._saves,
     required this._auth,
+    this._locale,
   }) : _guessRepo = guesses {
     WidgetsBinding.instance.addObserver(this);
     start();
@@ -35,12 +38,15 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
   final DailySaveStore _saves;
   final AuthController _auth;
 
+  /// Adds the exonyms translated in its locale to the search, as on the web.
+  final LocaleController? _locale;
+
   GameStatus _status = GameStatus.loading;
   Object? _error;
   Language? _target;
-  List<Language> _pool = const [];
+  LanguageSearch<LanguageName> _search = LanguageSearch(const []);
   List<LanguageGuess> _guesses = const [];
-  Language? _selected;
+  LanguageName? _selected;
   String? _hint;
   bool _submitting = false;
   String? _startedOn;
@@ -51,7 +57,7 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
   Object? get error => _error;
   Language? get target => _target;
   List<LanguageGuess> get guesses => _guesses;
-  Language? get selected => _selected;
+  LanguageName? get selected => _selected;
   bool get submitting => _submitting;
   bool get finished => _status == GameStatus.won || _status == GameStatus.lost;
   int get attemptsLeft => maxAttempts - _guesses.length;
@@ -73,14 +79,14 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
       final targetRequest = type == GameType.daily
           ? _guessRepo.daily()
           : _langs.random();
-      final poolRequest = _langs.active();
+      final poolRequest = _langs.names(active: true);
       // Surfaces the first failure as is, without leaving the other unhandled.
       await Future.wait([targetRequest, poolRequest]);
       final target = await targetRequest;
       final pool = await poolRequest;
 
       _target = target;
-      _pool = pool;
+      _search = LanguageSearch(pool, locale: _locale);
       _startedOn = utcDateString();
       _status = GameStatus.playing;
 
@@ -112,10 +118,11 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
         : GameStatus.playing;
   }
 
-  /// The playable languages ranked for [query] (lower case, trimmed).
-  List<Language> search(String query) => Language.search(_pool, query);
+  /// The playable languages matching [query], best first (all of them for an
+  /// empty one): ranked here, on names read once, so typing never waits.
+  List<LanguageName> search(String query) => _search.rank(query);
 
-  void select(Language? language) {
+  void select(LanguageName? language) {
     if (_selected?.id == language?.id) return;
     _selected = language;
     _notify();

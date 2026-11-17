@@ -367,7 +367,10 @@
     "publicOverview": "Abrir atlas público de rasgos",
     "changeRequests": "Revisar solicitudes de cambio",
     "reviewQueue": "Cola de revisión",
-    "requestLanguage": "Solicitar un idioma"
+    "requestLanguage": "Solicitar un idioma",
+    "showMore": "Mostrar más",
+    "searchPlaceholder": "Escribe un nombre o código de idioma",
+    "noMatches": "No hay idiomas que coincidan con tu búsqueda."
   },
   "PublicDataPage": {
     "eyebrow": "Atlas público",
@@ -419,6 +422,7 @@
     "loading": "Actualizando características",
     "notFound": "Idioma no encontrado",
     "notFounds": "Idiomas no encontrados",
+    "invalidCursor": "La lista de idiomas no pudo continuar, recarga la página",
     "notSignedIn": "Debes iniciar sesión",
     "notAllowed": "No tienes permiso para acceder a este idioma",
     "invalidData": "Datos de idioma inválidos",

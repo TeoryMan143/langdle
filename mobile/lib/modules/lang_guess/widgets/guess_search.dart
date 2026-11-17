@@ -159,7 +159,7 @@ class _Results extends StatelessWidget {
   const _Results({required this.query, required this.onSelect});
 
   final String query;
-  final ValueChanged<Language> onSelect;
+  final ValueChanged<LanguageName> onSelect;
 
   @override
   Widget build(BuildContext context) {

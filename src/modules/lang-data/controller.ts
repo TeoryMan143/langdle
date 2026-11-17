@@ -16,6 +16,10 @@ import {
   changeRequestStateSchema,
   rejectChangeRequestSchema,
 } from './schemas/change-request';
+import {
+  languageNamesQuerySchema,
+  languagePageQuerySchema,
+} from './schemas/language-page';
 import { languageRequestBodySchema } from './schemas/language-request';
 import {
   canEditLanguage,
@@ -26,8 +30,11 @@ import {
   getAllLanguages,
   getChangeRequests,
   getLanguageById,
+  getLanguageNames,
   getLanguageRequests,
   getLanguagesByIds,
+  getLanguagesPage,
+  getLanguagesSummary,
   getRandomActiveLanguage,
   getUserChangeRequests,
   getUserLangPermissions,
@@ -144,6 +151,74 @@ langDataRouter.get('/random', async c => {
   }
 
   return c.json(lang);
+});
+
+/**
+ * The catalogue one batch at a time: `?limit=` (1–100, default 24), the
+ * `nextCursor` of the previous batch as `?cursor=`, `?active=true|false` to
+ * keep the playable or the unplayable languages, `?sort=name|coverage` and
+ * `?q=` to keep the languages matching it, best matches first.
+ */
+langDataRouter.get('/page', async c => {
+  const parsed = languagePageQuerySchema.safeParse(c.req.query());
+
+  if (!parsed.success) {
+    return apiError(
+      c,
+      400,
+      'invalidData',
+      'Invalid paging query',
+      parsed.error.flatten(),
+    );
+  }
+
+  const { q, ...options } = parsed.data;
+  const result = await getLanguagesPage({ ...options, query: q });
+
+  if (!result.success) {
+    return result.key === 'invalidCursor'
+      ? apiError(c, 400, 'invalidCursor', 'The cursor is not valid')
+      : unknownError(c, 'The languages could not be read');
+  }
+
+  return c.json(result.page);
+});
+
+/**
+ * The names of every language (`?active=true|false` for one part), by name:
+ * light enough for a picker to load once and search in the browser.
+ */
+langDataRouter.get('/names', async c => {
+  const parsed = languageNamesQuerySchema.safeParse(c.req.query());
+
+  if (!parsed.success) {
+    return apiError(
+      c,
+      400,
+      'invalidData',
+      'Invalid names query',
+      parsed.error.flatten(),
+    );
+  }
+
+  const names = await getLanguageNames(parsed.data.active);
+
+  if (!names) {
+    return unknownError(c, 'The languages could not be read');
+  }
+
+  return c.json(names);
+});
+
+/** How many languages and features the catalogue holds. */
+langDataRouter.get('/summary', async c => {
+  const summary = await getLanguagesSummary();
+
+  if (!summary) {
+    return unknownError(c, 'The summary could not be computed');
+  }
+
+  return c.json(summary);
 });
 
 /* -------------------------------------------------------------------------- */

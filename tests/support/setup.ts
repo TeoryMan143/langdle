@@ -84,6 +84,10 @@ beforeEach(async () => {
 
   await postgres.query(`truncate ${tables} restart identity cascade`);
   await resetRedis(redis);
+  // The service keeps an index of the languages it read; Redis was just
+  // emptied under it. Imported here, after the environment above is set.
+  const { clearLanguageIndex } = await import('@/modules/lang-data/service');
+  clearLanguageIndex();
 
   vi.mocked(sendEmail).mockReset().mockResolvedValue(true);
   vi.mocked(putObject).mockReset().mockResolvedValue(true);

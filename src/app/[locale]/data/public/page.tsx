@@ -1,15 +1,27 @@
 import { getTranslations } from 'next-intl/server';
 import { buttonVariants } from '@/core/components/ui/button';
 import { Link } from '@/i18n/navigation';
-import { getAllLanguages } from '@/modules/lang-data/actions';
+import {
+  getLanguagesPage,
+  getLanguagesSummary,
+} from '@/modules/lang-data/actions';
 import PublicLanguageAtlas from '@/modules/lang-data/components/public-language-atlas';
+
+/** Cards per batch: each one is heavy (a dialog per feature). */
+const PAGE_SIZE = 24;
 
 async function PublicDataPage() {
   const t = await getTranslations('PublicDataPage');
-  const languagesRes = await getAllLanguages();
+  const [pageRes, summaryRes] = await Promise.all([
+    getLanguagesPage({ limit: PAGE_SIZE }),
+    getLanguagesSummary(),
+  ]);
 
-  if (!languagesRes.success) {
-    console.error(languagesRes.error);
+  if (!pageRes.success || !summaryRes.success) {
+    console.error(
+      pageRes.success ? undefined : pageRes.error,
+      summaryRes.success ? undefined : summaryRes.error,
+    );
 
     return (
       <main className='mx-auto flex min-h-[60dvh] max-w-6xl items-center justify-center px-4'>
@@ -21,7 +33,7 @@ async function PublicDataPage() {
     );
   }
 
-  const languages = languagesRes.result;
+  const summary = summaryRes.result;
 
   return (
     <main className='mx-auto max-w-6xl px-4 py-6'>
@@ -52,14 +64,14 @@ async function PublicDataPage() {
           <p className='text-sm uppercase tracking-[0.2em] text-foreground/60'>
             {t('summary.languages')}
           </p>
-          <p className='mt-2 text-3xl font-semibold'>{languages.length}</p>
+          <p className='mt-2 text-3xl font-semibold'>{summary.languages}</p>
         </div>
         <div className='rounded-2xl border-2 border-border bg-background p-4 shadow-shadow'>
           <p className='text-sm uppercase tracking-[0.2em] text-foreground/60'>
             {t('summary.activeLanguages')}
           </p>
           <p className='mt-2 text-3xl font-semibold'>
-            {languages.filter(language => language.active).length}
+            {summary.activeLanguages}
           </p>
         </div>
         <div className='rounded-2xl border-2 border-border bg-background p-4 shadow-shadow'>
@@ -67,10 +79,7 @@ async function PublicDataPage() {
             {t('summary.activeFeatures')}
           </p>
           <p className='mt-2 text-3xl font-semibold'>
-            {languages.reduce(
-              (total, language) => total + language.features.length,
-              0,
-            )}
+            {summary.activeFeatures}
           </p>
         </div>
         <div className='rounded-2xl border-2 border-border bg-background p-4 shadow-shadow'>
@@ -78,16 +87,16 @@ async function PublicDataPage() {
             {t('summary.partialFeatures')}
           </p>
           <p className='mt-2 text-3xl font-semibold'>
-            {languages.reduce(
-              (total, language) => total + language.partial.length,
-              0,
-            )}
+            {summary.partialFeatures}
           </p>
         </div>
       </section>
 
       <div className='mt-6'>
-        <PublicLanguageAtlas languages={languages} />
+        <PublicLanguageAtlas
+          initialPage={pageRes.result}
+          pageSize={PAGE_SIZE}
+        />
       </div>
 
       <p className='mt-8 text-center text-xs text-foreground/70'>

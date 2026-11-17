@@ -1,60 +1,62 @@
 'use client';
 
+import { type InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
+import { useDebounceValue } from 'usehooks-ts';
 import Loading from '@/core/components/icons/loading';
 import { Button, buttonVariants } from '@/core/components/ui/button';
 import { Input } from '@/core/components/ui/input';
 import type { Language } from '@/core/types';
 import { Link } from '@/i18n/navigation';
 import { setLangStatus } from '../actions';
+import {
+  LANG_SEARCH_DEBOUNCE_MS,
+  langPagesKey,
+  useLangPages,
+} from '../hooks/use-lang-pages';
+import type { LanguagePage } from '../types';
 import LangImage from './lang-image';
+import LoadMore from './load-more';
 
-const PAGE_SIZE = 50;
-
-/** Best described first; languages that were never imported go last. */
-function byCoverage(a: Language, b: Language) {
-  const coverage = (b.coverage ?? -1) - (a.coverage ?? -1);
-  return coverage || a.name.localeCompare(b.name);
-}
+type Props = {
+  /** The first batch of the queue, read by the server. */
+  initialPage: LanguagePage;
+  pageSize: number;
+};
 
 /**
- * The inactive languages an administrator still has to review, each with a
- * link to its editor and a one-click activation.
+ * The inactive languages an administrator still has to review, best described
+ * first, each with a link to its editor and a one-click activation. Read batch
+ * by batch as the administrator scrolls.
  */
-function ReviewQueue({ languages }: { languages: Language[] }) {
+function ReviewQueue({ initialPage, pageSize }: Props) {
   const t = useTranslations('ReviewPage');
   const langT = useTranslations('LangData');
+  const queryClient = useQueryClient();
 
-  const [queue, setQueue] = useState(() =>
-    languages.filter(language => !language.active).sort(byCoverage),
-  );
-  const [query, setQuery] = useState('');
-  const [visible, setVisible] = useState(PAGE_SIZE);
+  const [input, setInput] = useState('');
+  const [query, setQuery] = useDebounceValue('', LANG_SEARCH_DEBOUNCE_MS);
   const [activating, setActivating] = useState<string | null>(null);
 
-  const filtered = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
+  const listing = {
+    limit: pageSize,
+    active: false,
+    sort: 'coverage',
+    query,
+  } as const;
+  const {
+    data,
+    isPlaceholderData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useLangPages({ ...listing, initialPage });
 
-    if (!normalized) {
-      return queue;
-    }
-
-    return queue.filter(language =>
-      [
-        language.id,
-        language.name,
-        language.exonym ?? '',
-        ...language.searchParams,
-      ]
-        .join(' ')
-        .toLowerCase()
-        .includes(normalized),
-    );
-  }, [queue, query]);
-
-  const shown = filtered.slice(0, visible);
+  const languages = data?.pages.flatMap(page => page.items) ?? [];
+  const total = data?.pages[0]?.total ?? 0;
+  const searching = input.trim() !== query.trim() || isPlaceholderData;
 
   const activate = async (language: Language) => {
     setActivating(language.id);
@@ -65,11 +67,29 @@ function ReviewQueue({ languages }: { languages: Language[] }) {
       return toast.error(langT(res.error));
     }
 
-    setQueue(current => current.filter(({ id }) => id !== language.id));
+    // The language leaves this queue at once; the cursors stay valid, since
+    // they point at languages, not at positions.
+    queryClient.setQueryData<InfiniteData<LanguagePage, string | null>>(
+      langPagesKey(listing),
+      current =>
+        current && {
+          ...current,
+          pages: current.pages.map(page => ({
+            ...page,
+            items: page.items.filter(({ id }) => id !== language.id),
+            total: page.total - 1,
+          })),
+        },
+    );
+    // Every other listing (the atlas, a search of this queue) is now stale.
+    queryClient.invalidateQueries({
+      queryKey: ['langs'],
+      refetchType: 'none',
+    });
     toast.success(t('activated', { name: language.exonym ?? language.name }));
   };
 
-  if (queue.length === 0) {
+  if (total === 0 && !query && !input) {
     return (
       <p className='rounded-base border-2 border-border bg-secondary-background p-8 text-center shadow-shadow'>
         {t('empty')}
@@ -79,70 +99,75 @@ function ReviewQueue({ languages }: { languages: Language[] }) {
 
   return (
     <section className='space-y-4'>
-      <Input
-        value={query}
-        onChange={event => {
-          setQuery(event.target.value);
-          setVisible(PAGE_SIZE);
-        }}
-        placeholder={t('searchPlaceholder')}
-        aria-label={t('searchPlaceholder')}
-      />
+      <div className='relative'>
+        <Input
+          value={input}
+          onChange={event => {
+            setInput(event.target.value);
+            setQuery(event.target.value);
+          }}
+          placeholder={t('searchPlaceholder')}
+          aria-label={t('searchPlaceholder')}
+        />
+        {searching && (
+          <Loading className='absolute top-1/2 right-3 size-5 -translate-y-1/2' />
+        )}
+      </div>
 
-      <ul className='divide-y-2 divide-border overflow-hidden rounded-base border-2 border-border bg-secondary-background shadow-shadow'>
-        {shown.map(language => (
-          <li
-            key={language.id}
-            className='flex flex-wrap items-center gap-3 px-4 py-3'
-          >
-            <LangImage code={language.id} className='h-6 w-9' />
-            <div className='min-w-40 flex-1'>
-              <p className='font-heading'>
-                {language.name}
-                {language.exonym && ` (${language.exonym})`}
-              </p>
-              <p className='text-xs text-foreground/70'>
-                {[language.id, ...new Set([language.family, language.genus])]
-                  .filter(Boolean)
-                  .join(' · ')}
-              </p>
-            </div>
-            <span className='rounded-base border-2 border-border bg-background px-2 py-0.5 text-sm'>
-              {language.coverage === undefined
-                ? t('noCoverage')
-                : t('coverage', {
-                    percent: Math.round(language.coverage * 100),
-                  })}
-            </span>
-            <Link
-              className={buttonVariants({ variant: 'neutral', size: 'sm' })}
-              href={`/data/${language.id}`}
+      {languages.length > 0 && (
+        <ul className='divide-y-2 divide-border overflow-hidden rounded-base border-2 border-border bg-secondary-background shadow-shadow'>
+          {languages.map(language => (
+            <li
+              key={language.id}
+              className='flex flex-wrap items-center gap-3 px-4 py-3'
             >
-              {t('inspect')}
-            </Link>
-            <Button
-              size='sm'
-              disabled={activating !== null}
-              onClick={() => activate(language)}
-            >
-              {activating === language.id ? <Loading /> : t('activate')}
-            </Button>
-          </li>
-        ))}
-      </ul>
+              <LangImage code={language.id} className='h-6 w-9' />
+              <div className='min-w-40 flex-1'>
+                <p className='font-heading'>
+                  {language.name}
+                  {language.exonym && ` (${language.exonym})`}
+                </p>
+                <p className='text-xs text-foreground/70'>
+                  {[language.id, ...new Set([language.family, language.genus])]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </p>
+              </div>
+              <span className='rounded-base border-2 border-border bg-background px-2 py-0.5 text-sm'>
+                {language.coverage === undefined
+                  ? t('noCoverage')
+                  : t('coverage', {
+                      percent: Math.round(language.coverage * 100),
+                    })}
+              </span>
+              <Link
+                className={buttonVariants({ variant: 'neutral', size: 'sm' })}
+                href={`/data/${language.id}`}
+              >
+                {t('inspect')}
+              </Link>
+              <Button
+                size='sm'
+                disabled={activating !== null}
+                onClick={() => activate(language)}
+              >
+                {activating === language.id ? <Loading /> : t('activate')}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <div className='flex flex-col items-center gap-3'>
         <p className='text-sm text-foreground/70'>
-          {t('showing', { shown: shown.length, total: filtered.length })}
+          {t('showing', { shown: languages.length, total })}
         </p>
-        {shown.length < filtered.length && (
-          <Button
-            variant='neutral'
-            onClick={() => setVisible(count => count + PAGE_SIZE)}
-          >
-            {t('showMore')}
-          </Button>
-        )}
+        <LoadMore
+          hasNextPage={hasNextPage && !isPlaceholderData}
+          isFetchingNextPage={isFetchingNextPage}
+          onLoadMore={() => fetchNextPage()}
+          label={t('showMore')}
+        />
       </div>
     </section>
   );
