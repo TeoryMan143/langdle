@@ -241,6 +241,64 @@
           },
           "required": ["eyebrow", "title", "copy", "daily", "random"]
         },
+        "hints": {
+          "type": "object",
+          "properties": {
+            "eyebrow": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "copy": {
+              "type": "string"
+            },
+            "distance": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "copy": {
+                  "type": "string"
+                }
+              },
+              "required": ["label", "copy"]
+            },
+            "places": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "copy": {
+                  "type": "string"
+                }
+              },
+              "required": ["label", "copy"]
+            },
+            "relation": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "copy": {
+                  "type": "string"
+                }
+              },
+              "required": ["label", "copy"]
+            }
+          },
+          "required": [
+            "eyebrow",
+            "title",
+            "copy",
+            "distance",
+            "places",
+            "relation"
+          ]
+        },
         "features": {
           "type": "object",
           "properties": {
@@ -251,6 +309,9 @@
               "type": "string"
             },
             "copy": {
+              "type": "string"
+            },
+            "sources": {
               "type": "string"
             },
             "list": {
@@ -281,7 +342,7 @@
               ]
             }
           },
-          "required": ["eyebrow", "title", "copy", "list"]
+          "required": ["eyebrow", "title", "copy", "sources", "list"]
         },
         "footer": {
           "type": "string"
@@ -297,6 +358,7 @@
         "example",
         "status",
         "modes",
+        "hints",
         "features",
         "footer"
       ]

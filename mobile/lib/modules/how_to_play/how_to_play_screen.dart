@@ -22,6 +22,13 @@ const _featureCategories = [
   'lexicon',
 ];
 
+/// The hints a wrong guess earns, like the web's hint cards.
+const _hints = [
+  ('distance', Icons.explore_rounded),
+  ('places', Icons.place_rounded),
+  ('relation', Icons.account_tree_rounded),
+];
+
 /// How the game works (the web `/howtoplay`).
 class HowToPlayScreen extends StatelessWidget {
   const HowToPlayScreen({super.key});
@@ -158,6 +165,24 @@ class HowToPlayScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Eyebrow(t('hints.eyebrow')),
+              const SizedBox(height: 8),
+              Text(t('hints.title'), style: NeoText.heading(28)),
+              const SizedBox(height: 10),
+              Text(t('hints.copy'), style: NeoText.muted),
+              const SizedBox(height: 20),
+              for (final (key, icon) in _hints) ...[
+                _HintCard(icon: icon, hint: key),
+                const SizedBox(height: 16),
+              ],
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        NeoCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Eyebrow(t('features.eyebrow')),
               const SizedBox(height: 8),
               Text(t('features.title'), style: NeoText.heading(28)),
@@ -178,6 +203,8 @@ class HowToPlayScreen extends StatelessWidget {
                     ),
                 ],
               ),
+              const SizedBox(height: 16),
+              Text(t('features.sources'), style: NeoText.muted),
             ],
           ),
         ),
@@ -189,6 +216,51 @@ class HowToPlayScreen extends StatelessWidget {
           style: NeoText.eyebrow().copyWith(fontSize: 12),
         ),
       ],
+    );
+  }
+}
+
+class _HintCard extends StatelessWidget {
+  const _HintCard({required this.icon, required this.hint});
+
+  final IconData icon;
+  final String hint;
+
+  @override
+  Widget build(BuildContext context) {
+    final key = 'HowToPlayPage.hints.$hint';
+
+    return NeoCard(
+      shadow: false,
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: NeoColors.main,
+                  shape: BoxShape.circle,
+                  border: Neo.border,
+                ),
+                child: Icon(icon, color: NeoColors.foreground, size: 18),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  context.t('$key.label'),
+                  style: NeoText.heading(20),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Text(context.t('$key.copy'), style: NeoText.muted),
+        ],
+      ),
     );
   }
 }

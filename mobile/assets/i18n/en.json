@@ -30,7 +30,7 @@
       "dailyLabel": "Daily mode",
       "dailyValue": "One shared target",
       "guessesLabel": "Guess limit",
-      "guessesValue": "Six attempts",
+      "guessesValue": "Five attempts",
       "modesLabel": "Game versions",
       "modesValue": "Daily and random"
     },
@@ -38,7 +38,7 @@
       "eyebrow": "A round in practice",
       "title": "What a guess looks like",
       "copy": "Each guess is broken down feature by feature. The board shows whether you matched the target exactly, got a partial match, or missed it.",
-      "attempt": "Guess 1 of 6",
+      "attempt": "Guess 1 of 5",
       "note": "The same feedback pattern appears in both the daily game and the random game."
     },
     "status": {
@@ -72,10 +72,28 @@
         "cta": "Start a random round"
       }
     },
+    "hints": {
+      "eyebrow": "Beyond the features",
+      "title": "Hints on every wrong guess",
+      "copy": "Under each wrong guess, the board also tells you where the target is spoken and how closely it is related to your guess.",
+      "distance": {
+        "label": "Distance and direction",
+        "copy": "How many kilometres separate your guess from the target, and an arrow pointing towards it. A language can be spoken in several places, so the distance is measured between the two closest points of both languages: Portuguese and Spanish are close through Portugal and Spain, even though both are also spoken across the Americas."
+      },
+      "places": {
+        "label": "Where a language is placed",
+        "copy": "Each language has one or more points on the map. They start from the World Atlas of Language Structures (WALS), which places a language where it is traditionally spoken. Then come the countries where it is official and the main language (Spanish in Latin America, Portuguese in Brazil), and editors can add regions by hand. A country counts from its centre, so distances are approximate."
+      },
+      "relation": {
+        "label": "Family and branch",
+        "copy": "Whether your guess is in the same branch as the target (Spanish and Italian are both Romance), only in the same family (Spanish and German are both Indo-European) or in another family. Families and branches come from WALS."
+      }
+    },
     "features": {
       "eyebrow": "What gets compared",
       "title": "Feature groups used by the game",
       "copy": "Langdle compares typological features across the same broad categories, so every guess is judged mostly by structure, plus a few telltale words.",
+      "sources": "Most features come from WALS and the PHOIBLE sound inventories, then checked by editors. When no source says anything about a feature, it shows as not present: if you spot a mistake, suggest a change from the public atlas.",
       "list": {
         "wordOrder": "Word order",
         "morphology": "Morphology",

@@ -1,4 +1,11 @@
-import { ArrowRight, CalendarDays, Shuffle } from 'lucide-react';
+import {
+  ArrowRight,
+  CalendarDays,
+  Compass,
+  GitBranch,
+  MapPin,
+  Shuffle,
+} from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import Ball from '@/core/components/icons/ball';
 import Check from '@/core/components/icons/check';
@@ -59,6 +66,34 @@ function StatusCard({
           className={`flex size-9 items-center justify-center rounded-full border-2 border-border bg-white ${tone}`}
         >
           <Icon className='size-4' strokeWidth={2.5} />
+        </span>
+        <h3 className='text-xl font-heading text-foreground'>{title}</h3>
+      </div>
+      <p className='mt-4 text-sm leading-relaxed text-foreground/80'>{copy}</p>
+    </article>
+  );
+}
+
+const HINTS = [
+  { key: 'distance', icon: Compass },
+  { key: 'places', icon: MapPin },
+  { key: 'relation', icon: GitBranch },
+] as const;
+
+function HintCard({
+  icon: Icon,
+  title,
+  copy,
+}: {
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  title: string;
+  copy: string;
+}) {
+  return (
+    <article className='rounded-base border-2 border-border bg-white p-5'>
+      <div className='flex items-center gap-3'>
+        <span className='flex size-9 items-center justify-center rounded-full border-2 border-border bg-main'>
+          <Icon className='size-4 text-foreground' strokeWidth={2.5} />
         </span>
         <h3 className='text-xl font-heading text-foreground'>{title}</h3>
       </div>
@@ -248,6 +283,28 @@ export default async function HowToPlayPage() {
         </div>
       </section>
 
+      <section className='mt-6 rounded-base border-2 border-border bg-secondary-background p-6 shadow-shadow md:p-8'>
+        <p className='font-mono text-[11px] uppercase tracking-[0.25em] text-soft-det'>
+          {t('hints.eyebrow')}
+        </p>
+        <h2 className='mt-2 text-3xl font-heading text-foreground'>
+          {t('hints.title')}
+        </h2>
+        <p className='mt-3 max-w-3xl text-sm leading-relaxed text-foreground/80'>
+          {t('hints.copy')}
+        </p>
+        <div className='mt-6 grid gap-4 lg:grid-cols-3'>
+          {HINTS.map(({ key, icon }) => (
+            <HintCard
+              key={key}
+              icon={icon}
+              title={t(`hints.${key}.label`)}
+              copy={t(`hints.${key}.copy`)}
+            />
+          ))}
+        </div>
+      </section>
+
       <section className='mt-6 rounded-base border-2 border-border bg-white p-6 shadow-shadow md:p-8'>
         <p className='font-mono text-[11px] uppercase tracking-[0.25em] text-soft-det'>
           {t('features.eyebrow')}
@@ -268,6 +325,9 @@ export default async function HowToPlayPage() {
             </span>
           ))}
         </div>
+        <p className='mt-5 max-w-3xl text-sm leading-relaxed text-foreground/80'>
+          {t('features.sources')}
+        </p>
       </section>
 
       <p className='mt-6 border-t-2 border-border pt-4 font-mono text-xs uppercase tracking-[0.2em] text-soft-det'>

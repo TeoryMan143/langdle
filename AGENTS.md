@@ -38,6 +38,7 @@ npx tsc --noEmit    # typecheck only
 pnpm wals:build     # regenerate scripts/wals/languages.json from WALS
 pnpm wals:seed --dry-run   # add those languages to Redis, inactive (drop --dry-run to write)
 pnpm wals:update --dry-run # fix and backfill the languages already in Redis (backs up first)
+pnpm wals:flags --dry-run  # render every language's flag; drop --dry-run to upload them to R2
 
 # mobile app, from mobile/
 flutter run                        # against pnpm dev (Android: adb reverse tcp:3000 tcp:3000)

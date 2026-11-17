@@ -322,6 +322,11 @@ type WalsLanguage = {
   location?: { lat: number; lng: number };
   family?: string;
   genus?: string;
+  /** WALS's own genus and macroarea, kept for creoles too (flags). */
+  walsGenus: string;
+  macroarea: string;
+  /** ISO 3166 countries WALS places the language in. */
+  countries: string[];
   values: Map<string, number>;
 };
 
@@ -1253,6 +1258,198 @@ function regionsOf(codes: string[], points: Point[]) {
 }
 
 /* -------------------------------------------------------------------------- */
+/*                                    Flags                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Where a language's flag comes from: `country:mx` (a country flag of the
+ * flag-icons set), `flag-icons:es-ct` (one of its regional flags) or
+ * `commons:Sami flag.svg` (a flag file of Wikimedia Commons) or
+ * `drawn:sorbian` (a plain flag `upload-flags.ts` draws itself).
+ * `upload-flags.ts` turns it into the bucket's `flags/<code>.webp`.
+ */
+type FlagSpec = string;
+
+/** Country codes WALS still uses for states that no longer exist. */
+const RETIRED_COUNTRIES: Record<string, string> = { AN: 'CW', VR: 'VU' };
+
+const SAMI_FLAG = 'commons:Sami flag.svg';
+const AMAZIGH_FLAG = 'commons:Berber flag.svg';
+const ABORIGINAL_FLAG = 'commons:Australian Aboriginal Flag.svg';
+const KURDISH_FLAG = 'commons:Flag of Kurdistan.svg';
+const ROMANI_FLAG = 'commons:Flag of the Romani people.svg';
+const DAGESTAN_FLAG = 'commons:Flag of Dagestan.svg';
+
+/**
+ * Languages tied to a community or region with a flag of its own, which
+ * stands for them better than the flag of the state they are spoken in.
+ */
+const COMMUNITY_FLAGS: Record<string, FlagSpec> = {
+  // Regions of Spain, the United Kingdom, France, Italy
+  ca: 'flag-icons:es-ct',
+  cat: 'flag-icons:es-ct',
+  eu: 'flag-icons:es-pv',
+  gl: 'flag-icons:es-ga',
+  ast: 'commons:Flag of Asturias.svg',
+  an: 'commons:Flag of Aragon.svg',
+  cy: 'flag-icons:gb-wls',
+  gd: 'flag-icons:gb-sct',
+  sco: 'flag-icons:gb-sct',
+  kw: 'commons:Flag of Cornwall.svg',
+  gv: 'country:im',
+  br: 'commons:Flag of Brittany (Gwenn ha du).svg',
+  co: 'commons:Flag of Corsica.svg',
+  oc: 'commons:Flag of Occitania.svg',
+  sc: 'commons:Flag of Sardinia, Italy.svg',
+  fur: 'commons:Flag of Friuli.svg',
+  vec: 'commons:Flag of Veneto.svg',
+  fy: 'commons:Frisian flag.svg',
+  hsb: 'drawn:sorbian',
+  dsb: 'drawn:sorbian',
+  // Peoples across borders
+  kmr: KURDISH_FLAG,
+  ckb: KURDISH_FLAG,
+  sdh: KURDISH_FLAG,
+  rom: ROMANI_FLAG,
+  rmn: ROMANI_FLAG,
+  rmy: ROMANI_FLAG,
+  rmc: ROMANI_FLAG,
+  rmf: ROMANI_FLAG,
+  rml: ROMANI_FLAG,
+  rmo: ROMANI_FLAG,
+  rmw: ROMANI_FLAG,
+  aii: 'commons:Flag of Assyria.svg',
+  ain: 'commons:Flag of Ainu.svg',
+  arn: 'commons:Flag of the Mapuches.svg',
+  // Indigenous nations and territories
+  mi: 'commons:Tino Rangatiratanga Maori sovereignty movement flag.svg',
+  haw: 'commons:Flag of Hawaii.svg',
+  nv: 'commons:Navajo flag.svg',
+  chr: 'commons:Flag of the Cherokee Nation.svg',
+  iu: 'commons:Flag of Nunavut.svg',
+  ike: 'commons:Flag of Nunavut.svg',
+  kl: 'country:gl',
+  fo: 'country:fo',
+  rap: 'commons:Flag of Rapa Nui, Chile.svg',
+  ty: 'country:pf',
+  ch: 'country:gu',
+  pap: 'country:cw',
+  // The Torres Strait Islander flag is not free to reuse: Australia's.
+  mwp: 'country:au',
+  ulk: 'country:au',
+  // Republics of Russia
+  tt: 'commons:Flag of Tatarstan.svg',
+  ba: 'commons:Flag of Bashkortostan.svg',
+  cv: 'commons:Flag of Chuvashia.svg',
+  sah: 'commons:Flag of Sakha.svg',
+  bua: 'commons:Flag of Buryatia.svg',
+  bxr: 'commons:Flag of Buryatia.svg',
+  ce: 'commons:Flag of the Chechen Republic.svg',
+  inh: 'commons:Flag of Ingushetia.svg',
+  ady: 'commons:Flag of Adygea.svg',
+  kbd: 'commons:Flag of Kabardino-Balkaria.svg',
+  krc: 'commons:Flag of Karachay-Cherkessia.svg',
+  av: DAGESTAN_FLAG,
+  lez: DAGESTAN_FLAG,
+  dar: DAGESTAN_FLAG,
+  lbe: DAGESTAN_FLAG,
+  tab: DAGESTAN_FLAG,
+  udm: 'commons:Flag of Udmurtia.svg',
+  kv: 'commons:Flag of Komi.svg',
+  koi: 'commons:Flag of Komi.svg',
+  mhr: 'commons:Flag of Mari El.svg',
+  mrj: 'commons:Flag of Mari El.svg',
+  myv: 'commons:Flag of Mordovia.svg',
+  mdf: 'commons:Flag of Mordovia.svg',
+  xal: 'commons:Flag of Kalmykia.svg',
+  tyv: 'commons:Flag of Tuva.svg',
+  kjh: 'commons:Flag of Khakassia (3–2).svg',
+  alt: 'commons:Flag of Altai Republic.svg',
+  os: 'commons:Flag of North Ossetia.svg',
+  ab: 'commons:Flag of the Republic of Abkhazia.svg',
+  // Regions elsewhere
+  // Levantine Arabic spans Syria, Lebanon, Jordan and Palestine (since 2023
+  // ISO counts South Levantine in it): shown with Palestine's flag.
+  apc: 'country:ps',
+  bo: 'commons:Flag of Tibet.svg',
+  ug: 'commons:Flag of East Turkestan.svg',
+};
+
+/** Speakers of each CLDR language per country, first-language or not. */
+function buildSpeakers(territoryInfo: typeof cldrTerritoryInfo) {
+  const speakers = new Map<string, Map<string, number>>();
+
+  for (const [country, info] of Object.entries(
+    territoryInfo.supplemental.territoryInfo as Record<
+      string,
+      {
+        _population?: string;
+        languagePopulation?: Record<string, { _populationPercent: string }>;
+      }
+    >,
+  )) {
+    for (const [tag, language] of Object.entries(
+      info.languagePopulation ?? {},
+    )) {
+      const code = tag.split('_')[0];
+      const count =
+        (Number(info._population ?? 0) * Number(language._populationPercent)) /
+        100;
+      const counts = speakers.get(code) ?? new Map<string, number>();
+      counts.set(country, (counts.get(country) ?? 0) + count);
+      speakers.set(code, counts);
+    }
+  }
+
+  return speakers;
+}
+
+/**
+ * The flag of a language: its community's (COMMUNITY_FLAGS, then the Sámi,
+ * Amazigh and Aboriginal Australian peoples), else the country WALS places it
+ * in, the one where CLDR counts most of its speakers when there are several.
+ */
+function flagOf(
+  group: Group,
+  id: string,
+  codes: string[],
+): FlagSpec | undefined {
+  const curated = [id, group.iso]
+    .map(code => COMMUNITY_FLAGS[code])
+    .find(Boolean);
+  if (curated) return curated;
+
+  const entries = group.entries;
+  if (entries.some(e => e.walsGenus === 'Saami')) return SAMI_FLAG;
+  if (entries.some(e => e.walsGenus === 'Berber')) return AMAZIGH_FLAG;
+
+  const countries = [...new Set(entries.flatMap(e => e.countries))];
+
+  if (
+    entries.some(e => e.macroarea === 'Australia') &&
+    countries.length === 1 &&
+    countries[0] === 'AU'
+  ) {
+    return ABORIGINAL_FLAG;
+  }
+
+  const counts = codes.map(code => speakers.get(code)).filter(Boolean) as Map<
+    string,
+    number
+  >[];
+  const spokenIn = (country: string) =>
+    counts.reduce((sum, count) => sum + (count.get(country) ?? 0), 0);
+
+  // Not placed by WALS: where CLDR counts most speakers, if anywhere.
+  const candidates = countries.length
+    ? countries
+    : [...new Set(counts.flatMap(count => [...count.keys()]))];
+  const best = [...candidates].sort((a, b) => spokenIn(b) - spokenIn(a))[0];
+
+  return best ? `country:${best.toLowerCase()}` : undefined;
+}
+
+/* -------------------------------------------------------------------------- */
 /*                                    Build                                   */
 /* -------------------------------------------------------------------------- */
 
@@ -1292,6 +1489,7 @@ const phonology = buildPhonology(
 );
 const names = buildNames(parseCsv(wikidataCsv));
 const regions = buildRegions(cldrTerritoryInfo, countryRows);
+const speakers = buildSpeakers(cldrTerritoryInfo);
 const cldrScripts = cldrLanguageData.supplemental.languageData as Record<
   string,
   { _scripts?: string[] }
@@ -1337,6 +1535,11 @@ for (const language of walsLanguages) {
     name: language.Name,
     iso: '',
     glottocode: language.Glottocode,
+    walsGenus: language.Genus,
+    macroarea: language.Macroarea,
+    countries: language.Country_ID.split(/\s+/)
+      .filter(Boolean)
+      .map(country => RETIRED_COUNTRIES[country] ?? country),
     ...(language.Latitude && language.Longitude
       ? {
           location: {
@@ -1468,6 +1671,8 @@ type Entry = {
     wals: string[];
     /** Countries (ISO 3166) added to the WALS points, from CLDR. */
     regions: string[];
+    /** Where its flag comes from (see `FlagSpec`). */
+    flag?: FlagSpec;
     glottocode: string;
     phoible: boolean;
     /** Features some source answered (present, partial or absent). */
@@ -1488,7 +1693,7 @@ type ExistingEntry = {
     Entry['data'],
     'features' | 'partial' | 'locations' | 'family' | 'genus'
   >;
-  meta: Pick<Entry['meta'], 'wals' | 'unknown' | 'regions'>;
+  meta: Pick<Entry['meta'], 'wals' | 'unknown' | 'regions' | 'flag'>;
 };
 
 const entries: Entry[] = [];
@@ -1553,6 +1758,13 @@ function describe(group: Group, id: string) {
     facts,
     statuses,
     regions: added.map(region => region.country),
+    // CLDR often counts speakers under the macrolanguage (`ay` for Aymara).
+    flag: flagOf(group, id, [
+      ...cldrCodes(code, id),
+      ...[iso.macro.get(code), iso.part1.get(iso.macro.get(code) ?? '')].filter(
+        (value): value is string => Boolean(value),
+      ),
+    ]),
     place: {
       ...(points.length ? { locations: points } : {}),
       ...(primary.family ? { family: primary.family } : {}),
@@ -1580,7 +1792,7 @@ for (const group of [...groups.values()].sort((a, b) =>
     skipped.alreadyInCatalogue.push(`${label} → ${target ?? ids.get(id)}`);
 
     if (target) {
-      const { statuses, place, regions: added } = describe(group, target);
+      const { statuses, place, regions: added, flag } = describe(group, target);
       const rank = existingRank(group, target);
 
       if (rank > (existingRanks.get(target) ?? -1)) {
@@ -1598,6 +1810,7 @@ for (const group of [...groups.values()].sort((a, b) =>
           meta: {
             wals: group.entries.map(e => e.id),
             regions: added,
+            ...(flag ? { flag } : {}),
             unknown: features.filter(f => RULES[f] && !statuses[f]),
           },
         });
@@ -1607,7 +1820,7 @@ for (const group of [...groups.values()].sort((a, b) =>
     continue;
   }
 
-  const { facts, statuses, place, regions: added } = describe(group, id);
+  const { facts, statuses, place, regions: added, flag } = describe(group, id);
   // A writing system alone does not make a playable language: keep the ones
   // WALS (or PHOIBLE, for a WALS language) says something about.
   const typology = Object.values(RULES).some(
@@ -1668,6 +1881,7 @@ for (const group of [...groups.values()].sort((a, b) =>
     meta: {
       wals: group.entries.map(e => e.id),
       regions: added,
+      ...(flag ? { flag } : {}),
       glottocode: group.entries[0].glottocode,
       phoible: phonology.has(code),
       known: known.length,

@@ -11,6 +11,7 @@ with `PUT /api/lang/:id/status?active=true`.
 | `languages.json` | the generated dataset, one language per line; never edit it by hand |
 | `seed-languages.ts` | writes the new languages into Redis, never overwriting one |
 | `update-existing.ts` | fixes and completes the languages already in Redis, never overriding an editor |
+| `upload-flags.ts` | renders each language's flag and uploads it to the R2 bucket (`flags/<code>.webp`) |
 
 ```bash
 pnpm wals:build                      # regenerate languages.json (--offline: cached sources only)
@@ -27,6 +28,9 @@ pnpm wals:update                     # cleanup + backfill (backs up to backups/ 
 pnpm wals:update --place-only        # only locations, family, genus (no new features)
 pnpm wals:update --drop-legacy       # delete the old single `location` field
 pnpm wals:update --restore=scripts/wals/backups/<file>.json
+
+pnpm wals:flags --dry-run            # render the flags into .cache/flags-preview, upload nothing
+pnpm wals:flags                      # upload the missing ones (--force replaces, --only=arz,eu)
 ```
 
 **Order on a deploy that changes the catalogue:** deploy the code first (the
@@ -120,8 +124,35 @@ WALS is the authority; the others only fill what it does not cover.
 - WALS codes are kept even where they surprise: Japanese has "uvular
   continuants" in 6A (its moraic nasal), Swahili a definite article in 37A.
 
+## Flags
+
+`meta.flag` says where each language's flag comes from, and `upload-flags.ts`
+renders it like `core/lib/flags.ts` does (a 455×304 WebP) to the bucket key
+the clients look for once `public/flags` has nothing:
+
+1. A community or regional flag when the language is tied to one:
+   `COMMUNITY_FLAGS` in the build script (Catalonia, the Ikurriña, Wales,
+   Brittany, Kurdistan, the Romani, Māori, Navajo, Cherokee and Ainu flags,
+   the republics of Russia…), then the Sámi flag for the Saami genus, the
+   Amazigh flag for Berber and the Aboriginal flag for the languages of
+   Australia.
+2. Otherwise a country: the one WALS places the language in, or, when it
+   lists several, the one where CLDR counts most of its speakers.
+
+Country and regional flags come from the flag-icons set (MIT); community flags
+from Wikimedia Commons, only when Commons lists them as public domain, CC0, CC
+BY or "copyrighted free use" (the script checks, and prints each licence). A
+flag Commons only has inside a badge is drawn by the script (`DRAWN`: the
+Sorbian tricolour). A flag already in the bucket, such as one sent with a
+language request, is never replaced without `--force`; a language with a file
+in `public/flags` gets none. The 5 languages WALS places in no country
+(`brf`, `bvv`, `csk`, `gso`, `ywq`) keep the unknown flag.
+
 ## Licences
 
 WALS (Dryer & Haspelmath 2013) and PHOIBLE (Moran & McCloy 2019) are CC BY 4.0:
 the public atlas credits them (`PublicDataPage.attribution`), keep that line
 wherever this data is shown. CLDR is under the Unicode License, Wikidata is CC0.
+The flags: flag-icons is MIT (Lipis and contributors); the Commons flags used
+are public domain except Khakassia's (CC0) and the Aboriginal flag (free to use
+since the Commonwealth of Australia acquired its copyright in 2022).

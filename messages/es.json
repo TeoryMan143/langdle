@@ -30,7 +30,7 @@
       "dailyLabel": "Modo diario",
       "dailyValue": "Un objetivo compartido",
       "guessesLabel": "Límite de intentos",
-      "guessesValue": "Seis intentos",
+      "guessesValue": "Cinco intentos",
       "modesLabel": "Versiones del juego",
       "modesValue": "Diario y aleatorio"
     },
@@ -38,7 +38,7 @@
       "eyebrow": "Una ronda en práctica",
       "title": "Cómo se ve un intento",
       "copy": "Cada intento se divide rasgo por rasgo. El tablero muestra si coincidiste exactamente, si fue una coincidencia parcial o si no aparece.",
-      "attempt": "Intento 1 de 6",
+      "attempt": "Intento 1 de 5",
       "note": "El mismo patrón de respuesta aparece tanto en el modo diario como en el modo aleatorio."
     },
     "status": {
@@ -72,10 +72,28 @@
         "cta": "Empezar una ronda aleatoria"
       }
     },
+    "hints": {
+      "eyebrow": "Más allá de los rasgos",
+      "title": "Pistas en cada intento fallido",
+      "copy": "Debajo de cada intento fallido, el tablero también te dice dónde se habla el idioma objetivo y qué tan emparentado está con tu intento.",
+      "distance": {
+        "label": "Distancia y dirección",
+        "copy": "Cuántos kilómetros separan tu intento del objetivo, y una flecha que apunta hacia él. Un idioma puede hablarse en varios lugares, así que la distancia se mide entre los dos puntos más cercanos de ambos idiomas: el portugués y el español están cerca por Portugal y España, aunque los dos también se hablan en toda América."
+      },
+      "places": {
+        "label": "Dónde se ubica un idioma",
+        "copy": "Cada idioma tiene uno o más puntos en el mapa. Parten del World Atlas of Language Structures (WALS), que ubica cada idioma donde se habla tradicionalmente. Luego se suman los países donde es oficial y el idioma principal (el español en Latinoamérica, el portugués en Brasil), y los editores pueden añadir regiones a mano. Un país cuenta desde su centro, así que las distancias son aproximadas."
+      },
+      "relation": {
+        "label": "Familia y rama",
+        "copy": "Si tu intento está en la misma rama que el objetivo (el español y el italiano son lenguas romances), solo en la misma familia (el español y el alemán son indoeuropeos) o en otra familia. Las familias y ramas vienen de WALS."
+      }
+    },
     "features": {
       "eyebrow": "Qué se compara",
       "title": "Grupos de rasgos que usa el juego",
       "copy": "Langdle compara rasgos tipológicos dentro de las mismas categorías amplias, así que cada intento se juzga sobre todo por su estructura, más unas pocas palabras reveladoras.",
+      "sources": "La mayoría de los rasgos vienen de WALS y de los inventarios de sonidos de PHOIBLE, revisados después por los editores. Cuando ninguna fuente dice nada sobre un rasgo, aparece como no presente: si ves un error, sugiere un cambio desde el atlas público.",
       "list": {
         "wordOrder": "Orden de palabras",
         "morphology": "Morfología",
