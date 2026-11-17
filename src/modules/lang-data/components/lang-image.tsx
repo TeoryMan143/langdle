@@ -1,7 +1,7 @@
 'use client';
 
 import clsx, { ClassValue } from 'clsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { flagKey } from '@/core/lib/flags-config';
 
 /**
@@ -27,21 +27,36 @@ function LangImage({
 }) {
   const sources = flagSources(code);
   const [step, setStep] = useState(0);
+  const ref = useRef<HTMLImageElement>(null);
+  const src = sources[Math.min(step, sources.length - 1)];
+
+  /** Moves past `failed`, once, however many times its failure is noticed. */
+  const fallBack = (failed: number) =>
+    setStep(current =>
+      current === failed ? Math.min(current + 1, sources.length - 1) : current,
+    );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: start over for a new code
   useEffect(() => {
     setStep(0);
   }, [code]);
 
+  // The image is server-rendered, so it can fail before hydration, and React
+  // never replays that error to `onError`: check for it once we are mounted.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: re-check per source
+  useEffect(() => {
+    const img = ref.current;
+    if (img?.complete && img.naturalWidth === 0) fallBack(step);
+  }, [src]);
+
   return (
     <img
-      src={sources[Math.min(step, sources.length - 1)]}
+      ref={ref}
+      src={src}
       width={455}
       height={304}
       alt={`${code} flag`}
-      onError={() =>
-        setStep(current => Math.min(current + 1, sources.length - 1))
-      }
+      onError={() => fallBack(step)}
       className={clsx(className, 'w-6 h-5 rounded-xs inline-block')}
     />
   );
