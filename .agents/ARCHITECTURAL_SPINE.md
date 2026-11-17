@@ -172,8 +172,10 @@ one `JSON.MGET`.
 - **One ranking.** `core/lib/search.ts` (`normalizeSearchText`, `searchTerms`,
   `matchRank`, `rankByQuery`) decides what a query finds and in which order:
   whole term, start of a term, start of a word, anywhere, then a few typos
-  (one per four letters). The API ranks `?q=` with it and the pickers rank
-  `/names` with it in the browser, so both find the same languages.
+  (one per four letters; a letter added, removed or replaced, or two
+  neighbours swapped, each count as one: `typoDistance`). The API ranks `?q=`
+  with it and the pickers rank `/names` with it in the browser, so both find
+  the same languages.
 - The API tests empty Redis before each test, so `tests/support/setup.ts`
   clears the index with it.
 

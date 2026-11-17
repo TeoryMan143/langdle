@@ -1,5 +1,3 @@
-import { distance } from 'fastest-levenshtein';
-
 /**
  * How languages are matched against what a user types, shared by the API
  * (`GET /lang/page?q=`) and the pickers that rank in the browser, so both
@@ -31,6 +29,40 @@ export function searchTerms(language: {
   ]
     .map(normalizeSearchText)
     .filter(Boolean);
+}
+
+/**
+ * Typos between `a` and `b`: letters added, removed or replaced, and two
+ * neighbouring letters swapped (`spanihs` → `spanish`), each one typo.
+ * Optimal string alignment, so a swapped pair is not edited again.
+ */
+export function typoDistance(a: string, b: string) {
+  // Three rows of the dynamic programming table: two back for the swaps.
+  let beforePrevious: number[] = [];
+  let previous = Array.from({ length: b.length + 1 }, (_, j) => j);
+
+  for (let i = 1; i <= a.length; i++) {
+    const current = [i];
+
+    for (let j = 1; j <= b.length; j++) {
+      const replace = a[i - 1] === b[j - 1] ? 0 : 1;
+
+      current[j] = Math.min(
+        previous[j] + 1,
+        current[j - 1] + 1,
+        previous[j - 1] + replace,
+      );
+
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+        current[j] = Math.min(current[j], beforePrevious[j - 2] + 1);
+      }
+    }
+
+    beforePrevious = previous;
+    previous = current;
+  }
+
+  return previous[b.length];
 }
 
 const WORD_SEPARATOR = /[^\p{L}\p{N}]+/u;
@@ -90,7 +122,7 @@ export function matchRank(terms: string[], query: string): number | null {
 
         if (
           length <= candidate.length &&
-          distance(query, candidate.slice(0, length)) <= typos
+          typoDistance(query, candidate.slice(0, length)) <= typos
         ) {
           return true;
         }

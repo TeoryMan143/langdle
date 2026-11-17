@@ -4,6 +4,7 @@ import {
   normalizeSearchText,
   rankByQuery,
   searchTerms,
+  typoDistance,
 } from '@/core/lib/search';
 
 describe('normalizeSearchText', () => {
@@ -26,6 +27,22 @@ describe('searchTerms', () => {
   });
 });
 
+describe('typoDistance', () => {
+  test('counts letters added, removed and replaced', () => {
+    expect(typoDistance('spanish', 'spanish')).toBe(0);
+    expect(typoDistance('spanich', 'spanish')).toBe(1);
+    expect(typoDistance('spansh', 'spanish')).toBe(1);
+    expect(typoDistance('spannish', 'spanish')).toBe(1);
+    expect(typoDistance('', 'abc')).toBe(3);
+  });
+
+  test('counts two neighbouring letters swapped as one typo', () => {
+    expect(typoDistance('spanihs', 'spanish')).toBe(1);
+    expect(typoDistance('psanish', 'spanish')).toBe(1);
+    expect(typoDistance('sapnihs', 'spanish')).toBe(2);
+  });
+});
+
 describe('matchRank', () => {
   test('ranks a whole term, then its start, a word start and anywhere', () => {
     expect(matchRank(['ale'], 'ale')).toBe(0);
@@ -41,6 +58,8 @@ describe('matchRank', () => {
 
   test('forgives a typo per four letters typed, last', () => {
     expect(matchRank(['spanish'], 'spanich')).toBe(4);
+    expect(matchRank(['spanish'], 'spanihs')).toBe(4);
+    expect(matchRank(['basque'], 'bsaq')).toBe(4);
     expect(matchRank(['spanish'], 'spsni')).toBe(4);
     expect(matchRank(['old english'], 'englsh')).toBe(4);
     expect(matchRank(['spanish'], 'sponoch')).toBeNull();

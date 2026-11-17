@@ -812,4 +812,14 @@ describe('GET /lang/page?q= with typos', () => {
       'spanish',
     ]);
   });
+
+  test('takes two letters swapped for a single typo', async () => {
+    await seedLanguage('spanish', { name: 'Spanish' });
+
+    const res = await api('GET', '/lang/page', { query: { q: 'spanihs' } });
+
+    expect(res.body.items.map((lang: { id: string }) => lang.id)).toEqual([
+      'spanish',
+    ]);
+  });
 });
