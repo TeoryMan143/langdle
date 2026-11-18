@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { buttonVariants } from '@/core/components/ui/button';
 import { Link } from '@/i18n/navigation';
@@ -9,6 +10,18 @@ import PublicLanguageAtlas from '@/modules/lang-data/components/public-language-
 
 /** Cards per batch: each one is heavy (a dialog per feature). */
 const PAGE_SIZE = 24;
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('PublicDataPage');
+
+  return {
+    title: t('title'),
+    description: t('intro'),
+    alternates: { canonical: '/data/public' },
+    // The rest of `data/` is noindex; the public atlas is meant to be found.
+    robots: { index: true, follow: true },
+  };
+}
 
 async function PublicDataPage() {
   const t = await getTranslations('PublicDataPage');

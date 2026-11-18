@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { dongle } from '@/core/lib/fonts';
+import { NO_INDEX } from '@/core/lib/seo';
 import { getRandomLanguage } from '@/modules/lang-data/actions';
 import Game from '@/modules/lang-guess/components/game';
 import RandomLink from '@/modules/lang-guess/components/random-link';
@@ -7,6 +8,8 @@ import { GameProvider } from '@/modules/lang-guess/hooks/use-game';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+export const metadata = NO_INDEX;
 
 export default async function Home() {
   const t = await getTranslations('Game');

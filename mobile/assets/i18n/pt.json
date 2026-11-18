@@ -1,7 +1,12 @@
 {
   "$schema": "../src/i18n/messages-schema.json",
   "Home": {
-    "title": "Advinhe a linguagem do dia"
+    "title": "Advinhe a linguagem do dia",
+    "intro": "Langdle é um desafio diário para amantes de idiomas. Todo dia há um novo idioma misterioso: faça um palpite e compare sua fonologia, ordem das palavras, sistema de escrita e gramática para chegar à resposta."
+  },
+  "Metadata": {
+    "description": "Langdle é um jogo diário de adivinhar idiomas, como o Wordle mas com idiomas: adivinhe o idioma do dia pela ordem das palavras, sons, escrita e gramática.",
+    "keywords": "langdle, jogo de adivinhar idiomas, adivinhe o idioma, wordle de idiomas, jogo de linguística, jogo diário de idiomas"
   },
   "Nav": {
     "options": "Opções",
@@ -11,6 +16,12 @@
     "signUp": "Registrar-se",
     "data": "Dados",
     "home": "Início"
+  },
+  "Footer": {
+    "madeBy": "Feito por",
+    "portfolio": "Portfólio",
+    "github": "GitHub",
+    "x": "X (Twitter)"
   },
   "InstallApp": {
     "menu": "App para Android",

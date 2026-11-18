@@ -6,6 +6,7 @@ import {
   MapPin,
   Shuffle,
 } from 'lucide-react';
+import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import Ball from '@/core/components/icons/ball';
 import Check from '@/core/components/icons/check';
@@ -140,6 +141,17 @@ function ModeCard({
       </div>
     </Link>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('HowToPlayPage');
+
+  return {
+    // The title already says "Langdle": skip the "| Langdle" template.
+    title: { absolute: t('title') },
+    description: t('intro'),
+    alternates: { canonical: '/howtoplay' },
+  };
 }
 
 export default async function HowToPlayPage() {

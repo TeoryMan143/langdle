@@ -1,5 +1,8 @@
 import { getTranslations } from 'next-intl/server';
+import { NO_INDEX } from '@/core/lib/seo';
 import SignUpForm from '@/modules/auth/components/signup-form';
+
+export const metadata = NO_INDEX;
 
 async function SignUpPage() {
   const t = await getTranslations('AuthPage');

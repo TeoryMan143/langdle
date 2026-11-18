@@ -10,6 +10,12 @@ import Home from '../icons/home';
 import Language from '../icons/language';
 import User from '../icons/user';
 import { buttonVariants } from '../ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip';
 import LangDataAllowed from './lang-data-allowed';
 import LocaleSelector from './locale-selector';
 import OptionsSidebar from './options-sidebar';
@@ -18,6 +24,30 @@ const navButtonClass = cn(
   buttonVariants({ variant: 'noShadow', size: 'icon' }),
   'bg-white hover:bg-background',
 );
+
+/** An icon-only nav button, named by its tooltip and its aria-label. */
+function NavLink({
+  href,
+  label,
+  children,
+}: {
+  href: string;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <Link className={navButtonClass} href={href} aria-label={label} />
+        }
+      >
+        {children}
+      </TooltipTrigger>
+      <TooltipContent side='bottom'>{label}</TooltipContent>
+    </Tooltip>
+  );
+}
 
 function Header() {
   const { session } = useAuth();
@@ -35,32 +65,30 @@ function Header() {
         <div className='flex md:hidden'>
           <OptionsSidebar />
         </div>
-        <div className='hidden gap-3 md:flex'>
-          <Link className={navButtonClass} href='/'>
-            <Home />
-          </Link>
-          <Link className={navButtonClass} href='/howtoplay'>
-            ?
-          </Link>
-          <Link
-            className={navButtonClass}
-            href='/data/public'
-            aria-label={t('publicData')}
-          >
-            <Language />
-          </Link>
-          <Link
-            className={navButtonClass}
-            href={session ? '/account' : '/signup'}
-          >
-            <User />
-          </Link>
-          <LangDataAllowed>
-            <Link className={navButtonClass} href='/data'>
-              <Admin />
-            </Link>
-          </LangDataAllowed>
-        </div>
+        <TooltipProvider>
+          <div className='hidden gap-3 md:flex'>
+            <NavLink href='/' label={t('home')}>
+              <Home />
+            </NavLink>
+            <NavLink href='/howtoplay' label={t('howToPlay')}>
+              ?
+            </NavLink>
+            <NavLink href='/data/public' label={t('publicData')}>
+              <Language />
+            </NavLink>
+            <NavLink
+              href={session ? '/account' : '/signup'}
+              label={session ? t('account') : t('signUp')}
+            >
+              <User />
+            </NavLink>
+            <LangDataAllowed>
+              <NavLink href='/data' label={t('data')}>
+                <Admin />
+              </NavLink>
+            </LangDataAllowed>
+          </div>
+        </TooltipProvider>
       </div>
     </header>
   );

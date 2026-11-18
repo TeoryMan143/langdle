@@ -8,9 +8,24 @@
       "properties": {
         "title": {
           "type": "string"
+        },
+        "intro": {
+          "type": "string"
         }
       },
-      "required": ["title"]
+      "required": ["title", "intro"]
+    },
+    "Metadata": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        }
+      },
+      "required": ["description", "keywords"]
     },
     "Nav": {
       "type": "object",
@@ -46,6 +61,24 @@
         "data",
         "home"
       ]
+    },
+    "Footer": {
+      "type": "object",
+      "properties": {
+        "madeBy": {
+          "type": "string"
+        },
+        "portfolio": {
+          "type": "string"
+        },
+        "github": {
+          "type": "string"
+        },
+        "x": {
+          "type": "string"
+        }
+      },
+      "required": ["madeBy", "portfolio", "github", "x"]
     },
     "InstallApp": {
       "type": "object",
@@ -11651,7 +11684,9 @@
   },
   "required": [
     "Home",
+    "Metadata",
     "Nav",
+    "Footer",
     "InstallApp",
     "HowToPlayPage",
     "Features",

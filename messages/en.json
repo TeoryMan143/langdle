@@ -1,7 +1,12 @@
 {
   "$schema": "../src/i18n/messages-schema.json",
   "Home": {
-    "title": "Guess the language of the day"
+    "title": "Guess the language of the day",
+    "intro": "Langdle is a daily puzzle for language lovers. Every day there is a new mystery language: make a guess and compare its phonology, word order, writing system and grammar to close in on the answer."
+  },
+  "Metadata": {
+    "description": "Langdle is a daily language-guessing game, like Wordle for languages: guess the language of the day from its word order, sounds, writing system and grammar.",
+    "keywords": "langdle, language guessing game, guess the language, wordle for languages, linguistics game, daily language game"
   },
   "Nav": {
     "options": "Options",
@@ -11,6 +16,12 @@
     "signUp": "Sign up",
     "data": "Data",
     "home": "Home"
+  },
+  "Footer": {
+    "madeBy": "Made by",
+    "portfolio": "Portfolio",
+    "github": "GitHub",
+    "x": "X (Twitter)"
   },
   "InstallApp": {
     "menu": "Android app",
