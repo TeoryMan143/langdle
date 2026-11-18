@@ -9,8 +9,8 @@ import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { getDailyLanguage } from '@/modules/lang-guess/actions';
 import Game from '@/modules/lang-guess/components/game';
+import RandomLink from '@/modules/lang-guess/components/random-link';
 import { GameProvider } from '@/modules/lang-guess/hooks/use-game';
-import RandomLink from '../../modules/lang-guess/components/random-link';
 
 export const metadata: Metadata = {
   alternates: { canonical: '/' },

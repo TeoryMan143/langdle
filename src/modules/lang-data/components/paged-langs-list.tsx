@@ -4,10 +4,13 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useDebounceValue } from 'usehooks-ts';
 import Loading from '@/core/components/icons/loading';
+import LoadingRegion from '@/core/components/main/loading-region';
 import { Input } from '@/core/components/ui/input';
+import { cn } from '@/core/lib/utils';
 import { LANG_SEARCH_DEBOUNCE_MS, useLangPages } from '../hooks/use-lang-pages';
 import type { LanguagePage } from '../types';
 import LangListItem from './lang-list-item';
+import LangRowSkeleton from './lang-row-skeleton';
 import LoadMore from './load-more';
 
 type Props = {
@@ -54,17 +57,31 @@ function PagedLangsList({ initialPage, pageSize }: Props) {
       </div>
 
       {languages.length > 0 ? (
-        <div className='bg-background rounded-2xl border border-black overflow-clip'>
+        <div
+          aria-busy={searching}
+          className={cn(
+            'bg-background rounded-2xl border border-black overflow-clip transition-opacity',
+            searching && 'opacity-60',
+          )}
+        >
           {languages.map(language => (
             <LangListItem key={language.id} language={language} />
           ))}
         </div>
+      ) : searching ? (
+        <LoadingRegion className='bg-background rounded-2xl border border-black overflow-clip'>
+          {[0, 1, 2].map(index => (
+            <LangRowSkeleton
+              key={index}
+              index={index}
+              className='h-[53px] justify-center border-b border-black px-4'
+            />
+          ))}
+        </LoadingRegion>
       ) : (
-        !searching && (
-          <p className='rounded-2xl border border-black bg-background p-6 text-center'>
-            {t('noMatches')}
-          </p>
-        )
+        <p className='rounded-2xl border border-black bg-background p-6 text-center'>
+          {t('noMatches')}
+        </p>
       )}
 
       <LoadMore

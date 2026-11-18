@@ -5,13 +5,16 @@ import { memo, useState } from 'react';
 import { useDebounceValue } from 'usehooks-ts';
 import Loading from '@/core/components/icons/loading';
 import FeatureToolTip from '@/core/components/main/feature-tooltip';
+import LoadingRegion from '@/core/components/main/loading-region';
 import { Input } from '@/core/components/ui/input';
 import { groupedLangFeatures } from '@/core/lib/features';
+import { cn } from '@/core/lib/utils';
 import type { LangFeatures, Language } from '@/core/types';
 import ChangeRequestDialog from '@/modules/lang-data/components/change-request-dialog';
 import { LANG_SEARCH_DEBOUNCE_MS, useLangPages } from '../hooks/use-lang-pages';
 import type { LanguagePage } from '../types';
 import LangImage from './lang-image';
+import LanguageCardSkeleton from './language-card-skeleton';
 import LoadMore from './load-more';
 
 type Props = {
@@ -200,12 +203,31 @@ function PublicLanguageAtlas({ initialPage, pageSize }: Props) {
         <div className='rounded-2xl border-2 border-border bg-background p-8 text-center shadow-shadow'>
           <p className='text-lg font-medium'>{t('empty')}</p>
         </div>
+      ) : languages.length === 0 ? (
+        // A search that starts from no results has nothing to keep on screen.
+        <LoadingRegion className='grid gap-5 xl:grid-cols-2'>
+          <LanguageCardSkeleton />
+          <LanguageCardSkeleton />
+        </LoadingRegion>
       ) : (
         <>
-          <div className='grid gap-5 xl:grid-cols-2'>
+          {/* The previous results stay, dimmed, while a search loads. */}
+          <div
+            aria-busy={searching}
+            className={cn(
+              'grid gap-5 transition-opacity xl:grid-cols-2',
+              searching && 'opacity-60',
+            )}
+          >
             {languages.map(language => (
               <LanguageCard key={language.id} language={language} />
             ))}
+            {isFetchingNextPage && (
+              <LoadingRegion className='contents'>
+                <LanguageCardSkeleton />
+                <LanguageCardSkeleton />
+              </LoadingRegion>
+            )}
           </div>
 
           <div className='flex flex-col items-center gap-3'>

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
-import Loading from '@/core/components/icons/loading';
+import LoadingRegion from '@/core/components/main/loading-region';
 import {
   Command,
   CommandEmpty,
@@ -20,6 +20,7 @@ import { useLangLabel } from '../hooks/use-lang-label';
 import { useLangSearch } from '../hooks/use-lang-search';
 import type { LanguageName } from '../types';
 import LangImage from './lang-image';
+import LangRowSkeleton from './lang-row-skeleton';
 
 /** Rendering every language (thousands) on open would be slow to no end. */
 const MAX_RESULTS = 50;
@@ -81,9 +82,15 @@ function LangPickerDialog({
           />
           <CommandList className='max-h-72 p-2'>
             {isLoading && (
-              <div className='grid place-content-center py-6'>
-                <Loading className='text-4xl' />
-              </div>
+              <LoadingRegion className='space-y-1'>
+                {[0, 1, 2, 3, 4].map(index => (
+                  <LangRowSkeleton
+                    key={index}
+                    index={index}
+                    className='px-2 py-2'
+                  />
+                ))}
+              </LoadingRegion>
             )}
             {error && (
               <p className='py-6 text-center text-sm'>{t('unkError')}</p>

@@ -50,6 +50,9 @@
         },
         "home": {
           "type": "string"
+        },
+        "loading": {
+          "type": "string"
         }
       },
       "required": [
@@ -59,7 +62,8 @@
         "account",
         "signUp",
         "data",
-        "home"
+        "home",
+        "loading"
       ]
     },
     "Footer": {

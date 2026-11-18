@@ -1,5 +1,6 @@
 import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { Suspense } from 'react';
 import { buttonVariants } from '@/core/components/ui/button';
 import { dongle } from '@/core/lib/fonts';
 import { withNext } from '@/core/lib/redirect';
@@ -7,6 +8,7 @@ import { Link } from '@/i18n/navigation';
 import { auth } from '@/modules/auth/actions';
 import { getLangPermissions } from '@/modules/lang-data/actions';
 import LangsList from '@/modules/lang-data/components/langs-list';
+import LangsListSkeleton from '@/modules/lang-data/components/langs-list-skeleton';
 
 async function DataPage() {
   const { session, user } = await auth();
@@ -68,7 +70,9 @@ async function DataPage() {
       </div>
 
       <div className='flex justify-center'>
-        <LangsList allowedLangs={user.admin ? undefined : permissions} />
+        <Suspense fallback={<LangsListSkeleton search={user.admin} />}>
+          <LangsList allowedLangs={user.admin ? undefined : permissions} />
+        </Suspense>
       </div>
     </main>
   );

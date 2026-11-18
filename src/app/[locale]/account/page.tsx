@@ -1,5 +1,6 @@
 import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { Suspense } from 'react';
 import { dongle } from '@/core/lib/fonts';
 import { withNext } from '@/core/lib/redirect';
 import { NO_INDEX } from '@/core/lib/seo';
@@ -8,10 +9,15 @@ import DeleteAccountButton from '@/modules/auth/components/delete-account-button
 import SignOutButton from '@/modules/auth/components/signout-button';
 import MyChangeRequests from '@/modules/lang-data/components/my-change-requests';
 import MyLanguageRequests from '@/modules/lang-data/components/my-language-requests';
+import MyRequestsSkeleton from '@/modules/lang-data/components/my-requests-skeleton';
 import GameHistory from '@/modules/lang-guess/components/game-history';
+import GameHistorySkeleton from '@/modules/lang-guess/components/game-history-skeleton';
 import AccountData from '@/modules/user-profile/components/account-data';
 
 export const metadata = NO_INDEX;
+
+/** The history fills the right column from lg, and scrolls inside itself. */
+const HISTORY_CLASS_NAME = 'max-h-[70dvh] lg:absolute lg:inset-0 lg:max-h-none';
 
 async function AccountPage() {
   const { user, session } = await auth();
@@ -46,11 +52,19 @@ async function AccountPage() {
           />
         </div>
         <div className='relative lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:min-h-144'>
-          <GameHistory className='max-h-[70dvh] lg:absolute lg:inset-0 lg:max-h-none' />
+          <Suspense
+            fallback={<GameHistorySkeleton className={HISTORY_CLASS_NAME} />}
+          >
+            <GameHistory className={HISTORY_CLASS_NAME} />
+          </Suspense>
         </div>
         <div className='space-y-6 lg:col-start-1 lg:row-start-2'>
-          <MyChangeRequests />
-          <MyLanguageRequests />
+          <Suspense fallback={<MyRequestsSkeleton />}>
+            <MyChangeRequests />
+          </Suspense>
+          <Suspense fallback={<MyRequestsSkeleton kind='language' />}>
+            <MyLanguageRequests />
+          </Suspense>
         </div>
       </div>
     </main>
