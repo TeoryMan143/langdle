@@ -62,6 +62,24 @@
         "home"
       ]
     },
+    "Footer": {
+      "type": "object",
+      "properties": {
+        "madeBy": {
+          "type": "string"
+        },
+        "portfolio": {
+          "type": "string"
+        },
+        "github": {
+          "type": "string"
+        },
+        "x": {
+          "type": "string"
+        }
+      },
+      "required": ["madeBy", "portfolio", "github", "x"]
+    },
     "InstallApp": {
       "type": "object",
       "properties": {
@@ -11668,6 +11686,7 @@
     "Home",
     "Metadata",
     "Nav",
+    "Footer",
     "InstallApp",
     "HowToPlayPage",
     "Features",

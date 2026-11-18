@@ -17,6 +17,12 @@
     "data": "Data",
     "home": "Home"
   },
+  "Footer": {
+    "madeBy": "Made by",
+    "portfolio": "Portfolio",
+    "github": "GitHub",
+    "x": "X (Twitter)"
+  },
   "InstallApp": {
     "menu": "Android app",
     "title": "Get Langdle for Android",

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { Toaster } from 'sonner';
+import Footer from '@/core/components/main/footer';
 import Header from '@/core/components/main/header';
 import Providers from '@/core/components/main/providers';
 import { noto } from '@/core/lib/fonts';
@@ -72,6 +73,7 @@ export default async function RootLayout({
               <Header />
               <InstallAppDialog />
               <div className='flex-1 py-3 h-full'>{children}</div>
+              <Footer />
             </NextIntlClientProvider>
           </Providers>
         </div>
