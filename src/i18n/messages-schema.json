@@ -8,9 +8,24 @@
       "properties": {
         "title": {
           "type": "string"
+        },
+        "intro": {
+          "type": "string"
         }
       },
-      "required": ["title"]
+      "required": ["title", "intro"]
+    },
+    "Metadata": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        }
+      },
+      "required": ["description", "keywords"]
     },
     "Nav": {
       "type": "object",
@@ -11651,6 +11666,7 @@
   },
   "required": [
     "Home",
+    "Metadata",
     "Nav",
     "InstallApp",
     "HowToPlayPage",

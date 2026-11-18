@@ -1,5 +1,6 @@
 import { RedirectType } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server';
+import { NO_INDEX } from '@/core/lib/seo';
 import { redirect } from '@/i18n/navigation';
 import { getOAuthSignupData } from '@/modules/auth/actions';
 import GoogleDataForm from '@/modules/auth/components/google-data-form';
@@ -7,6 +8,8 @@ import GoogleDataForm from '@/modules/auth/components/google-data-form';
 type Props = {
   searchParams: Promise<{ data?: string; next?: string }>;
 };
+
+export const metadata = NO_INDEX;
 
 async function EndGooglePage({ searchParams }: Props) {
   const { data, next } = await searchParams;

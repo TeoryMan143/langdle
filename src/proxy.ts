@@ -8,10 +8,21 @@ import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
 
+// Next links the generated social image as `/<locale>/opengraph-image`.
+// With `localePrefix: 'never'` next-intl would redirect that URL, and link
+// preview scrapers do not reliably follow redirects for images.
+const LOCALIZED_OG_IMAGE = new RegExp(
+  `^/(${routing.locales.join('|')})/opengraph-image`,
+);
+
 export default function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   const isApi = pathname.startsWith('/api');
+
+  if (LOCALIZED_OG_IMAGE.test(pathname)) {
+    return NextResponse.next();
+  }
   const isServerAction = request.headers.has('next-action');
 
   // Run next-intl for pages AND server actions

@@ -2,6 +2,7 @@ import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { buttonVariants } from '@/core/components/ui/button';
 import { withNext } from '@/core/lib/redirect';
+import { NO_INDEX } from '@/core/lib/seo';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/modules/auth/actions';
 import { getLanguage, setLangPermission } from '@/modules/lang-data/actions';
@@ -9,6 +10,8 @@ import { getLanguage, setLangPermission } from '@/modules/lang-data/actions';
 type Props = {
   searchParams: Promise<{ token?: string }>;
 };
+
+export const metadata = NO_INDEX;
 
 async function AddPermissionPage({ searchParams }: Props) {
   const { token } = await searchParams;

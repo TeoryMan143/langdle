@@ -1,7 +1,12 @@
 {
   "$schema": "../src/i18n/messages-schema.json",
   "Home": {
-    "title": "Adivina el idioma del día"
+    "title": "Adivina el idioma del día",
+    "intro": "Langdle es un reto diario para amantes de los idiomas. Cada día hay un nuevo idioma misterioso: haz un intento y compara su fonología, orden de palabras, sistema de escritura y gramática para acercarte a la respuesta."
+  },
+  "Metadata": {
+    "description": "Langdle es un juego diario de adivinar idiomas, como Wordle pero con idiomas: adivina el idioma del día por su orden de palabras, sonidos, escritura y gramática.",
+    "keywords": "langdle, juego de adivinar idiomas, adivina el idioma, wordle de idiomas, juego de lingüística, juego diario de idiomas"
   },
   "Nav": {
     "options": "Opciones",
