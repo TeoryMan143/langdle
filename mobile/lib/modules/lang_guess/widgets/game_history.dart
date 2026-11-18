@@ -84,8 +84,8 @@ class _RecordCard extends StatelessWidget {
               Eyebrow(
                 context.t(
                   record.type == GameType.daily
-                      ? 'Mobile.daily'
-                      : 'Mobile.random',
+                      ? 'AccountPage.daily'
+                      : 'AccountPage.random',
                 ),
               ),
               const Spacer(),

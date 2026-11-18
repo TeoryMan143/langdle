@@ -34,9 +34,7 @@ export async function addGameHistory(
   // No revalidatePath: /account is dynamic and reads the history fresh, and
   // revalidating would re-render the page that called this, where /random
   // picks a new language mid-game.
-  return res.success
-    ? actionSuccess(res.result)
-    : actionError(res.error.key);
+  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
 }
 
 export async function getGameHistory(): Promise<

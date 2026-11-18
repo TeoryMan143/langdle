@@ -35,11 +35,7 @@ function SignOutButton() {
     router.push('/');
   };
 
-  return (
-    <div className='flex justify-center'>
-      <Button onClick={handleSignOut}>{t('signOut')}</Button>
-    </div>
-  );
+  return <Button onClick={handleSignOut}>{t('signOut')}</Button>;
 }
 
 export default SignOutButton;

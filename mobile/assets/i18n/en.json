@@ -459,12 +459,16 @@
     "fluentLang": "Fluent languages",
     "addNativeLang": "add native language",
     "addFluentLang": "add fluent language",
+    "edit": "Edit",
+    "remove": "Remove",
     "gameHistory": "Game History",
     "gameType": "Game type",
     "target": "Target",
     "guessed": "Guessed",
     "guesses": "Guesses",
     "noGames": "No games yet",
+    "daily": "Daily",
+    "random": "Random",
     "updating": "Updating",
     "selectLang": "Select a language",
     "unknownError": "Unknown server error",
@@ -2927,8 +2931,6 @@
     "oauthFailed": "Could not sign in with that account. Try again.",
     "showPassword": "Show password",
     "hidePassword": "Hide password",
-    "finishSignup": "Choose a nickname and your country to finish creating your account.",
-    "edit": "Edit",
-    "remove": "Remove"
+    "finishSignup": "Choose a nickname and your country to finish creating your account."
   }
 }
