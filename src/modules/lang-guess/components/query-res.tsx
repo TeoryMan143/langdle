@@ -1,8 +1,9 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import Loading from '@/core/components/icons/loading';
+import LoadingRegion from '@/core/components/main/loading-region';
 import LangImage from '@/modules/lang-data/components/lang-image';
+import LangRowSkeleton from '@/modules/lang-data/components/lang-row-skeleton';
 import type { LanguageName } from '@/modules/lang-data/types';
 import { useGame } from '../hooks/use-game';
 
@@ -27,8 +28,16 @@ function QueryRes({ onSelect }: Props) {
       )}
       {error && <li className='h-full'>{t('unkError')}</li>}
       {loading && (
-        <li className='h-full grid place-content-center'>
-          <Loading className='text-4xl' />
+        <li>
+          <LoadingRegion className='space-y-1'>
+            {[0, 1, 2, 3].map(index => (
+              <LangRowSkeleton
+                key={index}
+                index={index}
+                className='justify-center py-2'
+              />
+            ))}
+          </LoadingRegion>
         </li>
       )}
       {langs?.map(lang => {

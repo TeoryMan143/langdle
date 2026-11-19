@@ -6,8 +6,10 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useDebounceValue } from 'usehooks-ts';
 import Loading from '@/core/components/icons/loading';
+import LoadingRegion from '@/core/components/main/loading-region';
 import { Button, buttonVariants } from '@/core/components/ui/button';
 import { Input } from '@/core/components/ui/input';
+import { cn } from '@/core/lib/utils';
 import type { Language } from '@/core/types';
 import { Link } from '@/i18n/navigation';
 import { setLangStatus } from '../actions';
@@ -18,6 +20,7 @@ import {
 } from '../hooks/use-lang-pages';
 import type { LanguagePage } from '../types';
 import LangImage from './lang-image';
+import LangRowSkeleton from './lang-row-skeleton';
 import LoadMore from './load-more';
 
 type Props = {
@@ -114,8 +117,22 @@ function ReviewQueue({ initialPage, pageSize }: Props) {
         )}
       </div>
 
+      {languages.length === 0 && searching && (
+        <LoadingRegion className='space-y-2'>
+          {[0, 1, 2].map(index => (
+            <LangRowSkeleton key={index} index={index} className='px-4 py-2' />
+          ))}
+        </LoadingRegion>
+      )}
+
       {languages.length > 0 && (
-        <ul className='divide-y-2 divide-border overflow-hidden rounded-base border-2 border-border bg-secondary-background shadow-shadow'>
+        <ul
+          aria-busy={searching}
+          className={cn(
+            'divide-y-2 divide-border overflow-hidden rounded-base border-2 border-border bg-secondary-background shadow-shadow transition-opacity',
+            searching && 'opacity-60',
+          )}
+        >
           {languages.map(language => (
             <li
               key={language.id}

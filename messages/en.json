@@ -15,7 +15,8 @@
     "account": "Account",
     "signUp": "Sign up",
     "data": "Data",
-    "home": "Home"
+    "home": "Home",
+    "loading": "Loading"
   },
   "Footer": {
     "madeBy": "Made by",

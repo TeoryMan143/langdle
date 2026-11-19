@@ -15,7 +15,8 @@
     "account": "Conta",
     "signUp": "Registrar-se",
     "data": "Dados",
-    "home": "Início"
+    "home": "Início",
+    "loading": "Carregando"
   },
   "Footer": {
     "madeBy": "Feito por",

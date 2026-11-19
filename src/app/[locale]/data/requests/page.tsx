@@ -1,10 +1,12 @@
 import { RedirectType, redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
+import { Suspense } from 'react';
 import { dongle } from '@/core/lib/fonts';
 import { withNext } from '@/core/lib/redirect';
 import { auth } from '@/modules/auth/actions';
 import ReviewChangeRequests from '@/modules/lang-data/components/review-change-requests';
 import ReviewLanguageRequests from '@/modules/lang-data/components/review-language-requests';
+import ReviewRequestsSkeleton from '@/modules/lang-data/components/review-requests-skeleton';
 
 async function ChangeRequestsPage() {
   const { session, user } = await auth();
@@ -26,13 +28,17 @@ async function ChangeRequestsPage() {
         {t('adminTitle')}
       </h2>
       <div className='flex justify-center'>
-        <ReviewChangeRequests />
+        <Suspense fallback={<ReviewRequestsSkeleton />}>
+          <ReviewChangeRequests />
+        </Suspense>
       </div>
       <h2 className={`${dongle.className} text-6xl text-center`}>
         {languageT('adminTitle')}
       </h2>
       <div className='flex justify-center'>
-        <ReviewLanguageRequests />
+        <Suspense fallback={<ReviewRequestsSkeleton kind='language' />}>
+          <ReviewLanguageRequests />
+        </Suspense>
       </div>
     </main>
   );

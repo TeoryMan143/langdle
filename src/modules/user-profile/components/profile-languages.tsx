@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/core/components/ui/button';
+import { Skeleton } from '@/core/components/ui/skeleton';
 import LangImage from '@/modules/lang-data/components/lang-image';
 import LangPickerDialog from '@/modules/lang-data/components/lang-picker-dialog';
 import { useLangLabel } from '@/modules/lang-data/hooks/use-lang-label';
@@ -179,9 +180,15 @@ function LanguageRow({
   return (
     <div className='flex items-center gap-3 rounded-base border-2 border-border bg-secondary-background py-1.5 pr-1.5 pl-3'>
       <LangImage code={id} />
-      <span className='min-w-0 flex-1 font-heading'>
-        {language ? label(language) : loading ? '…' : id}
-      </span>
+      {!language && loading ? (
+        <span className='min-w-0 flex-1'>
+          <Skeleton className='h-4 w-32 bg-background' />
+        </span>
+      ) : (
+        <span className='min-w-0 flex-1 font-heading'>
+          {language ? label(language) : id}
+        </span>
+      )}
       {action}
     </div>
   );
