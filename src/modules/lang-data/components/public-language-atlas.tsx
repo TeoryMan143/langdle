@@ -1,164 +1,46 @@
 'use client';
 
+import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
+import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
 import { useTranslations } from 'next-intl';
-import { memo, useState } from 'react';
+import { useState } from 'react';
 import { useDebounceValue } from 'usehooks-ts';
 import Loading from '@/core/components/icons/loading';
-import FeatureToolTip from '@/core/components/main/feature-tooltip';
 import LoadingRegion from '@/core/components/main/loading-region';
 import { Input } from '@/core/components/ui/input';
-import { groupedLangFeatures } from '@/core/lib/features';
+import { TooltipProvider } from '@/core/components/ui/tooltip';
 import { cn } from '@/core/lib/utils';
-import type { LangFeatures, Language } from '@/core/types';
-import ChangeRequestDialog from '@/modules/lang-data/components/change-request-dialog';
+import type { LangFeatures } from '@/core/types';
 import { LANG_SEARCH_DEBOUNCE_MS, useLangPages } from '../hooks/use-lang-pages';
-import type { LanguagePage } from '../types';
-import LangImage from './lang-image';
+import type { ChangeRequestPayload, LanguagePage } from '../types';
+import ChangeRequestDialog from './change-request-dialog';
+import FeatureDescriptionTooltip from './feature-description-tooltip';
+import LanguageCard, { type LanguageCardHandles } from './language-card';
 import LanguageCardSkeleton from './language-card-skeleton';
 import LoadMore from './load-more';
 
 type Props = {
   /**
    * The first batch, read by the server. The catalogue holds thousands of
-   * languages and each card carries a dialog per feature, so the next batches
-   * (of the same size) are only read as the user scrolls.
+   * languages, so the next batches (of the same size) are only read as the
+   * user scrolls.
    */
   initialPage: LanguagePage;
   pageSize: number;
 };
 
-const groupedEntries = Object.entries(groupedLangFeatures) as Array<
-  [keyof typeof groupedLangFeatures, readonly LangFeatures[]]
->;
-
-function FeatureChip({
-  lang,
-  feature,
-  tone,
-}: {
-  lang: string;
-  feature: LangFeatures;
-  tone: 'present' | 'partial' | 'absent';
-}) {
-  return (
-    <FeatureToolTip feature={feature}>
-      <ChangeRequestDialog lang={lang} feature={feature} status={tone} />
-    </FeatureToolTip>
-  );
-}
-
 /**
- * Memoized: each loaded batch adds cards, and the ones already on screen (a
- * dialog per feature each) must not render again for it.
+ * The searchable, paged list of every language. It owns the single change
+ * request dialog and feature tooltip that all the cards' chips open.
  */
-const LanguageCard = memo(function LanguageCard({
-  language,
-}: {
-  language: Language;
-}) {
-  const t = useTranslations('PublicDataPage');
-
-  const presentFeatures = new Set(language.features);
-  const partialFeatures = new Set(language.partial);
-
-  return (
-    <article className='rounded-[1.75rem] border-2 border-border bg-background p-5 shadow-shadow'>
-      <header className='flex flex-col gap-4 md:gap-10 sm:flex-row sm:items-start sm:justify-between'>
-        <div className='flex items-start gap-4'>
-          <LangImage code={language.id} className='mt-1 h-8 w-11 rounded-sm' />
-          <div>
-            <h2 className='text-2xl font-semibold'>{language.name}</h2>
-            {language.exonym && (
-              <p className='mt-1 text-sm text-foreground/70'>
-                {language.exonym}
-              </p>
-            )}
-            {language.family && (
-              <p className='mt-1 text-xs text-foreground/60'>
-                {/* An isolate is its own family and branch: say it once. */}
-                {[...new Set([language.family, language.genus])]
-                  .filter(Boolean)
-                  .join(' · ')}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className='flex flex-wrap gap-2 text-sm'>
-          <span className='rounded-full border border-border bg-main px-3 py-1 font-medium text-main-foreground'>
-            {language.active ? t('status.active') : t('status.inactive')}
-          </span>
-          <span className='rounded-full border border-border bg-secondary-background px-3 py-1 font-medium'>
-            {language.features.length} {t('summary.activeFeatures')}
-          </span>
-          <span className='rounded-full border border-border bg-secondary-background px-3 py-1 font-medium'>
-            {language.partial.length} {t('summary.partialFeatures')}
-          </span>
-        </div>
-      </header>
-
-      <div className='mt-5 grid gap-4'>
-        {groupedEntries.map(([group, features]) => {
-          const present = features.filter(feature =>
-            presentFeatures.has(feature),
-          );
-          const partial = features.filter(feature =>
-            partialFeatures.has(feature),
-          );
-          const absent = features.filter(
-            feature =>
-              !presentFeatures.has(feature) && !partialFeatures.has(feature),
-          );
-
-          if (!present.length && !partial.length && !absent.length) {
-            return null;
-          }
-
-          return (
-            <section
-              key={group}
-              className='rounded-2xl border border-border/70 p-4'
-            >
-              <h3 className='text-base font-semibold'>
-                {t(`groups.${group}`)}
-              </h3>
-              <div className='mt-3 flex flex-wrap gap-2'>
-                {present.map(feature => (
-                  <FeatureChip
-                    key={feature}
-                    feature={feature}
-                    tone='present'
-                    lang={language.id}
-                  />
-                ))}
-                {partial.map(feature => (
-                  <FeatureChip
-                    key={feature}
-                    feature={feature}
-                    tone='partial'
-                    lang={language.id}
-                  />
-                ))}
-                {absent.map(feature => (
-                  <FeatureChip
-                    key={feature}
-                    feature={feature}
-                    tone='absent'
-                    lang={language.id}
-                  />
-                ))}
-              </div>
-            </section>
-          );
-        })}
-      </div>
-    </article>
-  );
-});
-
 function PublicLanguageAtlas({ initialPage, pageSize }: Props) {
   const t = useTranslations('PublicDataPage');
   const [input, setInput] = useState('');
+  // One dialog and one tooltip serve every chip of every card.
+  const [handles] = useState<LanguageCardHandles>(() => ({
+    dialog: DialogPrimitive.createHandle<ChangeRequestPayload>(),
+    tooltip: TooltipPrimitive.createHandle<LangFeatures>(),
+  }));
   const [query, setQuery] = useDebounceValue('', LANG_SEARCH_DEBOUNCE_MS);
 
   const {
@@ -175,75 +57,84 @@ function PublicLanguageAtlas({ initialPage, pageSize }: Props) {
   const searching = input.trim() !== query.trim() || isPlaceholderData;
 
   return (
-    <section className='space-y-4'>
-      <div className='rounded-2xl border-2 border-border bg-background p-4 shadow-shadow'>
-        <label
-          className='mb-2 flex items-center gap-2 text-sm font-medium'
-          htmlFor='public-lang-search'
-        >
-          {t('search.label')}
-          {searching && <Loading className='size-4' />}
-        </label>
-        <Input
-          id='public-lang-search'
-          value={input}
-          onChange={event => {
-            setInput(event.target.value);
-            setQuery(event.target.value);
-          }}
-          placeholder={t('search.placeholder')}
-        />
-      </div>
+    <TooltipProvider>
+      <section className='space-y-4'>
+        <ChangeRequestDialog handle={handles.dialog} />
+        <FeatureDescriptionTooltip handle={handles.tooltip} />
 
-      {isError && !data ? (
-        <div className='rounded-2xl border-2 border-border bg-background p-8 text-center shadow-shadow'>
-          <p className='text-lg font-medium'>{t('loadError')}</p>
-        </div>
-      ) : languages.length === 0 && !searching ? (
-        <div className='rounded-2xl border-2 border-border bg-background p-8 text-center shadow-shadow'>
-          <p className='text-lg font-medium'>{t('empty')}</p>
-        </div>
-      ) : languages.length === 0 ? (
-        // A search that starts from no results has nothing to keep on screen.
-        <LoadingRegion className='grid gap-5 xl:grid-cols-2'>
-          <LanguageCardSkeleton />
-          <LanguageCardSkeleton />
-        </LoadingRegion>
-      ) : (
-        <>
-          {/* The previous results stay, dimmed, while a search loads. */}
-          <div
-            aria-busy={searching}
-            className={cn(
-              'grid gap-5 transition-opacity xl:grid-cols-2',
-              searching && 'opacity-60',
-            )}
+        <div className='rounded-2xl border-2 border-border bg-background p-4 shadow-shadow'>
+          <label
+            className='mb-2 flex items-center gap-2 text-sm font-medium'
+            htmlFor='public-lang-search'
           >
-            {languages.map(language => (
-              <LanguageCard key={language.id} language={language} />
-            ))}
-            {isFetchingNextPage && (
-              <LoadingRegion className='contents'>
-                <LanguageCardSkeleton />
-                <LanguageCardSkeleton />
-              </LoadingRegion>
-            )}
-          </div>
+            {t('search.label')}
+            {searching && <Loading className='size-4' />}
+          </label>
+          <Input
+            id='public-lang-search'
+            value={input}
+            onChange={event => {
+              setInput(event.target.value);
+              setQuery(event.target.value);
+            }}
+            placeholder={t('search.placeholder')}
+          />
+        </div>
 
-          <div className='flex flex-col items-center gap-3'>
-            <p className='text-sm text-foreground/70'>
-              {t('showing', { shown: languages.length, total })}
-            </p>
-            <LoadMore
-              hasNextPage={hasNextPage && !isPlaceholderData}
-              isFetchingNextPage={isFetchingNextPage}
-              onLoadMore={() => fetchNextPage()}
-              label={t('showMore')}
-            />
+        {isError && !data ? (
+          <div className='rounded-2xl border-2 border-border bg-background p-8 text-center shadow-shadow'>
+            <p className='text-lg font-medium'>{t('loadError')}</p>
           </div>
-        </>
-      )}
-    </section>
+        ) : languages.length === 0 && !searching ? (
+          <div className='rounded-2xl border-2 border-border bg-background p-8 text-center shadow-shadow'>
+            <p className='text-lg font-medium'>{t('empty')}</p>
+          </div>
+        ) : languages.length === 0 ? (
+          // A search that starts from no results has nothing to keep on screen.
+          <LoadingRegion className='grid gap-5 xl:grid-cols-2'>
+            <LanguageCardSkeleton />
+            <LanguageCardSkeleton />
+          </LoadingRegion>
+        ) : (
+          <>
+            {/* The previous results stay, dimmed, while a search loads. */}
+            <div
+              aria-busy={searching}
+              className={cn(
+                'grid gap-5 transition-opacity xl:grid-cols-2',
+                searching && 'opacity-60',
+              )}
+            >
+              {languages.map(language => (
+                <LanguageCard
+                  key={language.id}
+                  language={language}
+                  handles={handles}
+                />
+              ))}
+              {isFetchingNextPage && (
+                <LoadingRegion className='contents'>
+                  <LanguageCardSkeleton />
+                  <LanguageCardSkeleton />
+                </LoadingRegion>
+              )}
+            </div>
+
+            <div className='flex flex-col items-center gap-3'>
+              <p className='text-sm text-foreground/70'>
+                {t('showing', { shown: languages.length, total })}
+              </p>
+              <LoadMore
+                hasNextPage={hasNextPage && !isPlaceholderData}
+                isFetchingNextPage={isFetchingNextPage}
+                onLoadMore={() => fetchNextPage()}
+                label={t('showMore')}
+              />
+            </div>
+          </>
+        )}
+      </section>
+    </TooltipProvider>
   );
 }
 

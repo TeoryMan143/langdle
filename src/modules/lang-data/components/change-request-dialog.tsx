@@ -1,184 +1,65 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
+import type { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
+import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { Button } from '@/core/components/ui/button';
+import Loading from '@/core/components/icons/loading';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/core/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/core/components/ui/select';
-import { cn } from '@/core/lib/utils';
-import type { LangFeatures } from '@/core/types';
-import { uploadChangeRequest } from '@/modules/lang-data/actions';
-import { createChangeRequestSchema } from '../schemas/change-request';
-import type { ChangeRequestFormValues } from '../types';
+import type { ChangeRequestPayload } from '../types';
 
+export type ChangeRequestDialogHandle =
+  DialogPrimitive.Handle<ChangeRequestPayload>;
+
+// The form libraries (react-hook-form, zod, the select) only load once a chip
+// is clicked: most visitors only read the atlas.
+const ChangeRequestForm = dynamic(() => import('./change-request-form'), {
+  loading: () => (
+    <div className='flex justify-center py-6'>
+      <Loading className='size-6' />
+    </div>
+  ),
+});
+
+/**
+ * One dialog for every feature chip of the atlas. The chips are detached
+ * `DialogTrigger`s sharing `handle` and passing a `ChangeRequestPayload`, so
+ * the page holds a single dialog and form instead of one per chip.
+ */
 function ChangeRequestDialog({
-  lang,
-  feature,
-  status,
+  handle,
 }: {
-  lang: string;
-  feature: LangFeatures;
-  status: 'present' | 'partial' | 'absent';
+  handle: ChangeRequestDialogHandle;
 }) {
-  const t = useTranslations('Features.name');
   const formT = useTranslations('Features.changeRequest');
-  const changeRequestSchema = createChangeRequestSchema(formT);
-  const {
-    control,
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors, isSubmitting },
-  } = useForm<ChangeRequestFormValues>({
-    resolver: zodResolver(changeRequestSchema),
-    defaultValues: {
-      lang,
-      feature,
-      status,
-      description: '',
-    },
-  });
-
-  const { status: formStatus } = watch();
-
-  const [diagOpen, setDiagOpen] = useState(false);
-
-  const statusItems = [
-    { value: 'present', label: formT('statusPresent') },
-    { value: 'partial', label: formT('statusPartial') },
-    { value: 'absent', label: formT('statusNotPresent') },
-  ] as const;
-
-  const onSubmit = async (data: ChangeRequestFormValues) => {
-    const toastId = toast.loading('Uploading request...');
-
-    if (formStatus === status) {
-      return toast.error('Choose a different status', { id: toastId });
-    }
-
-    const res = await uploadChangeRequest(data);
-
-    if (!res.success) {
-      return toast.error('server error', { id: toastId });
-    }
-
-    toast.success('Change request uploaded', { id: toastId });
-    setDiagOpen(false);
-  };
 
   return (
-    <Dialog open={diagOpen} onOpenChange={open => setDiagOpen(open)}>
-      <DialogTrigger
-        render={
-          <button
-            data-feature={feature}
-            data-state={status}
-            className={cn(
-              'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors cursor-pointer',
-              status === 'present' &&
-                'border-emerald-600 bg-emerald-100 text-emerald-950',
-              status === 'partial' &&
-                'border-amber-500 bg-amber-100 text-amber-950',
-              status === 'absent' &&
-                'border-border bg-secondary-background text-foreground/65 opacity-80',
-            )}
-          />
-        }
-      >
-        {t(feature)}
-      </DialogTrigger>
-      <DialogContent>
-        <form className='space-y-5' onSubmit={handleSubmit(onSubmit)}>
-          <DialogHeader>
-            <DialogTitle>{formT('title')}</DialogTitle>
-            <DialogDescription>{formT('description')}</DialogDescription>
-          </DialogHeader>
+    <Dialog handle={handle}>
+      {({ payload }) => {
+        const request = payload as ChangeRequestPayload | undefined;
 
-          <input type='hidden' {...register('lang')} />
-          <input type='hidden' {...register('feature')} />
-
-          <div className='space-y-4'>
-            <div className='grid gap-2'>
-              <label className='text-sm font-medium' htmlFor='status'>
-                {formT('requestedStatus')}
-              </label>
-              <Controller
-                control={control}
-                name='status'
-                render={({ field }) => (
-                  <Select
-                    items={statusItems}
-                    onValueChange={value => value && field.onChange(value)}
-                    value={field.value}
-                  >
-                    <SelectTrigger id='status'>
-                      <SelectValue placeholder={formT('statusPlaceholder')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {statusItems.map(({ value, label }) => (
-                        <SelectItem key={value} value={value}>
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
+        return (
+          request && (
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{formT('title')}</DialogTitle>
+                <DialogDescription>{formT('description')}</DialogDescription>
+              </DialogHeader>
+              {/* Keyed so every chip starts from a fresh form. */}
+              <ChangeRequestForm
+                key={`${request.lang}:${request.feature}`}
+                {...request}
+                onDone={() => handle.close()}
               />
-              {errors.status && (
-                <p className='text-sm text-red-500'>{errors.status.message}</p>
-              )}
-            </div>
-
-            <div className='grid gap-2'>
-              <label className='text-sm font-medium' htmlFor='description'>
-                {formT('descriptionLabel')}
-              </label>
-              <textarea
-                id='description'
-                rows={4}
-                placeholder={formT('descriptionPlaceholder')}
-                className='flex min-h-24 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base text-foreground placeholder:text-foreground/50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2'
-                {...register('description')}
-              />
-              {errors.description && (
-                <p className='text-sm text-red-500'>
-                  {errors.description.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <DialogFooter>
-            <DialogClose render={<Button type='button' variant='neutral' />}>
-              {formT('cancel')}
-            </DialogClose>
-            <Button
-              disabled={isSubmitting || formStatus === status}
-              type='submit'
-            >
-              {isSubmitting ? formT('submitting') : formT('submit')}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
+            </DialogContent>
+          )
+        );
+      }}
     </Dialog>
   );
 }

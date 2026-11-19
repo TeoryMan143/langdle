@@ -18,6 +18,13 @@ export type RejectChangeRequestValues = z.infer<
   typeof rejectChangeRequestSchema
 >;
 
+/** What a feature chip of the atlas hands the change request dialog. */
+export type ChangeRequestPayload = {
+  lang: string;
+  feature: LangFeatures;
+  status: FeatureStatus;
+};
+
 export type ChangeRequestState = InferSelectModel<
   typeof changeRequestTable
 >['state'];

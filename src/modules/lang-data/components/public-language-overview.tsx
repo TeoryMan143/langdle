@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import { getLanguagesPage, getLanguagesSummary } from '../actions';
 import PublicLanguageAtlas from './public-language-atlas';
 
-/** Cards per batch: each one is heavy (a dialog per feature). */
+/** Cards per batch: each one renders a chip per feature. */
 const PAGE_SIZE = 24;
 
 const COUNTERS = [
