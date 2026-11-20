@@ -70,6 +70,84 @@
       }
     }
   },
+  "overrides": [
+    {
+      "includes": ["src/core/**", "!src/core/components/main/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "next/link": "Use Link from @/i18n/navigation (CONVENTIONS.md, i18n).",
+                  "next/navigation": {
+                    "allowImportNames": ["useSearchParams", "useParams"],
+                    "message": "Use @/i18n/navigation; only useSearchParams and useParams come from next/navigation (CONVENTIONS.md, i18n)."
+                  }
+                },
+                "patterns": [
+                  {
+                    "group": ["@/modules/**", "@/app/**"],
+                    "message": "core never imports modules or app; only the app shell in core/components/main may (ARCHITECTURAL_SPINE.md, dependency rule 1)."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "src/core/components/main/**",
+        "src/modules/*/components/**",
+        "src/modules/*/hooks/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "next/link": "Use Link from @/i18n/navigation (CONVENTIONS.md, i18n).",
+                  "next/navigation": {
+                    "allowImportNames": ["useSearchParams", "useParams"],
+                    "message": "Use @/i18n/navigation; only useSearchParams and useParams come from next/navigation (CONVENTIONS.md, i18n)."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "src/modules/*/controller.ts",
+        "src/modules/*/service.ts",
+        "src/modules/*/middleware.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "next/headers": "Controllers and services also serve the mobile app: no Next request context (ARCHITECTURAL_SPINE.md, dependency rule 4).",
+                  "next/cache": "Controllers and services also serve the mobile app: no Next request context (ARCHITECTURAL_SPINE.md, dependency rule 4).",
+                  "next/navigation": "Controllers and services also serve the mobile app: no Next request context (ARCHITECTURAL_SPINE.md, dependency rule 4).",
+                  "next-intl/server": "The API is locale-agnostic and answers with keys (CONVENTIONS.md, i18n)."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
   "javascript": {
     "formatter": {
       "jsxQuoteStyle": "single",
