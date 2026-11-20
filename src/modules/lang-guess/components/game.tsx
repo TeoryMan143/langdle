@@ -49,7 +49,7 @@ function Game() {
                 ease: 'easeInOut',
               }}
               className={cn(
-                'hidden w-[90%] md:w-auto text-xs md:text-base absolute text-red-600 rounded-lg shadow-xl show-animation md:px-4 h-[80%] place-items-center left-1/2 -translate-x-1/2 z-5 border-2 bg-white',
+                'hidden w-[90%] md:w-auto text-xs md:text-base absolute text-danger rounded-base shadow-shadow show-animation md:px-4 h-[80%] place-items-center left-1/2 -translate-x-1/2 z-5 border-2 border-border bg-white',
                 { grid: !!queryError },
               )}
             >
@@ -91,7 +91,7 @@ function Game() {
           </Button>
         </search>
       </div>
-      <div className='text-gray-600 flex justify-center items-center gap-2'>
+      <div className='text-foreground/70 flex justify-center items-center gap-2'>
         {MAX_ATTEMPTS - guesses.length === 0 || hasGuessed ? (
           <>
             <p>{type === 'daily' ? t('dailyLang') : t('randomLang')}:</p>

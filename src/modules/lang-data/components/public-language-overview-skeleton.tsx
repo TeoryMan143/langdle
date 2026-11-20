@@ -10,7 +10,7 @@ function PublicLanguageOverviewSkeleton() {
         {['languages', 'active', 'features', 'partial'].map(counter => (
           <div
             key={counter}
-            className='rounded-2xl border-2 border-border bg-background p-4 shadow-shadow'
+            className='rounded-base border-2 border-border bg-background p-4 shadow-shadow'
           >
             <div className='flex h-5 items-center'>
               <Skeleton className='h-3.5 w-28' />
@@ -23,7 +23,7 @@ function PublicLanguageOverviewSkeleton() {
       </section>
 
       <section className='mt-6 space-y-4'>
-        <div className='rounded-2xl border-2 border-border bg-background p-4 shadow-shadow'>
+        <div className='rounded-base border-2 border-border bg-background p-4 shadow-shadow'>
           <div className='mb-2 flex h-5 items-center'>
             <Skeleton className='h-3.5 w-32' />
           </div>

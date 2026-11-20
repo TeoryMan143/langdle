@@ -31,8 +31,8 @@ async function PublicLanguageOverview() {
     );
 
     return (
-      <div className='mt-6 rounded-2xl border-2 border-border bg-background p-8 text-center shadow-shadow'>
-        <p className='text-lg font-medium'>{t('loadError')}</p>
+      <div className='mt-6 rounded-base border-2 border-border bg-background p-8 text-center shadow-shadow'>
+        <p className='text-lg font-base'>{t('loadError')}</p>
       </div>
     );
   }
@@ -45,12 +45,12 @@ async function PublicLanguageOverview() {
         {COUNTERS.map(counter => (
           <div
             key={counter}
-            className='rounded-2xl border-2 border-border bg-background p-4 shadow-shadow'
+            className='rounded-base border-2 border-border bg-background p-4 shadow-shadow'
           >
             <p className='text-sm uppercase tracking-[0.2em] text-foreground/60'>
               {t(`summary.${counter}`)}
             </p>
-            <p className='mt-2 text-3xl font-semibold'>{summary[counter]}</p>
+            <p className='mt-2 text-3xl font-heading'>{summary[counter]}</p>
           </div>
         ))}
       </section>

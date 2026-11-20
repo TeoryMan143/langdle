@@ -10,7 +10,7 @@ import type { GuessHints as Hints } from '../types';
 const RELATION = {
   genus: { key: 'hintSameGenus', Icon: Check, tone: 'text-main' },
   family: { key: 'hintSameFamily', Icon: Ball, tone: 'text-amber-400' },
-  none: { key: 'hintOtherFamily', Icon: Xcancel, tone: 'text-[#FF2C2C]' },
+  none: { key: 'hintOtherFamily', Icon: Xcancel, tone: 'text-danger' },
 } as const;
 
 const pill =

@@ -44,12 +44,15 @@ function LanguageCard({
         : 'absent';
 
   return (
-    <article className='rounded-[1.75rem] border-2 border-border bg-background p-5 shadow-shadow'>
+    <article className='rounded-base border-2 border-border bg-background p-5 shadow-shadow'>
       <header className='flex flex-col gap-4 md:gap-10 sm:flex-row sm:items-start sm:justify-between'>
         <div className='flex items-start gap-4'>
-          <LangImage code={language.id} className='mt-1 h-8 w-11 rounded-sm' />
+          <LangImage
+            code={language.id}
+            className='mt-1 h-8 w-11 rounded-base'
+          />
           <div>
-            <h2 className='text-2xl font-semibold'>{language.name}</h2>
+            <h2 className='text-2xl font-heading'>{language.name}</h2>
             {language.exonym && (
               <p className='mt-1 text-sm text-foreground/70'>
                 {language.exonym}
@@ -67,13 +70,13 @@ function LanguageCard({
         </div>
 
         <div className='flex flex-wrap gap-2 text-sm'>
-          <span className='rounded-full border border-border bg-main px-3 py-1 font-medium text-main-foreground'>
+          <span className='rounded-full border-2 border-border bg-main px-3 py-1 font-base text-main-foreground'>
             {language.active ? t('status.active') : t('status.inactive')}
           </span>
-          <span className='rounded-full border border-border bg-secondary-background px-3 py-1 font-medium'>
+          <span className='rounded-full border-2 border-border bg-secondary-background px-3 py-1 font-base'>
             {language.features.length} {t('summary.activeFeatures')}
           </span>
-          <span className='rounded-full border border-border bg-secondary-background px-3 py-1 font-medium'>
+          <span className='rounded-full border-2 border-border bg-secondary-background px-3 py-1 font-base'>
             {language.partial.length} {t('summary.partialFeatures')}
           </span>
         </div>
@@ -83,9 +86,9 @@ function LanguageCard({
         {groupedEntries.map(([group, features]) => (
           <section
             key={group}
-            className='rounded-2xl border border-border/70 p-4'
+            className='rounded-base border-2 border-border p-4'
           >
-            <h3 className='text-base font-semibold'>{t(`groups.${group}`)}</h3>
+            <h3 className='text-base font-heading'>{t(`groups.${group}`)}</h3>
             <div className='mt-3 flex flex-wrap gap-2'>
               {statusOrder.flatMap(status =>
                 features
@@ -137,7 +140,7 @@ function FeatureChip({
               data-feature={feature}
               data-state={status}
               className={cn(
-                'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors cursor-pointer',
+                'inline-flex items-center rounded-full border-2 px-3 py-1 text-xs font-base transition-colors cursor-pointer',
                 status === 'present' &&
                   'border-emerald-600 bg-emerald-100 text-emerald-950',
                 status === 'partial' &&

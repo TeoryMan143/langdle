@@ -134,7 +134,7 @@ function ReviewActions({ kind = 'change', requestId, nickname }: Props) {
                 {...register('reason')}
               />
               {errors.reason && (
-                <p className='text-sm text-red-500'>{errors.reason.message}</p>
+                <p className='text-sm text-danger'>{errors.reason.message}</p>
               )}
             </div>
 

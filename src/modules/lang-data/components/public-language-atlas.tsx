@@ -66,9 +66,9 @@ function PublicLanguageAtlas({ initialPage, pageSize }: Props) {
         <ChangeRequestDialog handle={handles.dialog} />
         <FeatureDescriptionTooltip handle={handles.tooltip} />
 
-        <div className='rounded-2xl border-2 border-border bg-background p-4 shadow-shadow'>
+        <div className='rounded-base border-2 border-border bg-background p-4 shadow-shadow'>
           <label
-            className='mb-2 flex items-center gap-2 text-sm font-medium'
+            className='mb-2 flex items-center gap-2 text-sm font-base'
             htmlFor='public-lang-search'
           >
             {t('search.label')}
@@ -86,12 +86,12 @@ function PublicLanguageAtlas({ initialPage, pageSize }: Props) {
         </div>
 
         {isError && !data ? (
-          <div className='rounded-2xl border-2 border-border bg-background p-8 text-center shadow-shadow'>
-            <p className='text-lg font-medium'>{t('loadError')}</p>
+          <div className='rounded-base border-2 border-border bg-background p-8 text-center shadow-shadow'>
+            <p className='text-lg font-base'>{t('loadError')}</p>
           </div>
         ) : languages.length === 0 && !searching ? (
-          <div className='rounded-2xl border-2 border-border bg-background p-8 text-center shadow-shadow'>
-            <p className='text-lg font-medium'>{t('empty')}</p>
+          <div className='rounded-base border-2 border-border bg-background p-8 text-center shadow-shadow'>
+            <p className='text-lg font-base'>{t('empty')}</p>
           </div>
         ) : languages.length === 0 ? (
           // A search that starts from no results has nothing to keep on screen.

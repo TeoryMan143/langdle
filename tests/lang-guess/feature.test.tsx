@@ -15,7 +15,7 @@ const render = (match: 'correct' | 'partial' | 'incorrect') =>
 // plain div: its own classes and transform origin, and no animation state.
 test('renders the translated feature inside its animated cell', () => {
   expect(render('correct')).toContain(
-    '<div class="md:h-12 bg-[#FDFBFB] flex items-center justify-center gap-2 rounded-[3px] shadow-xl p-1 md:p-3 border border-soft-det" style="transform-origin:center bottom">',
+    '<div class="md:h-12 bg-secondary-background flex items-center justify-center gap-2 rounded-base shadow-shadow p-1 md:p-3 border-2 border-border" style="transform-origin:center bottom">',
   );
   expect(render('correct')).toContain('Tones</div>');
 });
@@ -23,7 +23,7 @@ test('renders the translated feature inside its animated cell', () => {
 test.each([
   ['correct', 'text-main'],
   ['partial', 'text-amber-400'],
-  ['incorrect', 'text-[#FF2C2C]'],
+  ['incorrect', 'text-danger'],
 ] as const)('a %s match shows its own icon', (match, colour) => {
   expect(render(match)).toContain(colour);
 });

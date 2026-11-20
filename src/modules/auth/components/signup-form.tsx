@@ -157,7 +157,7 @@ function SignUpForm() {
 }
 
 function InputError({ message }: { message?: string }) {
-  return <p className='text-red-500 text-sm'>{message}</p>;
+  return <p className='text-danger text-sm'>{message}</p>;
 }
 
 export default SignUpForm;

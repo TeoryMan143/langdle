@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/core/components/ui/select';
+import { Textarea } from '@/core/components/ui/textarea';
 import { uploadChangeRequest } from '@/modules/lang-data/actions';
 import { createChangeRequestSchema } from '../schemas/change-request';
 import type { ChangeRequestFormValues, ChangeRequestPayload } from '../types';
@@ -29,8 +30,8 @@ function ChangeRequestForm({
   onDone,
 }: ChangeRequestPayload & { onDone: () => void }) {
   const formT = useTranslations('Features.changeRequest');
-  const changeRequestSchema = createChangeRequestSchema(formT);
   const errorT = useTranslations('ChangeRequests.errors');
+  const changeRequestSchema = createChangeRequestSchema(formT);
   const {
     control,
     register,
@@ -82,7 +83,7 @@ function ChangeRequestForm({
 
       <div className='space-y-4'>
         <div className='grid gap-2'>
-          <label className='text-sm font-medium' htmlFor='status'>
+          <label className='text-sm font-heading' htmlFor='status'>
             {formT('requestedStatus')}
           </label>
           <Controller
@@ -108,23 +109,23 @@ function ChangeRequestForm({
             )}
           />
           {errors.status && (
-            <p className='text-sm text-red-500'>{errors.status.message}</p>
+            <p className='text-sm text-danger'>{errors.status.message}</p>
           )}
         </div>
 
         <div className='grid gap-2'>
-          <label className='text-sm font-medium' htmlFor='description'>
+          <label className='text-sm font-heading' htmlFor='description'>
             {formT('descriptionLabel')}
           </label>
-          <textarea
+          <Textarea
             id='description'
             rows={4}
             placeholder={formT('descriptionPlaceholder')}
-            className='flex min-h-24 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base text-foreground placeholder:text-foreground/50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2'
+            className='min-h-24'
             {...register('description')}
           />
           {errors.description && (
-            <p className='text-sm text-red-500'>{errors.description.message}</p>
+            <p className='text-sm text-danger'>{errors.description.message}</p>
           )}
         </div>
       </div>

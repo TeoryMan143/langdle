@@ -35,7 +35,7 @@ async function LangsList({ allowedLangs }: { allowedLangs?: string[] }) {
   }
 
   return (
-    <div className='bg-background rounded-2xl border border-black overflow-clip mx-10 lg:mx-0'>
+    <div className='bg-background rounded-base border-2 border-border overflow-clip mx-10 lg:mx-0'>
       {langsRes.result.map(language => (
         <LangListItem key={language.id} language={language} />
       ))}

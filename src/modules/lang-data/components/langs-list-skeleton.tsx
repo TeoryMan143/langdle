@@ -12,13 +12,13 @@ function LangsListSkeleton({ search = true }: { search?: boolean }) {
   return (
     <LoadingRegion className='flex w-full max-w-xl flex-col items-stretch gap-4 px-10 lg:px-0'>
       {search && <Skeleton className='h-10 w-full' />}
-      <div className='bg-background rounded-2xl border border-black overflow-clip'>
+      <div className='bg-background rounded-base border-2 border-border overflow-clip'>
         {Array.from({ length: ROWS }, (_, index) => (
           <LangRowSkeleton
             key={index}
             index={index}
             // `py-3` around a `text-xl` name (28px), plus the 1px border.
-            className='h-[53px] justify-center border-b border-black px-4'
+            className='h-[53px] justify-center border-b-2 border-border px-4'
           />
         ))}
       </div>

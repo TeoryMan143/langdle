@@ -11,7 +11,7 @@ function LangListItem({
   return (
     <Link
       href={`/data/${id}`}
-      className='flex gap-2 justify-center items-center py-3 border-b border-black transition-colors px-4 hover:bg-main'
+      className='flex gap-2 justify-center items-center py-3 border-b-2 border-border transition-colors px-4 hover:bg-main'
     >
       <LangImage code={id} />
       <p className='text-center text-xl'>{`${name}${exonym ? ` (${exonym})` : ''}`}</p>

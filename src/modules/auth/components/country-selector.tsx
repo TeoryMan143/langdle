@@ -4,6 +4,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
+import { Input } from '@/core/components/ui/input';
 import { COUNTRIES } from '@/core/lib/countries';
 import type { CountrySelectorProps } from '../types';
 
@@ -45,9 +46,7 @@ export default function CountrySelector({
       <div className='mt-1 relative'>
         <button
           type='button'
-          className={`${
-            disabled ? 'bg-neutral-100' : 'bg-white'
-          } relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-main focus:border-main sm:text-sm`}
+          className='relative w-full rounded-base border-2 border-border bg-secondary-background py-2 pl-3 pr-10 text-left cursor-default sm:text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 disabled:opacity-50'
           aria-haspopup='listbox'
           aria-expanded='true'
           aria-labelledby='listbox-label'
@@ -58,7 +57,7 @@ export default function CountrySelector({
             <img
               alt={`${selectedValue.value}`}
               src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${selectedValue.value}.svg`}
-              className={'inline mr-2 h-4 rounded-sm'}
+              className={'inline mr-2 h-4 rounded-base'}
             />
             {selectedValue.title}
           </span>
@@ -68,7 +67,7 @@ export default function CountrySelector({
             }`}
           >
             <svg
-              className='h-5 w-5 text-gray-400'
+              className='h-5 w-5 text-foreground/60'
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 20 20'
               fill='currentColor'
@@ -90,19 +89,19 @@ export default function CountrySelector({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.1 }}
-              className='absolute z-10 mt-1 w-full bg-white shadow-lg max-h-80 rounded-md text-base ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'
+              className='absolute z-10 mt-1 w-full max-h-80 overflow-clip rounded-base border-2 border-border bg-secondary-background shadow-shadow text-base sm:text-sm focus:outline-none'
               tabIndex={-1}
               role='listbox'
               aria-labelledby='listbox-label'
               aria-activedescendant='listbox-option-3'
             >
-              <div className='sticky top-0 z-10 bg-white'>
-                <li className=' text-gray-900 cursor-default select-none relative py-2 px-3'>
-                  <input
+              <div className='sticky top-0 z-10 bg-secondary-background'>
+                <li className=' text-foreground cursor-default select-none relative py-2 px-3'>
+                  <Input
                     type='search'
                     name='search'
                     autoComplete={'off'}
-                    className='focus:ring-main focus:border-main block w-full sm:text-sm border-gray-300 rounded-md'
+                    className='sm:text-sm'
                     placeholder={t('searchCountry')}
                     onChange={e => setQuery(e.target.value)}
                   />
@@ -128,7 +127,7 @@ export default function CountrySelector({
                     return (
                       <li
                         key={`${id}-${index}`}
-                        className='text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9 flex items-center hover:bg-gray-50 transition'
+                        className='text-foreground cursor-default select-none relative py-2 pl-3 pr-9 flex items-center hover:bg-main transition'
                         id='listbox-option-0'
                         role='option'
                         onClick={() => {
@@ -140,7 +139,7 @@ export default function CountrySelector({
                         <img
                           alt={`${value.value}`}
                           src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${value.value}.svg`}
-                          className={'inline mr-2 h-4 rounded-sm'}
+                          className={'inline mr-2 h-4 rounded-base'}
                         />
 
                         <span className='font-normal truncate'>
