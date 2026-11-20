@@ -23,40 +23,6 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 /*                                  Languages                                 */
 /* -------------------------------------------------------------------------- */
 
-export async function getAllLanguages(): Promise<ActionResult<Language[]>> {
-  const res = await apiRequest<Language[]>('/lang');
-
-  return res.success ? actionSuccess(res.result) : actionError(res.error.key);
-}
-
-/**
- * Only the languages playable today, with the localized exonym added to the
- * search params so the selector can match what the user actually reads.
- */
-export async function getAllActiveLanguages(): Promise<
-  ActionResult<Language[]>
-> {
-  const res = await apiRequest<Language[]>('/lang', {
-    searchParams: { oactive: '1' },
-  });
-
-  if (!res.success) {
-    return actionError(res.error.key);
-  }
-
-  const t = await getTranslations('Exonyms');
-
-  return actionSuccess(
-    res.result.map(lang => ({
-      ...lang,
-      // Languages added through requests have no translated exonym yet.
-      searchParams: t.has(lang.id)
-        ? [...lang.searchParams, t(lang.id)]
-        : lang.searchParams,
-    })),
-  );
-}
-
 /**
  * The names a picker searches, with the exonym translated in the current
  * locale added to each language's search params: the game shows that name, so
