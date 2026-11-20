@@ -45,7 +45,7 @@ langDataRouter.get('/random', async c => {
 /**
  * The catalogue one batch at a time: `?limit=` (1–100, default 24), the
  * `nextCursor` of the previous batch as `?cursor=`, `?active=true|false` to
- * keep the playable or the unplayable languages, `?sort=name|coverage` and
+ * keep the playable or the unplayable languages, `?sort=name|coverage|active` and
  * `?q=` to keep the languages matching it, best matches first.
  */
 langDataRouter.get('/page', async c => {

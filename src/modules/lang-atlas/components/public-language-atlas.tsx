@@ -16,7 +16,7 @@ import {
   LANG_SEARCH_DEBOUNCE_MS,
   useLangPages,
 } from '@/modules/lang-data/hooks/use-lang-pages';
-import type { LanguagePage } from '@/modules/lang-data/types';
+import type { LanguagePage, LanguagePageSort } from '@/modules/lang-data/types';
 import ChangeRequestDialog from '@/modules/lang-requests/components/change-request-dialog';
 import type { ChangeRequestPayload } from '@/modules/lang-requests/types';
 import type { LanguageCardHandles } from '../types';
@@ -32,13 +32,15 @@ type Props = {
    */
   initialPage: LanguagePage;
   pageSize: number;
+  /** The order of the batches, `initialPage`'s included. */
+  sort: LanguagePageSort;
 };
 
 /**
  * The searchable, paged list of every language. It owns the single change
  * request dialog and feature tooltip that all the cards' chips open.
  */
-function PublicLanguageAtlas({ initialPage, pageSize }: Props) {
+function PublicLanguageAtlas({ initialPage, pageSize, sort }: Props) {
   const t = useTranslations('PublicDataPage');
   const [input, setInput] = useState('');
   // One dialog and one tooltip serve every chip of every card.
@@ -55,7 +57,12 @@ function PublicLanguageAtlas({ initialPage, pageSize }: Props) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useLangPages({ limit: pageSize, query, initialPage });
+  } = useLangPages({
+    limit: pageSize,
+    sort,
+    query,
+    initialPage,
+  });
 
   const languages = data?.pages.flatMap(page => page.items) ?? [];
   const total = data?.pages[0]?.total ?? 0;

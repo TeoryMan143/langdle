@@ -222,7 +222,8 @@ their placeholders, or the OS will not verify the links.
 
 The app never loads the whole catalogue with its features. Like the web:
 
-- **The atlas pages it.** `AtlasController` reads `GET /lang/page` in batches
+- **The atlas pages it.** `AtlasController` reads `GET /lang/page?sort=active`
+  (playable languages first, as on the web) in batches
   of `LangRepository.pageSize` (24), the next one as the end of the list comes
   within reach (`ScrollNotification` or, for a batch too short to fill the
   screen, `ScrollMetricsNotification`), and its counters from

@@ -8,6 +8,9 @@ import PublicLanguageAtlas from './public-language-atlas';
 /** Cards per batch: each one renders a chip per feature. */
 const PAGE_SIZE = 24;
 
+/** The playable languages first, then the rest, each by name. */
+const SORT = 'active';
+
 const COUNTERS = [
   'languages',
   'activeLanguages',
@@ -23,7 +26,7 @@ const COUNTERS = [
 async function PublicLanguageOverview() {
   const t = await getTranslations('PublicDataPage');
   const [pageRes, summaryRes] = await Promise.all([
-    getLanguagesPage({ limit: PAGE_SIZE }),
+    getLanguagesPage({ limit: PAGE_SIZE, sort: SORT }),
     getLanguagesSummary(),
   ]);
 
@@ -62,6 +65,7 @@ async function PublicLanguageOverview() {
         <PublicLanguageAtlas
           initialPage={pageRes.result}
           pageSize={PAGE_SIZE}
+          sort={SORT}
         />
       </div>
     </>

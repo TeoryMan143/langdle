@@ -253,7 +253,8 @@ export async function getLanguageNames(
 /**
  * Where a language sits in one listing: `[rank, order, name, id]`. `rank` is
  * the search match (`0` without a query), `order` the sort's own number (`0`
- * by name, minus the coverage by coverage); name and id break the ties, so the
+ * by name, minus the coverage by coverage, `0` for a playable language and `1`
+ * for the rest by active); name and id break the ties, so the
  * order is strict, which keyset paging relies on.
  */
 type LanguageSortKey = readonly [
@@ -272,8 +273,16 @@ function compareSortKeys(a: LanguageSortKey, b: LanguageSortKey) {
 }
 
 function sortOrder(language: IndexedLanguage, sort: LanguagePageSort) {
-  // Best described first; languages never imported (no coverage) go last.
-  return sort === 'coverage' ? -(language.coverage ?? -1) : 0;
+  switch (sort) {
+    case 'coverage':
+      // Best described first; languages never imported (no coverage) go last.
+      return -(language.coverage ?? -1);
+    case 'active':
+      // The playable languages first.
+      return language.active ? 0 : 1;
+    default:
+      return 0;
+  }
 }
 
 export function encodeLanguageCursor(key: LanguageSortKey) {

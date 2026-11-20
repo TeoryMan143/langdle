@@ -38,11 +38,13 @@ class LangRepository {
   Future<List<LanguageName>> names({bool? active}) =>
       _names[active] ??= _loadNames(active);
 
-  /// One batch of the catalogue by name, after [cursor] (the previous batch's
-  /// `nextCursor`), keeping the languages that match [query] when given.
+  /// One batch of the catalogue, after [cursor] (the previous batch's
+  /// `nextCursor`), keeping the languages that match [query] when given. By
+  /// name, unless [sort] asks for `coverage` or `active` (playable first).
   Future<LanguagePage> page({
     String? cursor,
     String? query,
+    String? sort,
     int limit = pageSize,
   }) async => LanguagePage.fromJson(
     await _api.get(
@@ -50,6 +52,7 @@ class LangRepository {
       query: {
         'limit': limit,
         'cursor': ?cursor,
+        'sort': ?sort,
         if (query != null && query.trim().isNotEmpty) 'q': query.trim(),
       },
     ) as Map<String, dynamic>,

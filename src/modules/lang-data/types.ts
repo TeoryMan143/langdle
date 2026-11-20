@@ -20,7 +20,7 @@ export type LangSearchResult = {
 };
 
 /** The orders `GET /lang/page` lists the catalogue in (`?sort=`). */
-export const languagePageSorts = ['name', 'coverage'] as const;
+export const languagePageSorts = ['name', 'coverage', 'active'] as const;
 export type LanguagePageSort = (typeof languagePageSorts)[number];
 
 /** Which batch to read: the parsed `GET /lang/page` query, cursor still opaque. */
@@ -37,7 +37,7 @@ export type LanguagePageOptions = {
 export type LanguagePageParams = Partial<LanguagePageOptions>;
 
 /**
- * One batch of the catalogue, sorted by name. `nextCursor` is opaque: send it
+ * One batch of the catalogue, in the order asked for (by name by default). `nextCursor` is opaque: send it
  * back as `?cursor=` for the next batch; `null` means this was the last one.
  * `total` counts every language matching the filters, not only this page.
  */

@@ -124,6 +124,7 @@ void main() {
       expect(atlas.total, 3);
       expect(atlas.hasMore, isTrue);
       expect(fake.pages.single['limit'], '${LangRepository.pageSize}');
+      expect(fake.pages.single['sort'], 'active');
     });
 
     test('appends the next batch, once at a time', () async {

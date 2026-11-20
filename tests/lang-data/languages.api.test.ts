@@ -651,6 +651,27 @@ describe('GET /lang/page', () => {
     ]);
   });
 
+  test('lists the playable languages first with ?sort=active', async () => {
+    await seedLanguage('ainu', { active: false });
+    await seedLanguage('basque');
+    await seedLanguage('cree', { active: false });
+    await seedLanguage('dogon');
+
+    const first = await api('GET', '/lang/page', {
+      query: { sort: 'active', limit: '2' },
+    });
+    const second = await api('GET', '/lang/page', {
+      query: { sort: 'active', limit: '2', cursor: first.body.nextCursor },
+    });
+
+    expect([...ids(first.body), ...ids(second.body)]).toEqual([
+      'basque',
+      'dogon',
+      'ainu',
+      'cree',
+    ]);
+  });
+
   test('keeps the languages whose id or names contain ?q=', async () => {
     await seedLanguage('spanish', { name: 'Spanish', exonym: 'Español' });
     await seedLanguage('basque', {
