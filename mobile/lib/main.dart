@@ -11,6 +11,7 @@ import 'modules/auth/auth_controller.dart';
 import 'modules/auth/auth_repository.dart';
 import 'modules/lang_data/lang_repository.dart';
 import 'modules/lang_guess/guess_repository.dart';
+import 'modules/lang_permissions/permission_repository.dart';
 import 'modules/meta/meta_repository.dart';
 import 'modules/user_profile/profile_repository.dart';
 import 'router.dart';
@@ -67,6 +68,7 @@ class _LangdleAppState extends State<LangdleApp> {
         ChangeNotifierProvider.value(value: widget.auth),
         Provider.value(value: api),
         Provider(create: (_) => LangRepository(api)),
+        Provider(create: (_) => PermissionRepository(api)),
         Provider(create: (_) => GuessRepository(api)),
         Provider(create: (_) => MetaRepository(api)),
         Provider(create: (_) => ProfileRepository(api)),

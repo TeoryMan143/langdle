@@ -1,6 +1,6 @@
 import { Skeleton } from '@/core/components/ui/skeleton';
-import MyRequestsSkeleton from '@/modules/lang-data/components/my-requests-skeleton';
 import GameHistorySkeleton from '@/modules/lang-guess/components/game-history-skeleton';
+import MyRequestsSkeleton from '@/modules/lang-requests/components/my-requests-skeleton';
 import AccountDataSkeleton from '@/modules/user-profile/components/account-data-skeleton';
 
 export default function AccountLoading() {

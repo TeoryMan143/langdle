@@ -261,6 +261,17 @@ describe('PUT /lang/:id', () => {
     expect(await getStoredLanguage('spanish')).toEqual(newData);
   });
 
+  test('answers the language it stored', async () => {
+    await seedLanguage('spanish');
+    const { token } = await createTestAdmin();
+
+    const res = await api('PUT', '/lang/spanish', { token, body: newData });
+    const read = await api('GET', '/lang/spanish');
+
+    expect(res.status).toBe(200);
+    expect(res.body.language).toEqual(read.body);
+  });
+
   test('keeps the stored place, family and coverage a body leaves out', async () => {
     const managed = {
       locations: [{ lat: 40, lng: -4 }],
@@ -636,6 +647,27 @@ describe('GET /lang/page', () => {
       'basque',
       'ainu',
       'dogon',
+      'cree',
+    ]);
+  });
+
+  test('lists the playable languages first with ?sort=active', async () => {
+    await seedLanguage('ainu', { active: false });
+    await seedLanguage('basque');
+    await seedLanguage('cree', { active: false });
+    await seedLanguage('dogon');
+
+    const first = await api('GET', '/lang/page', {
+      query: { sort: 'active', limit: '2' },
+    });
+    const second = await api('GET', '/lang/page', {
+      query: { sort: 'active', limit: '2', cursor: first.body.nextCursor },
+    });
+
+    expect([...ids(first.body), ...ids(second.body)]).toEqual([
+      'basque',
+      'dogon',
+      'ainu',
       'cree',
     ]);
   });

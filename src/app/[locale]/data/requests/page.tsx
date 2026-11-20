@@ -4,9 +4,9 @@ import { Suspense } from 'react';
 import { dongle } from '@/core/lib/fonts';
 import { withNext } from '@/core/lib/redirect';
 import { auth } from '@/modules/auth/actions';
-import ReviewChangeRequests from '@/modules/lang-data/components/review-change-requests';
-import ReviewLanguageRequests from '@/modules/lang-data/components/review-language-requests';
-import ReviewRequestsSkeleton from '@/modules/lang-data/components/review-requests-skeleton';
+import ReviewChangeRequests from '@/modules/lang-requests/components/review-change-requests';
+import ReviewLanguageRequests from '@/modules/lang-requests/components/review-language-requests';
+import ReviewRequestsSkeleton from '@/modules/lang-requests/components/review-requests-skeleton';
 
 async function ChangeRequestsPage() {
   const { session, user } = await auth();

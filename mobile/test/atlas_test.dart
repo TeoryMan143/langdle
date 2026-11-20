@@ -7,10 +7,10 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:langdle_app/core/api/api_client.dart';
 import 'package:langdle_app/core/i18n/translations.dart';
-import 'package:langdle_app/modules/lang_data/atlas_controller.dart';
+import 'package:langdle_app/modules/lang_atlas/atlas_controller.dart';
 import 'package:langdle_app/modules/lang_data/lang_models.dart';
 import 'package:langdle_app/modules/lang_data/lang_repository.dart';
-import 'package:langdle_app/modules/lang_data/screens/atlas_screen.dart';
+import 'package:langdle_app/modules/lang_atlas/screens/atlas_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -124,6 +124,7 @@ void main() {
       expect(atlas.total, 3);
       expect(atlas.hasMore, isTrue);
       expect(fake.pages.single['limit'], '${LangRepository.pageSize}');
+      expect(fake.pages.single['sort'], 'active');
     });
 
     test('appends the next batch, once at a time', () async {

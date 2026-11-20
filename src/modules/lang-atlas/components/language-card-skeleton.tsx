@@ -14,10 +14,10 @@ const chipWidth = (feature: string) => `${24 + feature.length * 5.9}px`;
  */
 function LanguageCardSkeleton() {
   return (
-    <article className='rounded-[1.75rem] border-2 border-border bg-background p-5 shadow-shadow'>
+    <article className='rounded-base border-2 border-border bg-background p-5 shadow-shadow'>
       <header className='flex flex-col gap-4 md:gap-10 sm:flex-row sm:items-start sm:justify-between'>
         <div className='flex items-start gap-4'>
-          <Skeleton className='mt-1 h-8 w-11 shrink-0 rounded-sm' />
+          <Skeleton className='mt-1 h-8 w-11 shrink-0 rounded-base' />
           <div>
             <div className='flex h-8 items-center'>
               <Skeleton className='h-6 w-40' />
@@ -38,7 +38,7 @@ function LanguageCardSkeleton() {
         {Object.entries(groupedLangFeatures).map(([group, features]) => (
           <section
             key={group}
-            className='rounded-2xl border border-border/70 p-4'
+            className='rounded-base border-2 border-border p-4'
           >
             <div className='flex h-6 items-center'>
               <Skeleton className='h-4 w-28' />

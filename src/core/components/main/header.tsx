@@ -54,7 +54,7 @@ function Header() {
   const t = useTranslations('Nav');
 
   return (
-    <header className='bg-main relative border-b-2 border-black'>
+    <header className='bg-main relative border-b-2 border-border'>
       <LocaleSelector className='absolute top-1/2 -translate-y-1/2 left-3 z-20 w-50 truncate hidden md:inline-flex' />
       <h1
         className={`${dongle.className} text-left ml-3 text-6xl lg:text-8xl lg:ml-0 text-white md:text-center relative top-1 md:top-2 overflow-clip`}

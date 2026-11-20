@@ -20,7 +20,7 @@ function QueryRes({ onSelect }: Props) {
   } = useGame();
 
   return (
-    <ul className='hidden absolute top-[calc(100%+0.3rem)] w-full rounded-lg h-40 overflow-y-scroll bg-white z-10 border-2 group-focus-within/langs:block'>
+    <ul className='hidden absolute top-[calc(100%+0.3rem)] w-full rounded-base h-40 overflow-y-scroll bg-white z-10 border-2 group-focus-within/langs:block'>
       {!error && langs?.length === 0 && (
         <li className='h-full grid place-content-center'>
           {t('langNotFound')}

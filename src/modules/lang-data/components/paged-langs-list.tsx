@@ -60,7 +60,7 @@ function PagedLangsList({ initialPage, pageSize }: Props) {
         <div
           aria-busy={searching}
           className={cn(
-            'bg-background rounded-2xl border border-black overflow-clip transition-opacity',
+            'bg-background rounded-base border-2 border-border overflow-clip transition-opacity',
             searching && 'opacity-60',
           )}
         >
@@ -69,17 +69,17 @@ function PagedLangsList({ initialPage, pageSize }: Props) {
           ))}
         </div>
       ) : searching ? (
-        <LoadingRegion className='bg-background rounded-2xl border border-black overflow-clip'>
+        <LoadingRegion className='bg-background rounded-base border-2 border-border overflow-clip'>
           {[0, 1, 2].map(index => (
             <LangRowSkeleton
               key={index}
               index={index}
-              className='h-[53px] justify-center border-b border-black px-4'
+              className='h-[53px] justify-center border-b-2 border-border px-4'
             />
           ))}
         </LoadingRegion>
       ) : (
-        <p className='rounded-2xl border border-black bg-background p-6 text-center'>
+        <p className='rounded-base border-2 border-border bg-background p-6 text-center'>
           {t('noMatches')}
         </p>
       )}

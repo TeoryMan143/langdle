@@ -10,14 +10,14 @@ import '../../../core/ui/neo_button.dart';
 import '../../../core/ui/neo_dialog.dart';
 import '../game_controller.dart';
 import '../guess_models.dart';
-import 'daily_timer.dart';
-import 'guess_search.dart';
-import 'guesses_list.dart';
+import '../widgets/daily_timer.dart';
+import '../widgets/guess_search.dart';
+import '../widgets/guesses_list.dart';
 
 /// A whole game screen, daily or random, driven by the [GameController]
 /// above it.
-class GameView extends StatelessWidget {
-  const GameView({super.key});
+class GameScreen extends StatelessWidget {
+  const GameScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

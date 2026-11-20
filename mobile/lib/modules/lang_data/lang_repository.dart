@@ -38,11 +38,13 @@ class LangRepository {
   Future<List<LanguageName>> names({bool? active}) =>
       _names[active] ??= _loadNames(active);
 
-  /// One batch of the catalogue by name, after [cursor] (the previous batch's
-  /// `nextCursor`), keeping the languages that match [query] when given.
+  /// One batch of the catalogue, after [cursor] (the previous batch's
+  /// `nextCursor`), keeping the languages that match [query] when given. By
+  /// name, unless [sort] asks for `coverage` or `active` (playable first).
   Future<LanguagePage> page({
     String? cursor,
     String? query,
+    String? sort,
     int limit = pageSize,
   }) async => LanguagePage.fromJson(
     await _api.get(
@@ -50,6 +52,7 @@ class LangRepository {
       query: {
         'limit': limit,
         'cursor': ?cursor,
+        'sort': ?sort,
         if (query != null && query.trim().isNotEmpty) 'q': query.trim(),
       },
     ) as Map<String, dynamic>,
@@ -90,16 +93,6 @@ class LangRepository {
         if (item is Map<String, dynamic> && item['name'] is String)
           Language.fromJson(item),
     ];
-  }
-
-  /// Claims the edit permission an administrator shared as a link
-  /// (`/addpermission?token=`). Answers the id of the language it grants.
-  Future<String> claimPermission(String token) async {
-    final json = await _api.put(
-      '/lang/permissions/claim/${Uri.encodeComponent(token)}',
-    ) as Map<String, dynamic>;
-
-    return json['lang'] as String;
   }
 
   Future<FeatureCatalogue> catalogue() => _catalogue ??= _loadCatalogue();

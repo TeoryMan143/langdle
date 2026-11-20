@@ -16,7 +16,8 @@
     "signUp": "Registrarse",
     "data": "Datos",
     "home": "Inicio",
-    "loading": "Cargando"
+    "loading": "Cargando",
+    "selectLanguage": "Selecciona un idioma"
   },
   "Footer": {
     "madeBy": "Hecho por",
@@ -130,7 +131,9 @@
       "descriptionRequired": "La descripción es obligatoria",
       "cancel": "Cancelar",
       "submit": "Enviar solicitud",
-      "submitting": "Enviando..."
+      "submitting": "Enviando...",
+      "sameStatus": "Elige un estado diferente",
+      "sent": "Solicitud de cambio enviada"
     },
     "description": {
       "nasalization": "Rasgo fonético donde parte del aire del sonido pasa por la nariz",
@@ -326,6 +329,7 @@
     "confirmPassword": "Confirmar contraseña",
     "country": "País",
     "searchCountry": "Busca un país",
+    "noCountries": "No se encontraron países",
     "noAccount": "¿No tienes una cuenta?",
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
     "createAccount": "Crear cuenta",
@@ -382,7 +386,8 @@
     "requestLanguage": "Solicitar un idioma",
     "showMore": "Mostrar más",
     "searchPlaceholder": "Escribe un nombre o código de idioma",
-    "noMatches": "No hay idiomas que coincidan con tu búsqueda."
+    "noMatches": "No hay idiomas que coincidan con tu búsqueda.",
+    "noLanguages": "No hay idiomas"
   },
   "PublicDataPage": {
     "eyebrow": "Atlas público",
@@ -442,6 +447,7 @@
     "noAdmin": "Necesitas ser administrador",
     "notActive": "El parámetro 'active' debe estar presente",
     "success": "Datos del idioma actualizados exitosamente",
+    "save": "Guardar",
     "phonology": "Fonología",
     "wordOrder": "Orden de palabra",
     "writingSystem": "Sistema de estritura",
@@ -608,6 +614,8 @@
     "dailyLang": "Idioma del día",
     "nextLang": "Próximo idioma en",
     "attLeft": "Intentos restantes",
+    "noAttemptsLeft": "No te quedan intentos",
+    "alreadyGuessed": "Ya lo adivinaste",
     "lang": "Idioma",
     "features": "Características",
     "firstGuess": "¡Haz tu primer intento!",

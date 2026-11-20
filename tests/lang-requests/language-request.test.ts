@@ -9,7 +9,7 @@ import {
   createLanguageRequestSchema,
   languageRequestBodySchema,
   languageRequestSchema,
-} from '@/modules/lang-data/schemas/language-request';
+} from '@/modules/lang-requests/schemas/language-request';
 
 const request = {
   code: 'eu',

@@ -25,7 +25,7 @@ function Feature({ id, match }: Props) {
     <FeatureTooltip feature={id}>
       <motion.div
         variants={featureVariants}
-        className='md:h-12 bg-[#FDFBFB] flex items-center justify-center gap-2 rounded-[3px] shadow-xl p-1 md:p-3 border border-soft-det'
+        className='md:h-12 bg-secondary-background flex items-center justify-center gap-2 rounded-base shadow-shadow p-1 md:p-3 border-2 border-border'
         style={{
           transformOrigin: 'center bottom',
         }}
@@ -36,7 +36,7 @@ function Feature({ id, match }: Props) {
           ) : match === 'partial' ? (
             <Ball className='text-amber-400 ' />
           ) : (
-            match === 'incorrect' && <Xcancel className='text-[#FF2C2C]' />
+            match === 'incorrect' && <Xcancel className='text-danger' />
           )}
         </span>
         {t(id)}

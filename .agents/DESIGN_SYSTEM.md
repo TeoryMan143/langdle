@@ -44,9 +44,9 @@ The theme is defined in `src/app/[locale]/globals.css` (`:root`, `.dark` and
 | Concern | Use | Don't use |
 | --- | --- | --- |
 | Surfaces | `bg-background` (page), `bg-secondary-background` (cards, inputs), `bg-main` (accent / primary), `bg-overlay` (behind modals) | `bg-gray-*`, arbitrary hex/oklch |
-| Text | `text-foreground`, `text-main-foreground` on `bg-main`, `text-soft-det` for muted eyebrows | `text-gray-*` |
+| Text | `text-foreground` (`text-foreground/70` for secondary text), `text-main-foreground` on `bg-main`, `text-soft-det` for muted eyebrows, `text-danger` for errors (field messages, failed states) | `text-gray-*`, `text-red-*` |
 | Borders | `border-2 border-border` (always 2px, always the border token) | `border` (1px), `border-black`, coloured borders for structure |
-| Radius | `rounded-base` | `rounded-md/lg/xl` |
+| Radius | `rounded-base`; `rounded-full` only for pills (feature chips, badges, round icon holders), like the app's `NeoPill` | `rounded-sm/md/lg/xl/2xl/3xl/4xl`, arbitrary `rounded-[…]` |
 | Shadow | `shadow-shadow` (hard 4px offset, no blur) | `shadow-sm/md/lg`, blurred shadows |
 | Weight | `font-base` (500) for body, `font-heading` (700) for titles and labels | `font-medium`, `font-semibold` |
 | Focus | `focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2` | removing focus styles |
@@ -60,7 +60,9 @@ matches) are the one allowed exception to the palette; they still sit inside
 The Flutter app restates these tokens in `mobile/lib/core/theme/tokens.dart`
 (`NeoColors`, `Neo`, `NeoText`), converted from oklch to hex. Changing a colour,
 the border width, the radius or the shadow in `globals.css` means changing
-`tokens.dart` in the same change, or the two clients drift apart. The app's
+`tokens.dart` in the same change, or the two clients drift apart. `--danger`
+is the game's "incorrect" red, `NeoColors.incorrect` in the app, which already
+uses it for form errors. The app's
 widget kit and its rules are in [`MOBILE.md`](./MOBILE.md).
 
 ### Interaction pattern
@@ -96,6 +98,17 @@ scale, glow or colour-fade hover effects to pressable elements.
 - **Other renames:** `TooltipProvider` takes `delay`; `Drawer` takes
   `swipeDirection` (`'right'`, `'down'`, …); `DialogContent` takes
   `showCloseButton`; change handlers receive an `eventDetails` second argument.
+- **A long list shares its popups.** When every item of a list would open the
+  same kind of popup (a dialog, tooltip or popover per chip), render **one**
+  root for the whole list and make the items detached triggers. Create the
+  handle once in the list (`useState(() => Dialog.createHandle<Payload>())`),
+  pass it to the root and to every `DialogTrigger handle={…} payload={…}`, and
+  read the item in the root's render-prop children (`{({ payload }) => …}`).
+  Key the popup body by the payload so each item gets fresh state, and load a
+  heavy body (a form) with `next/dynamic`. A detached `TooltipTrigger` reads its
+  delay from the nearest `TooltipProvider`, so that provider wraps the list,
+  not only the tooltip. The public atlas does all of this
+  (`public-language-atlas.tsx`, `language-card.tsx`).
 - Portals need the app root to be isolated: the `[locale]` layout wraps the app
   in an `isolate` div inside a `relative` body. Keep it that way.
 
@@ -105,24 +118,24 @@ Components available from neobrutalism.dev (docs at
 `https://www.neobrutalism.dev/docs/<name>`). **Bold** ones are already in
 `core/components/ui`.
 
-accordion, alert, alert-dialog, attachment, avatar, badge, breadcrumb,
-bubble, **button**, button-group, calendar, card, carousel, chart,
+accordion, alert, alert-dialog, attachment, avatar, **badge**, breadcrumb,
+bubble, **button**, button-group, calendar, **card**, carousel, chart,
 **checkbox**, collapsible, combobox, **command**, context-menu, data-table,
 date-picker, **dialog**, **drawer**, dropdown-menu, empty, field, form,
 hover-card, image-card, **input**, input-group, input-otp, item, kbd,
 **label**, marker, marquee, menubar, message, message-scroller,
 native-select, navigation-menu, pagination, **popover**, progress,
 questionnaire, radio-group, resizable, scroll-area, **select**, sheet,
-sidebar, skeleton, slider, spinner, stars, **switch**, **table**, tabs,
-textarea, toast, toggle, toggle-group, **tooltip**.
+sidebar, **skeleton**, slider, spinner, stars, **switch**, **table**, tabs,
+**textarea**, toast, toggle, toggle-group, **tooltip**.
 
 Toasts use `sonner` directly (`<Toaster />` in the layout, `toast.*` in
 forms), as the `toast` docs page does.
 
-## Existing drift
+## Keeping it enforced
 
-Some older app components predate these rules (e.g. `rounded-xl` and
-`text-gray-700` in the options sidebar, a hand-styled `<textarea>` in the
-change request dialog that the `textarea` component would replace). Do not
-copy them. When you touch one of those files, bring the part you touch in line
-with this document.
+`tests/core/rules.test.ts` fails on any "Don't use" utility of the token table
+in `src/**/*.tsx`, outside `core/components/ui` (the kit) and the email
+templates (they restyle the tokens inline). The semantic status colours and
+`rounded-full` pills are allowed. A rule change here updates that test in the
+same change.

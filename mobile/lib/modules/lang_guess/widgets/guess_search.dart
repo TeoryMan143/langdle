@@ -189,28 +189,58 @@ class _Results extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final language = results[index];
 
-                  return Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      splashColor: NeoColors.main,
-                      highlightColor: NeoColors.main,
-                      onTap: () => onSelect(language),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            LangFlag(language.id),
-                            const SizedBox(width: 8),
-                            Flexible(child: Text(language.label(context))),
-                          ],
-                        ),
-                      ),
+                  return _ResultRow(
+                    onTap: () => onSelect(language),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        LangFlag(language.id),
+                        const SizedBox(width: 8),
+                        Flexible(child: Text(language.label(context))),
+                      ],
                     ),
                   );
                 },
               ),
             ),
+    );
+  }
+}
+
+/// A result of the list. It fills with the accent while pressed, like a
+/// highlighted item of the web's command list, instead of a Material ripple.
+class _ResultRow extends StatefulWidget {
+  const _ResultRow({required this.onTap, required this.child});
+
+  final VoidCallback onTap;
+  final Widget child;
+
+  @override
+  State<_ResultRow> createState() => _ResultRowState();
+}
+
+class _ResultRowState extends State<_ResultRow> {
+  bool _pressed = false;
+
+  void _setPressed(bool pressed) {
+    if (_pressed != pressed) setState(() => _pressed = pressed);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapDown: (_) => _setPressed(true),
+      onTapUp: (_) => _setPressed(false),
+      onTapCancel: () => _setPressed(false),
+      onTap: widget.onTap,
+      child: ColoredBox(
+        color: _pressed ? NeoColors.main : Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: widget.child,
+        ),
+      ),
     );
   }
 }

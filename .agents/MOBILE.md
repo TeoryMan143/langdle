@@ -48,8 +48,9 @@ mobile/
       search/        the language search ranking, ported from the web, and
                      its generated accent table (search_fold.g.dart)
     modules/<name>/  one feature, named after the web module in snake_case
-                     (auth, user_profile, lang_guess, lang_data, meta,
-                     how_to_play)
+                     (auth, user_profile, lang_guess, lang_data,
+                     lang_permissions, lang_atlas, meta, how_to_play;
+                     lang_requests has no screens yet)
   assets/i18n, assets/flags   generated: copied from the web, never edited here
   tool/sync_shared.dart       the script that copies them
   tool/build_search_fold.mjs  generates core/search/search_fold.g.dart (Node)
@@ -221,7 +222,8 @@ their placeholders, or the OS will not verify the links.
 
 The app never loads the whole catalogue with its features. Like the web:
 
-- **The atlas pages it.** `AtlasController` reads `GET /lang/page` in batches
+- **The atlas pages it.** `AtlasController` reads `GET /lang/page?sort=active`
+  (playable languages first, as on the web) in batches
   of `LangRepository.pageSize` (24), the next one as the end of the list comes
   within reach (`ScrollNotification` or, for a batch too short to fill the
   screen, `ScrollMetricsNotification`), and its counters from

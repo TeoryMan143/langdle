@@ -17,6 +17,7 @@ import {
 function LocaleSelector({ className }: { className?: ClassValue }) {
   const locale = useLocale();
   const ex = useTranslations('Exonyms');
+  const nav = useTranslations('Nav');
   const router = useRouter();
   const pathname = usePathname();
 
@@ -36,7 +37,7 @@ function LocaleSelector({ className }: { className?: ClassValue }) {
   return (
     <Select items={items} onValueChange={handleSelect} defaultValue={locale}>
       <SelectTrigger className={cn('w-62.5', className)}>
-        <Language /> <SelectValue placeholder='Select a language' />
+        <Language /> <SelectValue placeholder={nav('selectLanguage')} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>

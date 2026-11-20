@@ -16,7 +16,8 @@
     "signUp": "Registrar-se",
     "data": "Dados",
     "home": "Início",
-    "loading": "Carregando"
+    "loading": "Carregando",
+    "selectLanguage": "Selecione um idioma"
   },
   "Footer": {
     "madeBy": "Feito por",
@@ -130,7 +131,9 @@
       "descriptionRequired": "A descrição é obrigatória",
       "cancel": "Cancelar",
       "submit": "Enviar solicitação",
-      "submitting": "Enviando..."
+      "submitting": "Enviando...",
+      "sameStatus": "Escolha um status diferente",
+      "sent": "Pedido de alteração enviado"
     },
     "description": {
       "nasalization": "Traço fonético no qual parte do fluxo de ar é redirecionado pelo nariz durante a articulação",
@@ -326,6 +329,7 @@
     "confirmPassword": "Confirmar senha",
     "country": "País",
     "searchCountry": "Pesquise um país",
+    "noCountries": "Nenhum país encontrado",
     "noAccount": "Não tem uma conta?",
     "alreadyHaveAccount": "Já tem uma conta?",
     "createAccount": "Criar conta",
@@ -382,7 +386,8 @@
     "requestLanguage": "Solicitar um idioma",
     "showMore": "Mostrar mais",
     "searchPlaceholder": "Digite o nome ou o código de um idioma",
-    "noMatches": "Nenhum idioma corresponde à sua busca no momento."
+    "noMatches": "Nenhum idioma corresponde à sua busca no momento.",
+    "noLanguages": "Nenhum idioma"
   },
   "PublicDataPage": {
     "eyebrow": "Atlas público",
@@ -442,6 +447,7 @@
     "noAdmin": "Você não é administrador",
     "notActive": "O parâmetro 'active' deve estar presente",
     "success": "Dados do idioma atualizados com sucesso",
+    "save": "Salvar",
     "phonology": "Fonologia",
     "wordOrder": "Ordem de palavra",
     "writingSystem": "Sistema de estrita",
@@ -608,6 +614,8 @@
     "dailyLang": "Idioma do dia",
     "nextLang": "Próximo idioma em",
     "attLeft": "Tentativas restantes",
+    "noAttemptsLeft": "Você não tem mais tentativas",
+    "alreadyGuessed": "Você já acertou",
     "lang": "Idioma",
     "features": "Características",
     "firstGuess": "Faça sua primeira tentativa!",

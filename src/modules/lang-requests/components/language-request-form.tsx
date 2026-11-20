@@ -11,20 +11,20 @@ import { Label } from '@/core/components/ui/label';
 import { Textarea } from '@/core/components/ui/textarea';
 import { FLAG_MAX_BYTES, FLAG_TYPES } from '@/core/lib/flags-config';
 import { useRouter } from '@/i18n/navigation';
+import FeatureStatusPicker, {
+  fromFeatureStates,
+  toFeatureStates,
+} from '@/modules/lang-data/components/feature-status-picker';
+import type { FeatureStates } from '@/modules/lang-data/types';
 import { uploadLanguageRequest } from '../actions';
 import { createLanguageRequestSchema } from '../schemas/language-request';
 import type {
   LanguageRequestFormValues,
   LanguageRequestValues,
 } from '../types';
-import FeatureStatusPicker, {
-  type FeatureStates,
-  fromFeatureStates,
-  toFeatureStates,
-} from './feature-status-picker';
 
 function FieldError({ message }: { message?: string }) {
-  return message ? <p className='text-sm text-red-500'>{message}</p> : null;
+  return message ? <p className='text-sm text-danger'>{message}</p> : null;
 }
 
 function LanguageRequestForm() {

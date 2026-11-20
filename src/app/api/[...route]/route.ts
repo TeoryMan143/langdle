@@ -3,6 +3,13 @@ import { handle } from 'hono/vercel';
 import authRouter from '@/modules/auth/controller';
 import langDataRouter from '@/modules/lang-data/controller';
 import langGuessRouter from '@/modules/lang-guess/controller';
+import langPermissionsRouter, {
+  langPermissionsJobsRouter,
+} from '@/modules/lang-permissions/controller';
+import {
+  changeRequestsRouter,
+  languageRequestsRouter,
+} from '@/modules/lang-requests/controller';
 import metaRouter from '@/modules/meta/controller';
 import userProfileRouter from '@/modules/user-profile/controller';
 
@@ -13,6 +20,11 @@ import userProfileRouter from '@/modules/user-profile/controller';
 const api = new Hono().basePath('/api');
 
 api.route('/auth', authRouter);
+// The modules under `/lang` go before it: its `/:id` would answer their paths.
+api.route('/lang/permissions', langPermissionsRouter);
+api.route('/lang/jobs', langPermissionsJobsRouter);
+api.route('/lang/change-requests', changeRequestsRouter);
+api.route('/lang/language-requests', languageRequestsRouter);
 api.route('/lang', langDataRouter);
 api.route('/guess', langGuessRouter);
 api.route('/user', userProfileRouter);

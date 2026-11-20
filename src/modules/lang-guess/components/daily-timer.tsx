@@ -31,7 +31,7 @@ function DailyTimer() {
   }, []);
 
   return (
-    <p className='text-sm text-gray-500'>
+    <p className='text-sm text-foreground/60'>
       {t('nextLang')}:{' '}
       <span className='font-mono tabular-nums'>
         {remaining === null ? '--:--:--' : formatTime(remaining)}

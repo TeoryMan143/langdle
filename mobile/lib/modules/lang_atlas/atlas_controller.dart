@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../../core/models/language.dart';
-import 'lang_models.dart';
-import 'lang_repository.dart';
+import '../lang_data/lang_models.dart';
+import '../lang_data/lang_repository.dart';
 
 /// The public atlas (the web `PublicLanguageAtlas` with `useLangPages`): the
 /// counters, the feature catalogue and the languages, read batch by batch as
@@ -16,6 +16,9 @@ class AtlasController extends ChangeNotifier {
 
   /// Wait for a pause in the typing before asking the API, as on the web.
   static const searchDebounce = Duration(milliseconds: 300);
+
+  /// The playable languages first, then the rest, each by name, as on the web.
+  static const sort = 'active';
 
   final LangRepository _langs;
 
@@ -73,7 +76,7 @@ class AtlasController extends ChangeNotifier {
     try {
       final summary = _langs.summary();
       final catalogue = _langs.catalogue();
-      final page = _langs.page(query: _query);
+      final page = _langs.page(query: _query, sort: sort);
       // Surfaces the first failure as is, without leaving the others unhandled.
       await Future.wait([summary, catalogue, page]);
 
@@ -117,7 +120,7 @@ class AtlasController extends ChangeNotifier {
     _notify();
 
     try {
-      final page = await _langs.page(query: _query);
+      final page = await _langs.page(query: _query, sort: sort);
       if (generation != _generation) return;
       _show(page);
     } catch (e) {
@@ -143,7 +146,11 @@ class AtlasController extends ChangeNotifier {
     _notify();
 
     try {
-      final page = await _langs.page(query: _query, cursor: cursor);
+      final page = await _langs.page(
+        query: _query,
+        sort: sort,
+        cursor: cursor,
+      );
 
       if (generation == _generation) {
         _languages = [..._languages, ...page.items];

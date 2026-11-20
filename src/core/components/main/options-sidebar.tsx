@@ -78,10 +78,10 @@ function SidebarLink({
   children: React.ReactNode;
 }) {
   return (
-    <li className='relative rounded-xl overflow-clip'>
+    <li className='relative rounded-base overflow-clip'>
       <Link
         href={href}
-        className='text-lg text-gray-700 hover:text-black group bg-none transition-colors'
+        className='text-lg text-foreground/70 hover:text-black group bg-none transition-colors'
       >
         <div className='absolute h-[150%] bg-main w-full scale-x-0 group-hover:scale-x-100 transition-transform' />
         <div className='z-40 relative flex gap-2 items-center justify-center py-2'>

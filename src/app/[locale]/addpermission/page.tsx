@@ -5,7 +5,8 @@ import { withNext } from '@/core/lib/redirect';
 import { NO_INDEX } from '@/core/lib/seo';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/modules/auth/actions';
-import { getLanguage, setLangPermission } from '@/modules/lang-data/actions';
+import { getLanguage } from '@/modules/lang-data/actions';
+import { setLangPermission } from '@/modules/lang-permissions/actions';
 
 type Props = {
   searchParams: Promise<{ token?: string }>;

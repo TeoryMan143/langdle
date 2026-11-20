@@ -3,7 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { dongle } from '@/core/lib/fonts';
 import { withNext } from '@/core/lib/redirect';
 import { auth } from '@/modules/auth/actions';
-import LanguageRequestForm from '@/modules/lang-data/components/language-request-form';
+import LanguageRequestForm from '@/modules/lang-requests/components/language-request-form';
 
 async function RequestLanguagePage() {
   const { session } = await auth();

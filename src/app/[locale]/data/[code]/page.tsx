@@ -1,11 +1,12 @@
 import { notFound, RedirectType, redirect } from 'next/navigation';
 import { withNext } from '@/core/lib/redirect';
 import { auth } from '@/modules/auth/actions';
-import { getLangPermissions, getLanguage } from '@/modules/lang-data/actions';
+import { getLanguage } from '@/modules/lang-data/actions';
 import LangFeaturesForm from '@/modules/lang-data/components/lang-features';
 import LangImage from '@/modules/lang-data/components/lang-image';
-import SharePermissionButton from '@/modules/lang-data/components/share-permission-button';
 import StatusSwitch from '@/modules/lang-data/components/status-switch';
+import { getLangPermissions } from '@/modules/lang-permissions/actions';
+import SharePermissionButton from '@/modules/lang-permissions/components/share-permission-button';
 
 type Props = {
   params: Promise<{ code: string }>;

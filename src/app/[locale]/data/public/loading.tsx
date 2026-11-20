@@ -1,6 +1,6 @@
 import { Skeleton } from '@/core/components/ui/skeleton';
 import { cn } from '@/core/lib/utils';
-import PublicLanguageOverviewSkeleton from '@/modules/lang-data/components/public-language-overview-skeleton';
+import PublicLanguageOverviewSkeleton from '@/modules/lang-atlas/components/public-language-overview-skeleton';
 
 /** The title wraps to three lines on a phone, one from sm. */
 const TITLE_LINES = [
@@ -20,7 +20,7 @@ const INTRO_LINES = [
 export default function PublicDataLoading() {
   return (
     <main className='mx-auto max-w-6xl px-4 py-6'>
-      <section className='rounded-4xl border-2 border-border bg-background px-6 py-8 shadow-shadow sm:px-8'>
+      <section className='rounded-base border-2 border-border bg-background px-6 py-8 shadow-shadow sm:px-8'>
         <div className='space-y-4'>
           <div className='flex h-5 items-center'>
             <Skeleton className='h-3.5 w-36' />

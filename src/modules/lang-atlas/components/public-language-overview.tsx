@@ -1,9 +1,15 @@
 import { getTranslations } from 'next-intl/server';
-import { getLanguagesPage, getLanguagesSummary } from '../actions';
+import {
+  getLanguagesPage,
+  getLanguagesSummary,
+} from '@/modules/lang-data/actions';
 import PublicLanguageAtlas from './public-language-atlas';
 
-/** Cards per batch: each one is heavy (a dialog per feature). */
+/** Cards per batch: each one renders a chip per feature. */
 const PAGE_SIZE = 24;
+
+/** The playable languages first, then the rest, each by name. */
+const SORT = 'active';
 
 const COUNTERS = [
   'languages',
@@ -20,7 +26,7 @@ const COUNTERS = [
 async function PublicLanguageOverview() {
   const t = await getTranslations('PublicDataPage');
   const [pageRes, summaryRes] = await Promise.all([
-    getLanguagesPage({ limit: PAGE_SIZE }),
+    getLanguagesPage({ limit: PAGE_SIZE, sort: SORT }),
     getLanguagesSummary(),
   ]);
 
@@ -31,8 +37,8 @@ async function PublicLanguageOverview() {
     );
 
     return (
-      <div className='mt-6 rounded-2xl border-2 border-border bg-background p-8 text-center shadow-shadow'>
-        <p className='text-lg font-medium'>{t('loadError')}</p>
+      <div className='mt-6 rounded-base border-2 border-border bg-background p-8 text-center shadow-shadow'>
+        <p className='text-lg font-base'>{t('loadError')}</p>
       </div>
     );
   }
@@ -45,12 +51,12 @@ async function PublicLanguageOverview() {
         {COUNTERS.map(counter => (
           <div
             key={counter}
-            className='rounded-2xl border-2 border-border bg-background p-4 shadow-shadow'
+            className='rounded-base border-2 border-border bg-background p-4 shadow-shadow'
           >
             <p className='text-sm uppercase tracking-[0.2em] text-foreground/60'>
               {t(`summary.${counter}`)}
             </p>
-            <p className='mt-2 text-3xl font-semibold'>{summary[counter]}</p>
+            <p className='mt-2 text-3xl font-heading'>{summary[counter]}</p>
           </div>
         ))}
       </section>
@@ -59,6 +65,7 @@ async function PublicLanguageOverview() {
         <PublicLanguageAtlas
           initialPage={pageRes.result}
           pageSize={PAGE_SIZE}
+          sort={SORT}
         />
       </div>
     </>

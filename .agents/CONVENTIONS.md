@@ -6,7 +6,7 @@ Rules about *how* code is written here. The layout rules are in
 ## Naming
 
 - Files and folders: `kebab-case` (`change-request-dialog.tsx`,
-  `use-lang.ts`). Hooks are named `use-<thing>`.
+  `use-lang-pages.ts`). Hooks are named `use-<thing>`.
 - Components: `PascalCase`, one main component per file, `export default`.
   Small private helpers (`InputError`, `CheckButton`) stay unexported in the
   same file, below the component that uses them.
@@ -25,9 +25,17 @@ Rules about *how* code is written here. The layout rules are in
 Biome decides, `biome.json` is the source of truth: 2 spaces, 80 columns, single
 quotes (JSX included), semicolons, trailing commas, `asNeeded` arrow parens, LF.
 Run `npx biome check --write src tests` before finishing; imports are sorted by
-the assist action, so never hand-sort them. Do not reformat
-`src/app/[locale]/globals.css` â€” Biome does not fully parse Tailwind v4 syntax
-there.
+the assist action, so never hand-sort them. CSS is checked too: the parser has
+`tailwindDirectives` on, so `globals.css` (`@plugin`, `@theme`,
+`@custom-variant`) is linted and formatted like everything else.
+
+Some layering rules are lint errors, not just prose: `biome.json` overrides
+forbid `@/modules` and `@/app` imports in `core` (except the app shell in
+`core/components/main`), `next/*` request APIs in controllers, services and
+middlewares, and `next/link` in components. `tests/core/rules.test.ts` checks
+what Biome cannot: the design tokens, `export type` outside `types.ts` and
+literal strings in `toast.*`. A rule change that touches one of them updates
+the check in the same change.
 
 Keep `tsc --noEmit` and `pnpm build` clean. `any` is not used; when a Redis
 payload has no knowable shape, type it `unknown` and narrow, or use the existing
@@ -47,7 +55,9 @@ payload has no knowable shape, type it `unknown` and narrow, or use the existing
   the `core/lib/http.ts` helpers (`apiError`, `notFound`, `forbidden`,
   `unknownError`). `key` is for clients, `message` is for humans debugging,
   `errors` carries `flatten()` output. Success responses return the resource
-  itself (`201` when something was created).
+  itself (`201` when something was created). A write answers what it stored, or
+  `{ <id field> }` when there is nothing more to say (`{ success: true, lang }`
+  for a status change), never a bare `{ key: 'success' }`.
 - **Services swallow and report.** A service that fails logs with
   `console.error` and returns `null` / `false` / `[]` so the controller can pick
   the status code; it throws only for a broken invariant (no daily language
@@ -104,8 +114,8 @@ already.
 - Pages stay thin: resolve params, call actions, render module components,
   redirect on failure. No data shaping or `fetch` in a page.
 - Client data goes through TanStack Query, and for languages specifically
-  through the `useLang` hook of `lang-data` instead of calling the actions
-  directly. A list of the whole catalogue never loads it at once: it reads it
+  through the hooks of `lang-data` instead of calling the actions directly. A
+  list of the whole catalogue never loads it at once: it reads it
   batch by batch with `useLangPages` (`GET /lang/page`), with the first batch
   read by the server component and handed over as `initialPage`, and the
   `LoadMore` component at its end. A picker (the game, the profile's language
@@ -137,8 +147,12 @@ error `toast.error(t('errors.' + res.error), { id })`, on an object error map
   it to the `properties` of its group and to that group's `required` list, next
   to its neighbours in the message files. A key present in `messages/` but
   missing from the schema is incomplete.
-- Navigate with `Link` / `useRouter` / `redirect` from `@/i18n/navigation`, not
-  from `next/*`, so the locale prefix survives.
+- Components navigate with `Link` / `useRouter` / `usePathname` from
+  `@/i18n/navigation`, not from `next/*`. URLs carry no locale today
+  (`localePrefix: 'never'`), but those helpers are what keeps the locale if
+  that ever changes. Server pages may call `redirect`, `notFound` and
+  `RedirectType` from `next/navigation`; `useSearchParams` and `useParams`
+  come from `next/navigation` everywhere (next-intl has no equivalent).
 - `useTranslations` in client components, `await getTranslations` in server
   components and actions. Translations never reach a controller or a service:
   the API is locale-agnostic and answers with keys.
@@ -160,11 +174,11 @@ error `toast.error(t('errors.' + res.error), { id })`, on an object error map
 
 Vitest, imports through the `@/` alias, two projects (`vitest.config.mts`):
 
-- **`unit`** — `tests/<module>/<subject>.test.ts(x)`. Pure logic (`getMatching`,
+- **`unit`** â€” `tests/<module>/<subject>.test.ts(x)`. Pure logic (`getMatching`,
   `applyFeatureStatus`, email templates). No database, no Docker. Importing a
   service pulls in the database clients, so anything a test needs from the
   environment is defaulted in `vitest.setup.ts`.
-- **`api`** — `tests/<module>/<subject>.api.test.ts`. They call the real REST
+- **`api`** â€” `tests/<module>/<subject>.api.test.ts`. They call the real REST
   API (`api('PUT', '/lang/x', { token, body })` from `tests/support/api.ts`,
   which goes through the same `route.ts` handlers Next mounts), so controllers,
   middlewares, services, drizzle and Redis are all exercised.
@@ -172,8 +186,8 @@ Vitest, imports through the `@/` alias, two projects (`vitest.config.mts`):
 ### The isolated databases
 
 The `api` project never touches a real database. Before the run,
-`tests/support/global-setup.ts` starts two containers with Testcontainers —
-`postgres` and `redis/redis-stack-server` (RedisJSON + RediSearch) — and applies
+`tests/support/global-setup.ts` starts two containers with Testcontainers â€”
+`postgres` and `redis/redis-stack-server` (RedisJSON + RediSearch) â€” and applies
 the real `drizzle/` migrations to the empty Postgres, so a migration that does
 not build the schema of `tables.ts` fails the suite. Before every test
 `tests/support/setup.ts` truncates every table and flushes Redis, so tests are

@@ -10,7 +10,8 @@ import 'package:langdle_app/modules/auth/auth_models.dart';
 import 'package:langdle_app/modules/auth/auth_repository.dart';
 import 'package:langdle_app/modules/auth/auth_routes.dart';
 import 'package:langdle_app/modules/lang_data/lang_repository.dart';
-import 'package:langdle_app/modules/lang_data/permission_controller.dart';
+import 'package:langdle_app/modules/lang_permissions/permission_controller.dart';
+import 'package:langdle_app/modules/lang_permissions/permission_repository.dart';
 import 'package:langdle_app/modules/lang_guess/game_controller.dart';
 import 'package:langdle_app/modules/lang_guess/guess_models.dart';
 import 'package:langdle_app/modules/lang_guess/guess_repository.dart';
@@ -267,6 +268,7 @@ void main() {
       });
       final claim = PermissionController(
         token: 'abc',
+        permissions: PermissionRepository(api.client),
         langs: LangRepository(api.client),
       );
       await _settle();
@@ -286,6 +288,7 @@ void main() {
       });
       final claim = PermissionController(
         token: 'old',
+        permissions: PermissionRepository(api.client),
         langs: LangRepository(api.client),
       );
       await _settle();
@@ -300,6 +303,7 @@ void main() {
       final api = _FakeApi({});
       final claim = PermissionController(
         token: null,
+        permissions: PermissionRepository(api.client),
         langs: LangRepository(api.client),
       );
       await _settle();

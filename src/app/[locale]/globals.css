@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@plugin 'tailwind-scrollbar';
+@plugin "tailwind-scrollbar";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -16,6 +16,8 @@
   --ring: oklch(0% 0 0);
   --overlay: oklch(0% 0 0 / 0.8);
   --shadow: 4px 4px 0px 0px var(--border);
+  /* The game's "incorrect" red, also every error: NeoColors.incorrect. */
+  --danger: #ff2c2c;
   --chart-1: #5294ff;
   --chart-2: #ff4d50;
   --chart-3: #facc00;
@@ -34,6 +36,7 @@
   --border: oklch(0% 0 0);
   --ring: oklch(100% 0 0);
   --shadow: 4px 4px 0px 0px var(--border);
+  --danger: #ff2c2c;
   --chart-1: #5294ff;
   --chart-2: #ff6669;
   --chart-3: #e0b700;
@@ -51,6 +54,7 @@
   --color-overlay: var(--overlay);
   --color-ring: var(--ring);
   --color-soft-det: var(--soft-det);
+  --color-danger: var(--danger);
 
   --spacing-boxShadowX: 4px;
   --spacing-boxShadowY: 4px;

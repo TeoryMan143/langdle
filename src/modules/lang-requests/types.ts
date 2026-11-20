@@ -1,0 +1,141 @@
+import type { Dialog } from '@base-ui/react/dialog';
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import type { z } from 'zod';
+import type {
+  changeRequestTable,
+  languageRequestTable,
+} from '@/core/database/relational/tables';
+import type { FeatureStatus, LangFeatures } from '@/core/types';
+import type {
+  changeRequestSchema,
+  rejectChangeRequestSchema,
+} from './schemas/change-request';
+import type { languageRequestSchema } from './schemas/language-request';
+
+/* -------------------------------------------------------------------------- */
+/*                               Change requests                              */
+/* -------------------------------------------------------------------------- */
+
+export type FeatureChangeRequest = InferInsertModel<typeof changeRequestTable>;
+
+export type ChangeRequestFormValues = z.infer<typeof changeRequestSchema>;
+export type RejectChangeRequestValues = z.infer<
+  typeof rejectChangeRequestSchema
+>;
+
+/** What a feature chip of the atlas hands the change request dialog. */
+export type ChangeRequestPayload = {
+  lang: string;
+  feature: LangFeatures;
+  status: FeatureStatus;
+};
+
+/** The handle of the atlas' single change request dialog. */
+export type ChangeRequestDialogHandle = Dialog.Handle<ChangeRequestPayload>;
+
+export type ChangeRequestState = InferSelectModel<
+  typeof changeRequestTable
+>['state'];
+
+/** A change request as the API sends it to the user who made it. */
+export type ChangeRequestDTO = {
+  id: string;
+  lang: string;
+  feature: LangFeatures;
+  status: FeatureStatus;
+  description: string;
+  state: ChangeRequestState;
+  rejectionReason: string | null;
+  createdAt: string;
+  reviewedAt: string | null;
+};
+
+/** What the administrators review: the request, who made it and the status the language has right now. */
+export type AdminChangeRequestDTO = ChangeRequestDTO & {
+  user: { id: string; nickname: string };
+  /** `null` once the request is resolved or when the language is gone. */
+  currentStatus: FeatureStatus | null;
+};
+
+export type ChangeRequestReview =
+  | { decision: 'accept' }
+  | { decision: 'reject'; reason: string };
+
+export type ReviewErrorKey =
+  | 'requestNotFound'
+  | 'requestAlreadyReviewed'
+  | 'langNotFound'
+  | 'unknown';
+
+export type ReviewChangeRequestResult =
+  | {
+      success: true;
+      request: ChangeRequestDTO;
+      emailSent: boolean;
+      key?: never;
+    }
+  | { success: false; request?: never; emailSent?: never; key: ReviewErrorKey };
+
+/* -------------------------------------------------------------------------- */
+/*                              Language requests                             */
+/* -------------------------------------------------------------------------- */
+
+export type NewLanguageRequest = InferInsertModel<typeof languageRequestTable>;
+
+/** What the form fills in; the flag is sent beside it as a file. */
+export type LanguageRequestFormValues = z.input<typeof languageRequestSchema>;
+export type LanguageRequestValues = z.output<typeof languageRequestSchema>;
+
+/** A language request as the API sends it to the user who made it. */
+export type LanguageRequestDTO = {
+  id: string;
+  code: string;
+  name: string;
+  exonym: string | null;
+  features: LangFeatures[];
+  partial: LangFeatures[];
+  description: string;
+  /**
+   * Public URL of the flag: the upload while pending, the published flag once
+   * accepted, `null` once rejected (the upload is deleted).
+   */
+  flagUrl: string | null;
+  state: ChangeRequestState;
+  rejectionReason: string | null;
+  createdAt: string;
+  reviewedAt: string | null;
+};
+
+export type AdminLanguageRequestDTO = LanguageRequestDTO & {
+  user: { id: string; nickname: string };
+};
+
+export type CreateLanguageRequestErrorKey =
+  | 'langExists'
+  | 'requestPending'
+  | 'invalidFlag'
+  | 'unknown';
+
+export type CreateLanguageRequestResult =
+  | { success: true; request: LanguageRequestDTO; key?: never }
+  | { success: false; request?: never; key: CreateLanguageRequestErrorKey };
+
+export type LanguageReviewErrorKey =
+  | 'requestNotFound'
+  | 'requestAlreadyReviewed'
+  | 'langExists'
+  | 'unknown';
+
+export type ReviewLanguageRequestResult =
+  | {
+      success: true;
+      request: LanguageRequestDTO;
+      emailSent: boolean;
+      key?: never;
+    }
+  | {
+      success: false;
+      request?: never;
+      emailSent?: never;
+      key: LanguageReviewErrorKey;
+    };

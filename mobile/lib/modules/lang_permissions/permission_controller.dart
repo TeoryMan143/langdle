@@ -2,19 +2,25 @@ import 'package:flutter/foundation.dart';
 
 import '../../core/api/api_client.dart';
 import '../../core/models/language.dart';
-import 'lang_repository.dart';
+import '../lang_data/lang_repository.dart';
+import 'permission_repository.dart';
 
 enum ClaimStatus { claiming, granted, failed }
 
 /// Claims the edit permission of a shared link (the web `/addpermission`):
 /// `PUT /lang/permissions/claim/:token`, then the language it granted.
 class PermissionController extends ChangeNotifier {
-  PermissionController({required this.token, required this._langs}) {
+  PermissionController({
+    required this.token,
+    required this._permissions,
+    required this._langs,
+  }) {
     claim();
   }
 
   /// `null` when the link carried none.
   final String? token;
+  final PermissionRepository _permissions;
   final LangRepository _langs;
 
   ClaimStatus _status = ClaimStatus.claiming;
@@ -61,7 +67,7 @@ class PermissionController extends ChangeNotifier {
     }
 
     try {
-      final langId = await _langs.claimPermission(token);
+      final langId = await _permissions.claim(token);
       _status = ClaimStatus.granted;
 
       try {

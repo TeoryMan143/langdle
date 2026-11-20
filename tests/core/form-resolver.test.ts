@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { expect, test } from 'vitest';
 import { signUpSchema } from '@/modules/auth/schemas/signup';
-import { createRejectChangeRequestSchema } from '@/modules/lang-data/schemas/change-request';
+import { createRejectChangeRequestSchema } from '@/modules/lang-requests/schemas/change-request';
 
 /**
  * The forms validate through `zodResolver(schema)`. This pins what

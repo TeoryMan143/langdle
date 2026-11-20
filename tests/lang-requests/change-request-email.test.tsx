@@ -1,6 +1,6 @@
 import { render } from 'react-email';
 import { expect, test } from 'vitest';
-import ChangeRequestEmail from '@/modules/lang-data/components/change-request-email';
+import ChangeRequestEmail from '@/modules/lang-requests/components/change-request-email';
 
 const props = {
   subject: 'Your change request for Spanish was rejected',

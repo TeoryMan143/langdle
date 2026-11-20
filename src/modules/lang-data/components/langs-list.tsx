@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import {
   getLanguagesByIds,
   getLanguagesPage,
@@ -13,12 +14,14 @@ const PAGE_SIZE = 50;
  * get the whole catalogue, paged; editors get their few languages at once.
  */
 async function LangsList({ allowedLangs }: { allowedLangs?: string[] }) {
+  const t = await getTranslations('ListPage');
+
   if (!allowedLangs) {
     const pageRes = await getLanguagesPage({ limit: PAGE_SIZE });
 
     if (!pageRes.success) {
       console.error(pageRes.error);
-      return <p className='text-xl text-center'>No languages</p>;
+      return <p className='text-xl text-center'>{t('noLanguages')}</p>;
     }
 
     return <PagedLangsList initialPage={pageRes.result} pageSize={PAGE_SIZE} />;
@@ -28,11 +31,11 @@ async function LangsList({ allowedLangs }: { allowedLangs?: string[] }) {
 
   if (!langsRes.success) {
     console.error(langsRes.error);
-    return <p className='text-xl text-center'>No languages</p>;
+    return <p className='text-xl text-center'>{t('noLanguages')}</p>;
   }
 
   return (
-    <div className='bg-background rounded-2xl border border-black overflow-clip mx-10 lg:mx-0'>
+    <div className='bg-background rounded-base border-2 border-border overflow-clip mx-10 lg:mx-0'>
       {langsRes.result.map(language => (
         <LangListItem key={language.id} language={language} />
       ))}
