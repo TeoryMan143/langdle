@@ -13,7 +13,7 @@ import 'package:langdle_app/modules/lang_data/lang_repository.dart';
 import 'package:langdle_app/modules/lang_guess/game_controller.dart';
 import 'package:langdle_app/modules/lang_guess/guess_models.dart';
 import 'package:langdle_app/modules/lang_guess/guess_repository.dart';
-import 'package:langdle_app/modules/lang_guess/widgets/game_view.dart';
+import 'package:langdle_app/modules/lang_guess/screens/game_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -71,7 +71,7 @@ Future<void> _pumpGame(WidgetTester tester) async {
           ),
         ),
       ],
-      child: const MaterialApp(home: Scaffold(body: GameView())),
+      child: const MaterialApp(home: Scaffold(body: GameScreen())),
     ),
   );
 

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/i18n/translations.dart';
-import '../../core/theme/tokens.dart';
-import '../../core/ui/feature_chip.dart';
-import '../../core/ui/neo_button.dart';
-import '../../core/ui/neo_card.dart';
+import '../../../core/i18n/translations.dart';
+import '../../../core/theme/tokens.dart';
+import '../../../core/ui/feature_chip.dart';
+import '../../../core/ui/neo_button.dart';
+import '../../../core/ui/neo_card.dart';
 
 const _exampleFeatures = [
   ('sov', FeatureMatch.correct),
