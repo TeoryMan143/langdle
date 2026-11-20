@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../../core/models/language.dart';
-import 'lang_models.dart';
-import 'lang_repository.dart';
+import '../lang_data/lang_models.dart';
+import '../lang_data/lang_repository.dart';
 
 /// The public atlas (the web `PublicLanguageAtlas` with `useLangPages`): the
 /// counters, the feature catalogue and the languages, read batch by batch as

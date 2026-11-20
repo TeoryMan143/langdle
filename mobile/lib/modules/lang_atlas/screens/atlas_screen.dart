@@ -10,8 +10,8 @@ import '../../../core/ui/lang_flag.dart';
 import '../../../core/ui/neo_button.dart';
 import '../../../core/ui/neo_card.dart';
 import '../atlas_controller.dart';
-import '../lang_models.dart';
-import '../lang_repository.dart';
+import '../../lang_data/lang_models.dart';
+import '../../lang_data/lang_repository.dart';
 
 /// The public atlas: every language with the features marked for it (the web
 /// `/data/public`). Read only, loaded batch by batch as the user scrolls.

@@ -12,11 +12,12 @@ import 'modules/auth/screens/oauth_signup_screen.dart';
 import 'modules/auth/screens/signin_screen.dart';
 import 'modules/auth/screens/signup_screen.dart';
 import 'modules/how_to_play/screens/how_to_play_screen.dart';
-import 'modules/lang_data/atlas_controller.dart';
+import 'modules/lang_atlas/atlas_controller.dart';
+import 'modules/lang_atlas/screens/atlas_screen.dart';
 import 'modules/lang_data/lang_repository.dart';
-import 'modules/lang_data/permission_controller.dart';
-import 'modules/lang_data/screens/add_permission_screen.dart';
-import 'modules/lang_data/screens/atlas_screen.dart';
+import 'modules/lang_permissions/permission_controller.dart';
+import 'modules/lang_permissions/permission_repository.dart';
+import 'modules/lang_permissions/screens/add_permission_screen.dart';
 import 'modules/lang_guess/game_controller.dart';
 import 'modules/lang_guess/guess_models.dart';
 import 'modules/lang_guess/guess_repository.dart';
@@ -174,7 +175,10 @@ Widget _account() => MultiProvider(
 /// Keyed by the token: a second link opened over the first claims again.
 Widget _addPermission(String? token) => ChangeNotifierProvider(
   key: ValueKey(token),
-  create: (context) =>
-      PermissionController(token: token, langs: context.read<LangRepository>()),
+  create: (context) => PermissionController(
+    token: token,
+    permissions: context.read<PermissionRepository>(),
+    langs: context.read<LangRepository>(),
+  ),
   child: const AddPermissionScreen(),
 );

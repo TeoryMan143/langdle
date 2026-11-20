@@ -92,16 +92,6 @@ class LangRepository {
     ];
   }
 
-  /// Claims the edit permission an administrator shared as a link
-  /// (`/addpermission?token=`). Answers the id of the language it grants.
-  Future<String> claimPermission(String token) async {
-    final json = await _api.put(
-      '/lang/permissions/claim/${Uri.encodeComponent(token)}',
-    ) as Map<String, dynamic>;
-
-    return json['lang'] as String;
-  }
-
   Future<FeatureCatalogue> catalogue() => _catalogue ??= _loadCatalogue();
 
   Future<List<LanguageName>> _loadNames(bool? active) async {
