@@ -17,7 +17,7 @@
 | Client data | TanStack Query for client fetching, server components otherwise |
 | Forms | react-hook-form + zod resolver |
 | UI | Tailwind v4, neobrutalism.dev components on Base UI primitives (`@base-ui/react`), `class-variance-authority`, `motion` (imported from `motion/react`), sonner toasts — see [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) |
-| i18n | next-intl, locale prefix in the route (`/[locale]/…`), proxy in `src/proxy.ts` |
+| i18n | next-intl with `localePrefix: 'never'` (`src/i18n/routing.ts`): pages live under `src/app/[locale]/…`, but public URLs carry no locale; it comes from the `USER_LOCALE` cookie. Proxy in `src/proxy.ts` |
 | Email | Resend (`resend`) with React Email templates (`react-email`); templates restyle the neobrutalism tokens inline, since mail clients ignore Tailwind |
 | Tooling | Biome (format + lint), Vitest, pnpm, deployed on Vercel (crons in `vercel.json`) |
 
@@ -71,9 +71,10 @@ added at the module root without a reason recorded here.
 
 ### Folders
 
-- **`components/`** — React components owned by the module. A component used by
-  another module or by a page of another feature does not belong here: it moves
-  to `src/core/components/`.
+- **`components/`** — React components owned by the module. A component tied to
+  the module's data (`LangImage`, `LangPickerDialog`) stays here even when other
+  modules use it; they import it from here (dependency rule 2). Only UI that
+  knows nothing about any module's domain moves to `src/core/components/`.
 - **`schemas/`** — zod schemas, one file per subject (`signup.ts`,
   `change-request.ts`). Schemas export values only; the inferred types live in
   `types.ts`.
@@ -115,7 +116,11 @@ added at the module root without a reason recorded here.
 
 ### Dependency rules
 
-1. `core` never imports from `modules/` or `app/`.
+1. `core` never imports from `modules/` or `app/`. The one exception is the app
+   shell in `core/components/main` (header, options sidebar, providers,
+   `LangDataAllowed`): it composes modules (the auth state, the install prompt,
+   edit permissions) and may import their hooks, types and actions. Biome
+   enforces both the rule and its exception (`biome.json` overrides).
 2. A module may import from `core` and from another module. Prefer importing
    that module's `service.ts` (server side) or `components/` (UI).
 3. `app/` imports from modules and core, never the reverse.
@@ -185,17 +190,28 @@ one `JSON.MGET`.
 
 ```
 core/
-  components/  icons/  main/ (app shell: header, sidebar, providers)  ui/ (design system)
+  components/  icons/
+               main/ (app shell: header, footer, options sidebar, locale selector,
+                      providers, LangDataAllowed, LoadingRegion, FeatureToolTip)
+               ui/ (design system)
   database/    redis/ (client + key getters)   relational/ (drizzle client + tables)
-  lib/         action.ts     actionSuccess / actionError
-               api-client.ts apiRequest: the one place actions talk to the API
-               email.ts      sendEmail: the one place that talks to the email provider
-               http.ts       apiError / notFound / forbidden / unknownError / parseJsonBody
-               session.ts    session cookie read / write / clear
-               features.ts   the catalogue of linguistic features
+  lib/         action.ts         actionSuccess / actionError
+               api-client.ts     apiRequest: the one place actions talk to the API
+               email.ts          sendEmail: the one place that talks to the email provider
+               http.ts           apiError / notFound / forbidden / unknownError / parseJsonBody
+               session-config.ts the session cookie's name, lifetime and options
+               session.ts        session cookie read / write / clear
+               redirect.ts       safe `?next=` return paths (safeNextPath, withNext)
+               features.ts       the catalogue of linguistic features
+               search.ts         the language search ranking (see Language index)
+               storage.ts        the R2 bucket (put / copy / delete / publicUrl)
+               flags.ts          normalizes an uploaded flag to WebP
+               flags-config.ts   flag size, upload limits and bucket keys (no sharp: client safe)
+               seo.ts            siteUrl and the NO_INDEX metadata
                countries.ts  fonts.ts  utils.ts (cn, random, dates, getErrorMessage)
   middleware/  cron.ts       guards the Vercel cron endpoints
   schemas/     lang.ts       langDataSchema, the shape of a language (and langManagedFields)
+  env.ts       the zod schema of the environment, checked at build (see §6)
   types.ts     language domain, ActionResult, API error/request contracts
 ```
 
@@ -243,7 +259,7 @@ with the (possibly renewed) session expiry, so clients that store the token
 | GET | `/names?active=` | — | `[{ id, name, exonym?, searchParams }]` of every language by name (`active=true\|false` for one part): the light list a picker loads once and searches locally |
 | GET | `/summary` | — | `{ languages, activeLanguages, activeFeatures, partialFeatures }`: the atlas counters |
 | GET | `/:id` | — | one language |
-| PUT | `/:id` | B + owner/A | replaces the language data (`langDataBodySchema`); the `langManagedFields` (`locations`, `family`, `genus`, `coverage`) a body leaves out are kept, so a client that only edits features never erases them, and one set to `null` is removed |
+| PUT | `/:id` | B + owner/A | replaces the language data (`langDataBodySchema`); the `langManagedFields` (`locations`, `family`, `genus`, `coverage`) a body leaves out are kept, so a client that only edits features never erases them, and one set to `null` is removed. Answers `{ key, message, language }`: `language` is the stored result, as `GET /:id` reads it |
 | PUT | `/:id/status?active=` | B + A | activates/deactivates a language |
 | GET | `/permissions/:userId` | — | language ids a user may edit |
 | POST | `/permissions/tokens/:lang` | B + A | mints a share token for that language |
@@ -329,6 +345,11 @@ accepted besides `GOOGLE_CLIENT_ID` as the audience of a Google ID token) and
 `/auth/apple/token` rejects every token). `NEXT_PUBLIC_ANDROID_APP_URL` is the
 absolute URL of the Android release APK, linked from the install prompt; without
 it no install entry is shown.
+
+Every variable is declared in `core/env.ts`. `next.config.ts` imports it, so
+`pnpm build` fails on a missing required one, and it types `process.env` for
+the whole app. A new variable goes there (`.optional()` when the app works
+without it) and in the list above in the same change.
 
 Two external registrations follow the endpoint paths and must be updated with
 them:
