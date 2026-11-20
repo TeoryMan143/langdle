@@ -549,7 +549,12 @@ langDataRouter.put('/:id', authMiddleware, async c => {
     return unknownError(c, 'The language data could not be set');
   }
 
-  return c.json({ key: 'success', message: 'Language set' });
+  // `key` and `message` predate `language` and stay for installed apps.
+  return c.json({
+    key: 'success',
+    message: 'Language set',
+    language: await getLanguageById(langId),
+  });
 });
 
 langDataRouter.put('/:id/status', authMiddleware, adminMiddleware, async c => {

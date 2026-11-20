@@ -261,6 +261,17 @@ describe('PUT /lang/:id', () => {
     expect(await getStoredLanguage('spanish')).toEqual(newData);
   });
 
+  test('answers the language it stored', async () => {
+    await seedLanguage('spanish');
+    const { token } = await createTestAdmin();
+
+    const res = await api('PUT', '/lang/spanish', { token, body: newData });
+    const read = await api('GET', '/lang/spanish');
+
+    expect(res.status).toBe(200);
+    expect(res.body.language).toEqual(read.body);
+  });
+
   test('keeps the stored place, family and coverage a body leaves out', async () => {
     const managed = {
       locations: [{ lat: 40, lng: -4 }],
