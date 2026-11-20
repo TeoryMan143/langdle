@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import { langFeatures } from '@/core/lib/features';
 import { langDataSchema } from '@/core/schemas/lang';
-import { LANG_CODE_PATTERN } from '@/modules/lang-data/schemas/language-request';
+import { LANG_CODE_PATTERN } from '@/modules/lang-requests/schemas/language-request';
 
 type Entry = {
   id: string;

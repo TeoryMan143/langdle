@@ -48,8 +48,9 @@ mobile/
       search/        the language search ranking, ported from the web, and
                      its generated accent table (search_fold.g.dart)
     modules/<name>/  one feature, named after the web module in snake_case
-                     (auth, user_profile, lang_guess, lang_data, meta,
-                     how_to_play)
+                     (auth, user_profile, lang_guess, lang_data,
+                     lang_permissions, lang_atlas, meta, how_to_play;
+                     lang_requests has no screens yet)
   assets/i18n, assets/flags   generated: copied from the web, never edited here
   tool/sync_shared.dart       the script that copies them
   tool/build_search_fold.mjs  generates core/search/search_fold.g.dart (Node)

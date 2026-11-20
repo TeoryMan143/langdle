@@ -1,6 +1,6 @@
 import { Skeleton } from '@/core/components/ui/skeleton';
 import { cn } from '@/core/lib/utils';
-import PublicLanguageOverviewSkeleton from '@/modules/lang-data/components/public-language-overview-skeleton';
+import PublicLanguageOverviewSkeleton from '@/modules/lang-atlas/components/public-language-overview-skeleton';
 
 /** The title wraps to three lines on a phone, one from sm. */
 const TITLE_LINES = [

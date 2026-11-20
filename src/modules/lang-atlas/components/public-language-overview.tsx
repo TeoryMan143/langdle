@@ -1,5 +1,8 @@
 import { getTranslations } from 'next-intl/server';
-import { getLanguagesPage, getLanguagesSummary } from '../actions';
+import {
+  getLanguagesPage,
+  getLanguagesSummary,
+} from '@/modules/lang-data/actions';
 import PublicLanguageAtlas from './public-language-atlas';
 
 /** Cards per batch: each one renders a chip per feature. */

@@ -87,8 +87,9 @@ added at the module root without a reason recorded here.
 - **`controller.ts`** — the module's hono router: HTTP concerns only (routing,
   auth middleware, body/query parsing, status codes, response shape). It is
   mounted under its own prefix in `src/app/api/[...route]/route.ts` and holds no
-  business logic of its own. Sub-routers (e.g. language permissions) may live in
-  the same file and be mounted with `router.route('/prefix', subRouter)`.
+  business logic of its own. A module with more than one prefix exports one
+  router per prefix by name, each mounted in `route.ts` (`lang-requests`'
+  `changeRequestsRouter` and `languageRequestsRouter`).
 - **`service.ts`** — the real work: database and Redis access, token crypto,
   computations. Knows nothing about HTTP, cookies, React or `next/*`. Called by
   controllers, and by other modules' services when it is the owner of that data.
@@ -100,7 +101,7 @@ added at the module root without a reason recorded here.
   `modules/auth/actions.ts`, which validates the session cookie once per request
   under React `cache`.
 - **`emails.tsx`** — only when a module sends transactional email
-  (`modules/lang-data/emails.tsx`). It builds subject and body from the `Emails`
+  (`modules/lang-requests/emails.tsx`). It builds subject and body from the `Emails`
   group of `messages/<locale>.json` (read directly, since the API has no
   request locale: the locale travels with the data that triggers the email),
   fills a React Email template from the module's `components/` and hands it to
@@ -122,13 +123,22 @@ added at the module root without a reason recorded here.
    edit permissions) and may import their hooks, types and actions. Biome
    enforces both the rule and its exception (`biome.json` overrides).
 2. A module may import from `core` and from another module. Prefer importing
-   that module's `service.ts` (server side) or `components/` (UI).
+   that module's `service.ts` (server side) or `components/` (UI). Services,
+   components and hooks keep the module graph one-way (`lang-atlas` →
+   `lang-requests` → `lang-permissions` → nothing; `lang-requests` →
+   `lang-data`): when two modules would need each other, the part that ties
+   them together moves to the one that depends on the other, or to a module of
+   its own (as `lang-atlas` did). Controllers sit on top and may call any
+   service.
 3. `app/` imports from modules and core, never the reverse.
 4. Controllers and services must stay free of `next/headers`, `next/cache` and
    `next-intl/server`: they also run for the mobile client, where there is no
    Next request context. Anything request-bound belongs in `actions.ts`.
 5. Data access goes through the owning module's service. `lang-guess` reads
-   languages via `lang-data`'s service, it does not touch `lang:*` keys itself.
+   languages via `lang-data`'s service, it does not touch `lang:*` keys itself;
+   `lang-requests` gives the author of an accepted language request edit rights
+   through `lang-permissions`' `grantLangPermission`, it does not write
+   `langPermissionTable` itself.
 6. A service that writes a row of `userTable` calls `evictUserSessionsCache`
    from `modules/auth/service.ts` once the write succeeds (today only
    `user-profile`'s `updateProfile`). Otherwise the user cached with the
@@ -221,7 +231,10 @@ core/
 | --- | --- | --- |
 | `auth` | users, password hashing, sessions and their Redis cache, Google OAuth, hono auth guards | `/api/auth` |
 | `user-profile` | the profile a signed-in user edits: native and fluent languages | `/api/user` |
-| `lang-data` | the language catalogue, feature editing, edit permissions, change requests and their review | `/api/lang` |
+| `lang-data` | the language catalogue: reading, paging and search (the language index), feature editing, activation, the editors and pickers (`LangImage`, `LangPickerDialog`, `FeatureStatusPicker`) | `/api/lang` |
+| `lang-permissions` | who may edit which language: share tokens, claiming them, `canEditLanguage`, the expired-token cron | `/api/lang/permissions`, `/api/lang/jobs` |
+| `lang-requests` | what users suggest and administrators review: change requests, language requests (flag upload, publishing), their review UI and resolution emails | `/api/lang/change-requests`, `/api/lang/language-requests` |
+| `lang-atlas` | the public atlas page: counters, language cards, the feature tooltip; opens `lang-requests`' change request dialog (no endpoints: it reads `lang-data`) | — |
 | `lang-guess` | the game: daily language, guess matching, game history | `/api/guess` |
 | `meta` | read-only catalogues the clients build forms from (features, countries) | `/api/meta` |
 | `app-install` | the Android install prompt and menu entry (no endpoints: it only links the APK in `NEXT_PUBLIC_ANDROID_APP_URL`) | — |
@@ -249,7 +262,12 @@ with the (possibly renewed) session expiry, so clients that store the token
 | GET | `/oauth/signup-data?token=` | — | `{ provider, nickname, email }` inside a signup token, to prefill the form |
 | POST | `/oauth/signup` | — | finishes a Google/Apple signup from `{ dataToken, nickname, country }`; `/google/signup` is an alias |
 
-### `/api/lang`
+The four modules that share `/api/lang` are mounted in
+`src/app/api/[...route]/route.ts` from the most specific prefix down, `lang-data`
+last: its `/:id` would answer the other modules' paths otherwise. The paths
+predate the split and stay exactly as the mobile app calls them.
+
+### `/api/lang` (`lang-data`)
 
 | Method | Path | Guard | Purpose |
 | --- | --- | --- | --- |
@@ -261,20 +279,40 @@ with the (possibly renewed) session expiry, so clients that store the token
 | GET | `/:id` | — | one language |
 | PUT | `/:id` | B + owner/A | replaces the language data (`langDataBodySchema`); the `langManagedFields` (`locations`, `family`, `genus`, `coverage`) a body leaves out are kept, so a client that only edits features never erases them, and one set to `null` is removed. Answers `{ key, message, language }`: `language` is the stored result, as `GET /:id` reads it |
 | PUT | `/:id/status?active=` | B + A | activates/deactivates a language |
-| GET | `/permissions/:userId` | — | language ids a user may edit |
-| POST | `/permissions/tokens/:lang` | B + A | mints a share token for that language |
-| PUT | `/permissions/claim/:token` | B | claims the permission the token carries |
-| POST | `/change-requests` | B | suggests a feature change (optional `locale` for the resolution email) |
-| GET | `/change-requests/mine` | B | the caller's requests with state and rejection reason |
-| GET | `/change-requests?state=` | B + A | every request, with author and current status |
-| PUT | `/change-requests/:id/accept` | B + A | applies the change to the language and emails the author |
-| PUT | `/change-requests/:id/reject` | B + A | body `{ reason }`; rejects the request and emails the author |
-| POST | `/language-requests` | B | **multipart**, the only non-JSON body: `data` (JSON `{ code, name, exonym?, features, partial, description, locale? }`) and `flag` (PNG/JPEG/WebP ≤ 2 MB). `409 langExists` / `requestPending`, `400 invalidFlag` |
-| GET | `/language-requests/mine` | B | the caller's language requests, each with its `flagUrl` |
-| GET | `/language-requests?state=` | B + A | every language request, with author |
-| PUT | `/language-requests/:id/accept` | B + A | creates the language **inactive**, publishes the flag, gives the author edit permission and emails them |
-| PUT | `/language-requests/:id/reject` | B + A | body `{ reason }`; deletes the uploaded flag and emails the author |
-| GET | `/jobs/cleanup-tokens` | C | deletes expired permission tokens |
+
+### `/api/lang/permissions` (`lang-permissions`)
+
+| Method | Path | Guard | Purpose |
+| --- | --- | --- | --- |
+| GET | `/:userId` | — | language ids a user may edit |
+| POST | `/tokens/:lang` | B + A | mints a share token for that language |
+| PUT | `/claim/:token` | B | claims the permission the token carries |
+
+`/api/lang/jobs` (`lang-permissions`, mounted apart so the cron path in `vercel.json` stays):
+
+| Method | Path | Guard | Purpose |
+| --- | --- | --- | --- |
+| GET | `/cleanup-tokens` | C | deletes expired permission tokens |
+
+### `/api/lang/change-requests` (`lang-requests`)
+
+| Method | Path | Guard | Purpose |
+| --- | --- | --- | --- |
+| POST | `/` | B | suggests a feature change (optional `locale` for the resolution email) |
+| GET | `/mine` | B | the caller's requests with state and rejection reason |
+| GET | `/?state=` | B + A | every request, with author and current status |
+| PUT | `/:id/accept` | B + A | applies the change to the language and emails the author |
+| PUT | `/:id/reject` | B + A | body `{ reason }`; rejects the request and emails the author |
+
+### `/api/lang/language-requests` (`lang-requests`)
+
+| Method | Path | Guard | Purpose |
+| --- | --- | --- | --- |
+| POST | `/` | B | **multipart**, the only non-JSON body: `data` (JSON `{ code, name, exonym?, features, partial, description, locale? }`) and `flag` (PNG/JPEG/WebP ≤ 2 MB). `409 langExists` / `requestPending`, `400 invalidFlag` |
+| GET | `/mine` | B | the caller's language requests, each with its `flagUrl` |
+| GET | `/?state=` | B + A | every language request, with author |
+| PUT | `/:id/accept` | B + A | creates the language **inactive**, publishes the flag, gives the author edit permission and emails them |
+| PUT | `/:id/reject` | B + A | body `{ reason }`; deletes the uploaded flag and emails the author |
 
 ### `/api/guess`
 

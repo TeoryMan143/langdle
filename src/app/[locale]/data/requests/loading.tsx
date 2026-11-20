@@ -1,5 +1,5 @@
 import { Skeleton } from '@/core/components/ui/skeleton';
-import ReviewRequestsSkeleton from '@/modules/lang-data/components/review-requests-skeleton';
+import ReviewRequestsSkeleton from '@/modules/lang-requests/components/review-requests-skeleton';
 
 export default function ChangeRequestsLoading() {
   return (

@@ -6,9 +6,9 @@ import { dongle } from '@/core/lib/fonts';
 import { withNext } from '@/core/lib/redirect';
 import { Link } from '@/i18n/navigation';
 import { auth } from '@/modules/auth/actions';
-import { getLangPermissions } from '@/modules/lang-data/actions';
 import LangsList from '@/modules/lang-data/components/langs-list';
 import LangsListSkeleton from '@/modules/lang-data/components/langs-list-skeleton';
+import { getLangPermissions } from '@/modules/lang-permissions/actions';
 
 async function DataPage() {
   const { session, user } = await auth();

@@ -3,8 +3,8 @@ import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 import { buttonVariants } from '@/core/components/ui/button';
 import { Link } from '@/i18n/navigation';
-import PublicLanguageOverview from '@/modules/lang-data/components/public-language-overview';
-import PublicLanguageOverviewSkeleton from '@/modules/lang-data/components/public-language-overview-skeleton';
+import PublicLanguageOverview from '@/modules/lang-atlas/components/public-language-overview';
+import PublicLanguageOverviewSkeleton from '@/modules/lang-atlas/components/public-language-overview-skeleton';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('PublicDataPage');

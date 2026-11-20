@@ -11,17 +11,18 @@ import { Input } from '@/core/components/ui/input';
 import { TooltipProvider } from '@/core/components/ui/tooltip';
 import { cn } from '@/core/lib/utils';
 import type { LangFeatures } from '@/core/types';
-import { LANG_SEARCH_DEBOUNCE_MS, useLangPages } from '../hooks/use-lang-pages';
-import type {
-  ChangeRequestPayload,
-  LanguageCardHandles,
-  LanguagePage,
-} from '../types';
-import ChangeRequestDialog from './change-request-dialog';
+import LoadMore from '@/modules/lang-data/components/load-more';
+import {
+  LANG_SEARCH_DEBOUNCE_MS,
+  useLangPages,
+} from '@/modules/lang-data/hooks/use-lang-pages';
+import type { LanguagePage } from '@/modules/lang-data/types';
+import ChangeRequestDialog from '@/modules/lang-requests/components/change-request-dialog';
+import type { ChangeRequestPayload } from '@/modules/lang-requests/types';
+import type { LanguageCardHandles } from '../types';
 import FeatureDescriptionTooltip from './feature-description-tooltip';
 import LanguageCard from './language-card';
 import LanguageCardSkeleton from './language-card-skeleton';
-import LoadMore from './load-more';
 
 type Props = {
   /**

@@ -7,8 +7,9 @@ import { TooltipTrigger } from '@/core/components/ui/tooltip';
 import { groupedLangFeatures } from '@/core/lib/features';
 import { cn } from '@/core/lib/utils';
 import type { FeatureStatus, LangFeatures, Language } from '@/core/types';
-import type { ChangeRequestPayload, LanguageCardHandles } from '../types';
-import LangImage from './lang-image';
+import LangImage from '@/modules/lang-data/components/lang-image';
+import type { ChangeRequestPayload } from '@/modules/lang-requests/types';
+import type { LanguageCardHandles } from '../types';
 
 const groupedEntries = Object.entries(groupedLangFeatures) as Array<
   [keyof typeof groupedLangFeatures, readonly LangFeatures[]]

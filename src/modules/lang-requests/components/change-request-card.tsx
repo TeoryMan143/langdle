@@ -1,8 +1,8 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
 import type { FeatureStatus } from '@/core/types';
+import LangImage from '@/modules/lang-data/components/lang-image';
 import type { ChangeRequestDTO } from '../types';
 import ChangeRequestStateBadge from './change-request-state-badge';
-import LangImage from './lang-image';
 
 const STATUS_KEYS = {
   present: 'statusPresent',

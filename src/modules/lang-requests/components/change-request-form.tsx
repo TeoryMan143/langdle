@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from '@/core/components/ui/select';
 import { Textarea } from '@/core/components/ui/textarea';
-import { uploadChangeRequest } from '@/modules/lang-data/actions';
+import { uploadChangeRequest } from '../actions';
 import { createChangeRequestSchema } from '../schemas/change-request';
 import type { ChangeRequestFormValues, ChangeRequestPayload } from '../types';
 
