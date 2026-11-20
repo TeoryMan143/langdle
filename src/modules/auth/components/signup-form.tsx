@@ -69,7 +69,7 @@ function SignUpForm() {
           });
         });
 
-        toast.error('Validation errors', { id: toastId });
+        toast.error(t('errors.dataValidation'), { id: toastId });
         return;
       }
 

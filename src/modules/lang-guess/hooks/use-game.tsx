@@ -119,11 +119,11 @@ export const GameProvider = ({
 
   const handleGuess = async () => {
     if (guesses.length >= MAX_ATTEMPTS) {
-      return toast.error('No attempts left');
+      return toast.error(t('noAttemptsLeft'));
     }
 
     if (hasGuessed) {
-      return toast.info('You already guessed');
+      return toast.info(t('alreadyGuessed'));
     }
 
     if (!selectedLang) {

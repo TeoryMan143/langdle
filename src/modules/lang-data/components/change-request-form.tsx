@@ -30,6 +30,7 @@ function ChangeRequestForm({
 }: ChangeRequestPayload & { onDone: () => void }) {
   const formT = useTranslations('Features.changeRequest');
   const changeRequestSchema = createChangeRequestSchema(formT);
+  const errorT = useTranslations('ChangeRequests.errors');
   const {
     control,
     register,
@@ -55,19 +56,22 @@ function ChangeRequestForm({
   ] as const;
 
   const onSubmit = async (data: ChangeRequestFormValues) => {
-    const toastId = toast.loading('Uploading request...');
+    const toastId = toast.loading(formT('submitting'));
 
     if (formStatus === status) {
-      return toast.error('Choose a different status', { id: toastId });
+      return toast.error(formT('sameStatus'), { id: toastId });
     }
 
     const res = await uploadChangeRequest(data);
 
     if (!res.success) {
-      return toast.error('server error', { id: toastId });
+      return toast.error(
+        errorT.has(res.error) ? errorT(res.error) : errorT('unknown'),
+        { id: toastId },
+      );
     }
 
-    toast.success('Change request uploaded', { id: toastId });
+    toast.success(formT('sent'), { id: toastId });
     onDone();
   };
 

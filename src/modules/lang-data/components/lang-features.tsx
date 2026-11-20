@@ -66,7 +66,7 @@ function LangFeaturesForm({ currentData, code }: Props) {
         className='mt-4 fixed bottom-3 right-3'
         onClick={handleSubmitData}
       >
-        Save
+        {t('save')}
       </Button>
     </div>
   );

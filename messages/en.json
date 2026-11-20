@@ -16,7 +16,8 @@
     "signUp": "Sign up",
     "data": "Data",
     "home": "Home",
-    "loading": "Loading"
+    "loading": "Loading",
+    "selectLanguage": "Select a language"
   },
   "Footer": {
     "madeBy": "Made by",
@@ -130,7 +131,9 @@
       "descriptionRequired": "Description is required",
       "cancel": "Cancel",
       "submit": "Send request",
-      "submitting": "Sending..."
+      "submitting": "Sending...",
+      "sameStatus": "Choose a different status",
+      "sent": "Change request sent"
     },
     "description": {
       "nasalization": "Phonetic feature where some of the sound's air goes through the nose",
@@ -326,6 +329,7 @@
     "confirmPassword": "Confirm password",
     "country": "Country",
     "searchCountry": "Search a country",
+    "noCountries": "No countries found",
     "noAccount": "Don't have an account?",
     "alreadyHaveAccount": "Already have an account?",
     "createAccount": "Create account",
@@ -382,7 +386,8 @@
     "requestLanguage": "Request a language",
     "showMore": "Show more",
     "searchPlaceholder": "Type a language name or code",
-    "noMatches": "No languages match your search right now."
+    "noMatches": "No languages match your search right now.",
+    "noLanguages": "No languages"
   },
   "PublicDataPage": {
     "eyebrow": "Public atlas",
@@ -442,6 +447,7 @@
     "notActive": "You need the 'active' param",
     "noAdmin": "You need to be an administrator",
     "success": "Language data updated successfully",
+    "save": "Save",
     "phonology": "Phonology",
     "wordOrder": "Word order",
     "writingSystem": "Writing System",
@@ -608,6 +614,8 @@
     "dailyLang": "Language of the day",
     "nextLang": "Next language in",
     "attLeft": "Attempts left",
+    "noAttemptsLeft": "No attempts left",
+    "alreadyGuessed": "You already guessed it",
     "lang": "Language",
     "features": "Features",
     "firstGuess": "Do your first guess!",

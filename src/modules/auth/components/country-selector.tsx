@@ -118,8 +118,8 @@ export default function CountrySelector({
                 {COUNTRIES.filter(country =>
                   country.title.toLowerCase().startsWith(query.toLowerCase()),
                 ).length === 0 ? (
-                  <li className='text-gray-900 cursor-default select-none relative py-2 pl-3 pr-9'>
-                    No countries found
+                  <li className='text-foreground cursor-default select-none relative py-2 pl-3 pr-9'>
+                    {t('noCountries')}
                   </li>
                 ) : (
                   COUNTRIES.filter(country =>

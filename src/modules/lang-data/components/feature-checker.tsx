@@ -28,6 +28,7 @@ function CheckButton({ className, ...props }: React.ComponentProps<'button'>) {
 
 function FeatureChecker({ feat, state, onChange: _onChange }: Props) {
   const t = useTranslations('Features.name');
+  const statusT = useTranslations('Features.changeRequest');
   const name = useMemo(() => t(feat), [feat, t]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: don't need it to update
@@ -46,7 +47,9 @@ function FeatureChecker({ feat, state, onChange: _onChange }: Props) {
               onClick={() => onChange('notPresent')}
               id={`notPresentBtn-${feat}`}
             />
-            <Label htmlFor={`notPresentBtn-${feat}`}>Not present</Label>
+            <Label htmlFor={`notPresentBtn-${feat}`}>
+              {statusT('statusNotPresent')}
+            </Label>
           </div>
           <div className='flex flex-col items-center gap-1'>
             <CheckButton
@@ -56,7 +59,9 @@ function FeatureChecker({ feat, state, onChange: _onChange }: Props) {
               onClick={() => onChange('partial')}
               id={`partialBtn-${feat}`}
             />
-            <Label htmlFor={`partialBtn-${feat}`}>Partial</Label>
+            <Label htmlFor={`partialBtn-${feat}`}>
+              {statusT('statusPartial')}
+            </Label>
           </div>
           <div className='flex flex-col items-center gap-1'>
             <CheckButton
@@ -66,7 +71,9 @@ function FeatureChecker({ feat, state, onChange: _onChange }: Props) {
               onClick={() => onChange('present')}
               id={`presentBtn-${feat}`}
             />
-            <Label htmlFor={`presentBtn-${feat}`}>Present</Label>
+            <Label htmlFor={`presentBtn-${feat}`}>
+              {statusT('statusPresent')}
+            </Label>
           </div>
         </div>
       </div>
