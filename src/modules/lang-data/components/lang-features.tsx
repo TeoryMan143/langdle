@@ -6,14 +6,13 @@ import { toast } from 'sonner';
 import { Button } from '@/core/components/ui/button';
 import type { LanguageData } from '@/core/types';
 import { setLanguageData } from '@/modules/lang-data/actions';
+import type { FeatureStates, PlaceDraft } from '../types';
 import FeatureStatusPicker, {
-  type FeatureStates,
   fromFeatureStates,
   toFeatureStates,
 } from './feature-status-picker';
 import LangPlaceFields, {
   fromPlaceDraft,
-  type PlaceDraft,
   toPlaceDraft,
 } from './lang-place-fields';
 

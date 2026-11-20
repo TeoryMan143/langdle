@@ -7,13 +7,7 @@ import { Button, buttonVariants } from '@/core/components/ui/button';
 import { Input } from '@/core/components/ui/input';
 import { Label } from '@/core/components/ui/label';
 import type { LangLocation, LanguageData } from '@/core/types';
-
-/** The fields as typed: coordinates stay text until the form is saved. */
-export type PlaceDraft = {
-  family: string;
-  genus: string;
-  locations: Array<{ lat: string; lng: string }>;
-};
+import type { PlaceDraft } from '../types';
 
 export function toPlaceDraft(data: LanguageData): PlaceDraft {
   return {

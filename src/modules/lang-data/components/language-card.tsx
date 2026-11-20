@@ -7,16 +7,8 @@ import { TooltipTrigger } from '@/core/components/ui/tooltip';
 import { groupedLangFeatures } from '@/core/lib/features';
 import { cn } from '@/core/lib/utils';
 import type { FeatureStatus, LangFeatures, Language } from '@/core/types';
-import type { ChangeRequestPayload } from '../types';
-import type { ChangeRequestDialogHandle } from './change-request-dialog';
-import type { FeatureTooltipHandle } from './feature-description-tooltip';
+import type { ChangeRequestPayload, LanguageCardHandles } from '../types';
 import LangImage from './lang-image';
-
-/** The atlas' single dialog and tooltip, which every chip opens. */
-export type LanguageCardHandles = {
-  dialog: ChangeRequestDialogHandle;
-  tooltip: FeatureTooltipHandle;
-};
 
 const groupedEntries = Object.entries(groupedLangFeatures) as Array<
   [keyof typeof groupedLangFeatures, readonly LangFeatures[]]

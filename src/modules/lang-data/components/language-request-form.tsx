@@ -14,11 +14,11 @@ import { useRouter } from '@/i18n/navigation';
 import { uploadLanguageRequest } from '../actions';
 import { createLanguageRequestSchema } from '../schemas/language-request';
 import type {
+  FeatureStates,
   LanguageRequestFormValues,
   LanguageRequestValues,
 } from '../types';
 import FeatureStatusPicker, {
-  type FeatureStates,
   fromFeatureStates,
   toFeatureStates,
 } from './feature-status-picker';

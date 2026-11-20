@@ -12,10 +12,14 @@ import { TooltipProvider } from '@/core/components/ui/tooltip';
 import { cn } from '@/core/lib/utils';
 import type { LangFeatures } from '@/core/types';
 import { LANG_SEARCH_DEBOUNCE_MS, useLangPages } from '../hooks/use-lang-pages';
-import type { ChangeRequestPayload, LanguagePage } from '../types';
+import type {
+  ChangeRequestPayload,
+  LanguageCardHandles,
+  LanguagePage,
+} from '../types';
 import ChangeRequestDialog from './change-request-dialog';
 import FeatureDescriptionTooltip from './feature-description-tooltip';
-import LanguageCard, { type LanguageCardHandles } from './language-card';
+import LanguageCard from './language-card';
 import LanguageCardSkeleton from './language-card-skeleton';
 import LoadMore from './load-more';
 

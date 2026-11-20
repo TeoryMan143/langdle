@@ -1,11 +1,9 @@
 'use client';
 
-import type { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
 import { useTranslations } from 'next-intl';
 import { Tooltip, TooltipContent } from '@/core/components/ui/tooltip';
 import type { LangFeatures } from '@/core/types';
-
-export type FeatureTooltipHandle = TooltipPrimitive.Handle<LangFeatures>;
+import type { FeatureTooltipHandle } from '../types';
 
 /**
  * One feature description tooltip for every chip of the atlas. The chips are

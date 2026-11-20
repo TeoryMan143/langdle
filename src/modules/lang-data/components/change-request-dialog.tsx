@@ -1,6 +1,5 @@
 'use client';
 
-import type { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'next-intl';
 import Loading from '@/core/components/icons/loading';
@@ -11,10 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/core/components/ui/dialog';
-import type { ChangeRequestPayload } from '../types';
-
-export type ChangeRequestDialogHandle =
-  DialogPrimitive.Handle<ChangeRequestPayload>;
+import type { ChangeRequestDialogHandle, ChangeRequestPayload } from '../types';
 
 // The form libraries (react-hook-form, zod, the select) only load once a chip
 // is clicked: most visitors only read the atlas.

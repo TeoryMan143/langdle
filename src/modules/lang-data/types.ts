@@ -1,3 +1,5 @@
+import type { Dialog } from '@base-ui/react/dialog';
+import type { Tooltip } from '@base-ui/react/tooltip';
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import type { z } from 'zod';
 import type {
@@ -201,4 +203,35 @@ export type LanguagesSummary = {
   activeLanguages: number;
   activeFeatures: number;
   partialFeatures: number;
+};
+
+/* -------------------------------------------------------------------------- */
+/*                                  Editors                                   */
+/* -------------------------------------------------------------------------- */
+
+/** A feature as the editors' three-way picker shows it. */
+export type FeatureState = 'notPresent' | 'partial' | 'present';
+export type FeatureStates = Record<LangFeatures, FeatureState>;
+
+/** The place fields as typed: coordinates stay text until the form is saved. */
+export type PlaceDraft = {
+  family: string;
+  genus: string;
+  locations: Array<{ lat: string; lng: string }>;
+};
+
+/* -------------------------------------------------------------------------- */
+/*                                    Atlas                                   */
+/* -------------------------------------------------------------------------- */
+
+/** The handle of the atlas' single change request dialog. */
+export type ChangeRequestDialogHandle = Dialog.Handle<ChangeRequestPayload>;
+
+/** The handle of the atlas' single feature description tooltip. */
+export type FeatureTooltipHandle = Tooltip.Handle<LangFeatures>;
+
+/** The atlas' single dialog and tooltip, which every chip opens. */
+export type LanguageCardHandles = {
+  dialog: ChangeRequestDialogHandle;
+  tooltip: FeatureTooltipHandle;
 };

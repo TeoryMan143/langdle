@@ -3,10 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { groupedLangFeatures, langFeatures } from '@/core/lib/features';
 import type { LangFeatures } from '@/core/types';
+import type { FeatureState, FeatureStates } from '../types';
 import FeatureChecker from './feature-checker';
-
-export type FeatureState = 'notPresent' | 'partial' | 'present';
-export type FeatureStates = Record<LangFeatures, FeatureState>;
 
 /** Every feature with its state, read from a language's two lists. */
 export function toFeatureStates(data: {
