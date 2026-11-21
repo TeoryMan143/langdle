@@ -208,6 +208,17 @@ needs its own Android OAuth client, and its SHA-256 goes in
 means no more updates to an app already signed with it: keep a backup outside
 the repo.
 
+### Releasing
+
+`/release [patch|minor|major|X.Y.Z] mobile` (the project skill in
+`.claude/skills/release/`) gives the pubspec the same version name as
+`package.json`, raises its build number by one, builds the APK and AAB with
+`env.prod.json`, tags `vX.Y.Z` on `dev`, and attaches the APK as
+`langdle.apk` to a GitHub release marked *latest*. The web's
+`NEXT_PUBLIC_ANDROID_APP_URL` points at `releases/latest/download/langdle.apk`,
+so web-only releases are published with `--latest=false` so the link keeps
+resolving.
+
 ### App links
 
 The web host whose links open the app is a build setting, `localhost` until
