@@ -20,8 +20,14 @@ import type { LangSearchResult, LanguageName } from '@/modules/lang-data/types';
 import { addGameHistory, checkGuess } from '../actions';
 import { LanguageGuess } from '../types';
 
+/**
+ * Progress of today's daily game. `targetId` ties it to the language it was
+ * played against: the cron that rolls the daily language does not fire at
+ * 00:00 UTC sharp, so a save dated today can belong to yesterday's language.
+ */
 type SavedGuesses = {
   date: string;
+  targetId: string | null;
   guesses: LanguageGuess[];
   dailyLang: Language | null;
 };
@@ -46,6 +52,13 @@ const GameContext = createContext<UseGameProps | null>(null);
 
 const MAX_ATTEMPTS = 5;
 
+const EMPTY_SAVE: SavedGuesses = {
+  date: 'invalid',
+  targetId: null,
+  guesses: [],
+  dailyLang: null,
+};
+
 export const GameProvider = ({
   children,
   targetLang: initialTargetLang,
@@ -66,7 +79,7 @@ export const GameProvider = ({
 
   const [localGuesses, setLocalGuesses] = useLocalStorage<SavedGuesses>(
     'day-save',
-    { date: 'invalid', guesses: [], dailyLang: null },
+    EMPTY_SAVE,
   );
 
   const t = useTranslations('Game');
@@ -79,35 +92,35 @@ export const GameProvider = ({
   const hasRetrievedSave = useRef(false);
 
   useEffect(() => {
-    if (type === 'daily') {
-      if (
-        !hasRetrievedSave.current &&
-        localGuesses.date === getUTCDateString()
-      ) {
-        hasRetrievedSave.current = true;
-        setGuesses(localGuesses.guesses);
-        setHasGuessed(localGuesses.dailyLang !== null);
-      } else if (
-        !hasRetrievedSave.current &&
-        localGuesses.date !== getUTCDateString()
-      ) {
-        setLocalGuesses({ date: 'invalid', guesses: [], dailyLang: null });
-        hasRetrievedSave.current = true;
-      }
+    if (type !== 'daily' || hasRetrievedSave.current) {
+      return;
     }
-  }, [localGuesses, setLocalGuesses, type]);
+
+    hasRetrievedSave.current = true;
+
+    if (
+      localGuesses.date === getUTCDateString() &&
+      localGuesses.targetId === targetLang.id
+    ) {
+      setGuesses(localGuesses.guesses);
+      setHasGuessed(localGuesses.dailyLang !== null);
+    } else {
+      setLocalGuesses(EMPTY_SAVE);
+    }
+  }, [localGuesses, setLocalGuesses, targetLang.id, type]);
 
   useEffect(() => {
     if (type === 'daily') {
       if (hasRetrievedSave.current && !localGuesses.dailyLang) {
         setLocalGuesses({
           date: getUTCDateString(),
+          targetId: targetLang.id,
           guesses,
           dailyLang: null,
         });
       }
     }
-  }, [guesses, setLocalGuesses, localGuesses.dailyLang, type]);
+  }, [guesses, setLocalGuesses, localGuesses.dailyLang, targetLang.id, type]);
 
   useEffect(() => {
     if (inputRef.current && selectedLang) {
@@ -143,6 +156,7 @@ export const GameProvider = ({
     if (selectedLang.id === targetLang.id) {
       setLocalGuesses({
         date: getUTCDateString(),
+        targetId: targetLang.id,
         guesses,
         dailyLang: targetLang,
       });
@@ -167,6 +181,7 @@ export const GameProvider = ({
     if ('guessed' in matching) {
       setLocalGuesses({
         date: getUTCDateString(),
+        targetId: targetLang.id,
         guesses,
         dailyLang: matching.guessed,
       });
