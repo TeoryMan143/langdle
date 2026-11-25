@@ -48,6 +48,7 @@ class DailySave {
     required this.targetId,
     required this.guesses,
     required this.won,
+    this.gameId,
   });
 
   factory DailySave.fromJson(Map<String, dynamic> json) => DailySave(
@@ -59,6 +60,7 @@ class DailySave {
         LanguageGuess.fromJson(guess),
     ],
     won: json['won'] as bool,
+    gameId: json['gameId'] as String?,
   );
 
   /// UTC date (`yyyy-mm-dd`) the game belongs to.
@@ -67,11 +69,15 @@ class DailySave {
   final List<LanguageGuess> guesses;
   final bool won;
 
+  /// Keeps a resumed game's logs together; saves from before it have none.
+  final String? gameId;
+
   Map<String, dynamic> toJson() => {
     'date': date,
     'targetId': targetId,
     'guesses': [for (final guess in guesses) guess.toJson()],
     'won': won,
+    'gameId': ?gameId,
   };
 }
 

@@ -40,6 +40,40 @@ export const authMiddleware = createMiddleware<AuthEnv>(async (c, next) => {
   await next();
 });
 
+type OptionalAuthEnv = {
+  Variables: {
+    session?: Session;
+    user?: UserDTO;
+  };
+};
+
+/**
+ * Like `authMiddleware` for endpoints anyone may call: exposes `session` and
+ * `user` when the request carries a valid `Bearer` token, and lets it through
+ * anonymously otherwise (a missing, expired or revoked token alike).
+ */
+export const optionalAuthMiddleware = createMiddleware<OptionalAuthEnv>(
+  async (c, next) => {
+    const authHeader = c.req.header('Authorization');
+
+    const sessionToken = authHeader?.startsWith('Bearer ')
+      ? authHeader.slice('Bearer '.length)
+      : undefined;
+
+    if (sessionToken) {
+      const { session, user } = await validateSessionToken(sessionToken);
+
+      if (session && user) {
+        c.set('session', session);
+        c.set('user', user);
+        c.header('X-Session-Expires-At', session.expiresAt.toISOString());
+      }
+    }
+
+    await next();
+  },
+);
+
 /** Runs after `authMiddleware` and rejects non administrator users. */
 export const adminMiddleware = createMiddleware<AuthEnv>(async (c, next) => {
   if (!c.get('user').admin) {

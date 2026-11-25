@@ -16,7 +16,7 @@ behind the API's back except the services the API itself uses.
 | Path | What lives there |
 | --- | --- |
 | `src/core/` | Everything shared across the app: UI kit, database clients, helpers, global types. Behaves like a module. |
-| `src/modules/<name>/` | One feature: `auth`, `user-profile`, `lang-data`, `lang-permissions`, `lang-requests`, `lang-atlas`, `lang-guess`, `meta`, `app-install`. |
+| `src/modules/<name>/` | One feature: `auth`, `user-profile`, `lang-data`, `lang-permissions`, `lang-requests`, `lang-atlas`, `lang-guess`, `game-logs`, `meta`, `app-install`. |
 | `src/app/[locale]/` | Pages only. They compose module components and call module actions. |
 | `src/app/api/[...route]/route.ts` | Mounts every module controller under its prefix. The single API entry point. |
 | `src/i18n/` | next-intl routing, request config and navigation helpers. |

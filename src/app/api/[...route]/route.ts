@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/vercel';
 import authRouter from '@/modules/auth/controller';
+import gameLogsRouter from '@/modules/game-logs/controller';
 import langDataRouter from '@/modules/lang-data/controller';
 import langGuessRouter from '@/modules/lang-guess/controller';
 import langPermissionsRouter, {
@@ -29,6 +30,7 @@ api.route('/lang', langDataRouter);
 api.route('/guess', langGuessRouter);
 api.route('/user', userProfileRouter);
 api.route('/meta', metaRouter);
+api.route('/logs', gameLogsRouter);
 
 export const GET = handle(api);
 export const POST = handle(api);

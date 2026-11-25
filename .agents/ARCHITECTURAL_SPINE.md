@@ -10,7 +10,7 @@
 | Language | TypeScript (strict), path alias `@/*` → `src/*` |
 | REST API | hono 4, mounted inside the App Router via `hono/vercel` |
 | Relational DB | Neon Postgres through Drizzle ORM (`drizzle-kit` migrations in `drizzle/`) |
-| Key-value DB | Redis (`redis` client) with RedisJSON + RediSearch — holds the languages (`lang:<id>`), the daily language (`daylang`) and the session cache (`session:<sessionId>`) |
+| Key-value DB | Redis (`redis` client) with RedisJSON + RediSearch — holds the languages (`lang:<id>`), the daily language (`daylang`), the session cache (`session:<sessionId>`) and the game logs (`gamelog:<yyyy-mm-dd>` streams, see §2 *Game logs*) |
 | File storage | Cloudflare R2 through its S3 API (`@aws-sdk/client-s3`, wrapped by `core/lib/storage.ts`) — the flags of languages added through requests (`flags/<code>.webp`) and the uploads of open requests (`language-requests/<id>.webp`); `sharp` normalizes every upload to a 455×304 WebP (`core/lib/flags.ts`). The flags in `public/flags` stay where they are: clients look there first, then in the bucket |
 | Validation | zod 4 (+ `drizzle-zod`, `@hookform/resolvers`) |
 | Auth | Own session implementation: argon2 password hashes, opaque session tokens hashed with SHA-256, stored in Postgres and cached in Redis (see §2 *Session cache*), `arctic` for Google OAuth, `jose` for short-lived encrypted tokens |
@@ -169,6 +169,37 @@ added at the module root without a reason recorded here.
 - Expiry and renewal are checked on the cached copy exactly as on the row, so a
   cached session never outlives `expiresAt`.
 
+### Game logs
+
+`game-logs` records what players do — `start` (a game opened that is not over
+yet), every `guess`, `win` and `lose` — signed in or not:
+
+- **The client reports, the API enriches.** Each client sends the event
+  (`POST /api/logs/game`: game id, type, target, guess, attempt, a visitor id it
+  keeps, its device details); the API adds the player when the request is
+  signed (`optionalAuthMiddleware`) and what the request headers say
+  (`readClientInfo`: IP, user agent, languages, referer and Vercel's IP
+  location). A web win never reaches the guess endpoint (the browser knows the
+  right answer), which is why the events are reported rather than inferred.
+- **The browser's headers, not the server's.** A server action calls the API
+  from the server, so `apiRequest`'s `forwardClient` copies the browser's
+  headers under `x-langdle-client-*` with a key derived from `JWT_SECRET`
+  (`core/lib/client-info.ts`). The API reads them only with that key and the
+  request's own headers otherwise, so nobody else can choose the IP they are
+  logged with.
+- **Storage.** One Redis stream per UTC day, `gamelog:<yyyy-mm-dd>`, each entry
+  a `data` field holding the JSON of `GameLogEntry`. A day expires
+  `GAME_LOG_TTL_S` (90 days) after its last event. `GET /api/logs/game` reads a
+  day newest first, with the entry id as cursor; administrators browse it at
+  `/data/logs`.
+- **Erased with the account.** `DELETE /api/auth/me` calls
+  `deleteUserGameLogs`, which sweeps every retained day and removes the
+  entries signed by that user. The privacy policy (`/privacy`) promises it:
+  a change to what is logged, how long or who sees it is a change to that
+  page's `PrivacyPage` messages too.
+- **Never in the way.** Both clients fire and forget: a log that fails is
+  dropped, the game goes on.
+
 ### Language index
 
 `getLanguagesPage` (`GET /lang/page`) and `getLanguageNames`
@@ -211,6 +242,8 @@ core/
                http.ts           apiError / notFound / forbidden / unknownError / parseJsonBody
                session-config.ts the session cookie's name, lifetime and options
                session.ts        session cookie read / write / clear
+               client-info.ts    who sent a request (IP, browser, location) and the
+                                 forwarding of those headers by server actions
                redirect.ts       safe `?next=` return paths (safeNextPath, withNext)
                features.ts       the catalogue of linguistic features
                search.ts         the language search ranking (see Language index)
@@ -237,6 +270,7 @@ core/
 | `lang-atlas` | the public atlas page: counters, language cards, the feature tooltip; opens `lang-requests`' change request dialog (no endpoints: it reads `lang-data`) | — |
 | `lang-guess` | the game: daily language, guess matching, game history | `/api/guess` |
 | `meta` | read-only catalogues the clients build forms from (features, countries) | `/api/meta` |
+| `game-logs` | the record of every game event (start, guess, win, lose) with the player and their request, in Redis streams (see §2 *Game logs*) | `/api/logs` |
 | `app-install` | the Android install prompt and menu entry (no endpoints: it only links the APK in `NEXT_PUBLIC_ANDROID_APP_URL`) | — |
 
 ## 4. Endpoint inventory
@@ -254,7 +288,7 @@ with the (possibly renewed) session expiry, so clients that store the token
 | POST | `/signin` | — | same payload for existing credentials |
 | POST | `/signout` | B | invalidates the session |
 | GET | `/me` | B | the current user |
-| DELETE | `/me` | B | deletes the account: sessions, history, permissions, change requests (reviews it made lose their reviewer) |
+| DELETE | `/me` | B | deletes the account: sessions, history, permissions, change requests (reviews it made lose their reviewer) and the game logs signed by it |
 | GET | `/google` | — | redirects to Google, stores state cookies (and a safe `?next=` return path) |
 | GET | `/google/callback` | — | signs the user in and redirects to `next` (or `/`), or redirects to `/endgoogle?data=<encrypted claims>&next=` |
 | POST | `/google/token` | — | native sign in from `{ idToken }`: `{ status: 'signedIn', user, token, expiresAt }` or `{ status: 'needsSignup', dataToken, nickname, email }` |
@@ -330,6 +364,16 @@ predate the split and stay exactly as the mobile app calls them.
 | --- | --- | --- | --- |
 | GET | `/features` | — | `{ groups, statuses }`: the feature catalogue of `core/lib/features.ts` |
 | GET | `/countries` | — | the country list of `core/lib/countries.ts` |
+
+### `/api/logs` (`game-logs`)
+
+`B?` = `Bearer` optional: the player is logged when it is valid, the request
+goes on anonymously otherwise.
+
+| Method | Path | Guard | Purpose |
+| --- | --- | --- | --- |
+| POST | `/game` | B? | logs a game event: `{ event: start\|guess\|win\|lose, gameId, type, targetLang, guessLang? (required for guess), attempt?, resumed?, visitorId?, client? }`, answers `201 { id }` |
+| GET | `/game?date=&limit=&cursor=` | B + A | one UTC day of events (today by default), newest first: `{ items, nextCursor, total }` (`total` counts the whole day); `limit` 1–200 (default 50) |
 
 ### `/api/user`
 

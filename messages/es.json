@@ -23,7 +23,8 @@
     "madeBy": "Hecho por",
     "portfolio": "Portafolio",
     "github": "GitHub",
-    "x": "X (Twitter)"
+    "x": "X (Twitter)",
+    "privacy": "Privacidad"
   },
   "InstallApp": {
     "menu": "App para Android",
@@ -116,6 +117,91 @@
       }
     },
     "footer": "Lee la huella, acota el objetivo y sigue intentando hasta que el patrón encaje."
+  },
+  "PrivacyPage": {
+    "eyebrow": "Tus datos",
+    "title": "Política de privacidad",
+    "description": "Qué recopila Langdle cuando juegas o creas una cuenta, por qué, quién lo procesa, cuánto tiempo se guarda y cómo pedir que se borre.",
+    "updated": "Última actualización: {date}",
+    "intro": "Langdle es un juego gratuito de adivinar idiomas. Esta página explica, sin rodeos, qué recopilamos cuando usas la web o la app, por qué lo hacemos y qué puedes hacer al respecto.",
+    "sections": {
+      "who": {
+        "title": "Quién es responsable",
+        "p1": "Langdle es un proyecto independiente creado y gestionado por TeoryMan, responsable de tus datos. Para cualquier cuestión sobre tu privacidad, escribe a {email}."
+      },
+      "account": {
+        "title": "Cuando creas una cuenta",
+        "p1": "La cuenta es opcional: puedes jugar sin ella. Si creas una, guardamos:",
+        "i1": "tu apodo, tu correo electrónico y tu país;",
+        "i2": "tu contraseña, solo como un hash de un solo sentido que no podemos leer;",
+        "i3": "el id de tu cuenta de Google o Apple, si inicias sesión con ellas;",
+        "i4": "tus idiomas nativo y con fluidez, si los añades;",
+        "i5": "tus partidas terminadas (fecha, modo, idioma, número de intentos, resultado);",
+        "i6": "las correcciones e idiomas que sugieres, las banderas que subes y los idiomas que puedes editar.",
+        "p2": "Tu apodo, tu país y tus idiomas nativo y con fluidez se muestran en tu perfil público."
+      },
+      "logs": {
+        "title": "Cuando juegas, con o sin sesión",
+        "p1": "Cada vez que empiezas una partida, haces un intento, ganas o pierdes, guardamos un registro de juego con:",
+        "i1": "qué pasó: el modo, el idioma objetivo, el idioma que probaste y el número de intento;",
+        "i2": "un id aleatorio guardado en tu dispositivo, para distinguir las partidas de jugadores sin cuenta;",
+        "i3": "tu dirección IP, tu navegador o app (user agent), sus idiomas y la página de la que vienes;",
+        "i4": "tu ubicación aproximada según la deduce nuestro proveedor de alojamiento a partir de tu IP: país, región, ciudad, coordenadas y zona horaria;",
+        "i5": "tu dispositivo: plataforma, tamaño de pantalla y de ventana, zona horaria e idioma de la interfaz;",
+        "i6": "si tienes la sesión iniciada, el id de tu cuenta, tu apodo, tu correo, tu país y si eres administrador.",
+        "p2": "Solo los administradores de Langdle pueden ver estos registros. Los usamos para entender cómo se juega, para encontrar y corregir errores y para detectar abusos."
+      },
+      "storage": {
+        "title": "Cookies y almacenamiento del dispositivo",
+        "p1": "Langdle no usa cookies publicitarias ni de seguimiento de terceros. Solo guarda lo que necesita para funcionar:",
+        "i1": "una cookie de sesión que mantiene tu sesión iniciada, hasta 30 días después de tu último uso;",
+        "i2": "una cookie con el idioma que elegiste para la interfaz;",
+        "i3": "dos cookies temporales mientras inicias sesión con Google, que se borran al terminar;",
+        "i4": "en el almacenamiento de tu navegador o app: el progreso de la partida de hoy, el id aleatorio del dispositivo descrito arriba y si cerraste el aviso para instalar la app.",
+        "p2": "Puedes borrarlos cuando quieras desde los ajustes de tu navegador o app; se cerrará tu sesión y perderás el progreso de hoy."
+      },
+      "purposes": {
+        "title": "Para qué usamos tus datos",
+        "i1": "Para ofrecerte el juego y tu cuenta, como nos pediste (ejecución de un contrato).",
+        "i2": "Para guardar los registros de juego, mejorar el juego y mantenerlo seguro, que es nuestro interés legítimo; los registros se guardan poco tiempo y nunca se usan para publicidad.",
+        "i3": "Para escribirte sobre las correcciones e idiomas que sugieres.",
+        "i4": "Para cumplir la ley cuando debamos."
+      },
+      "sharing": {
+        "title": "Quién los procesa",
+        "p1": "Nunca vendemos tus datos ni los compartimos con fines publicitarios. Los procesan por nosotros estos proveedores, solo para que Langdle funcione:",
+        "i1": "Vercel, que aloja la web y la API y localiza las direcciones IP;",
+        "i2": "Neon, que aloja la base de datos de cuentas y partidas;",
+        "i3": "una base de datos Redis gestionada, que guarda los idiomas, la caché de sesiones y los registros de juego;",
+        "i4": "Cloudflare R2, que guarda las imágenes de las banderas;",
+        "i5": "Resend, que envía nuestros correos;",
+        "i6": "Google y Apple, solo si eliges iniciar sesión con ellos.",
+        "p2": "Estos proveedores pueden procesar datos fuera de tu país, incluso en Estados Unidos, con sus propias garantías para transferencias internacionales."
+      },
+      "retention": {
+        "title": "Cuánto tiempo los guardamos",
+        "i1": "Registros de juego: 90 días después del día en que se guardaron; luego se borran automáticamente.",
+        "i2": "Sesiones: hasta que cierres sesión o 30 días después de tu último uso.",
+        "i3": "Tu cuenta y todo lo vinculado a ella: hasta que borres tu cuenta."
+      },
+      "rights": {
+        "title": "Tus derechos",
+        "p1": "Según dónde vivas (por ejemplo, con el RGPD o la LGPD de Brasil), puedes pedir acceder a tus datos, corregirlos, exportarlos o borrarlos, y oponerte a cómo los usamos o limitarlo.",
+        "i1": "Puedes editar tu perfil desde la página de tu cuenta cuando quieras.",
+        "i2": "Borrar tu cuenta desde la página de tu cuenta borra tu cuenta, tu historial de partidas, tus permisos de edición, tus solicitudes y todos los registros de juego guardados mientras tenías la sesión iniciada.",
+        "i3": "Los registros guardados sin sesión no están vinculados a ninguna cuenta. Para que los borremos, escríbenos con la hora aproximada y tu dirección IP.",
+        "p2": "Para cualquier solicitud, escribe a {email}; respondemos en un plazo de 30 días. También puedes reclamar ante tu autoridad de protección de datos."
+      },
+      "children": {
+        "title": "Menores",
+        "p1": "Langdle no está dirigido a menores de 13 años, y no deberían crear una cuenta. Si crees que un menor lo ha hecho, escríbenos y la borraremos."
+      },
+      "changes": {
+        "title": "Cambios en esta política",
+        "p1": "Si cambia lo que recopilamos o cómo lo usamos, actualizaremos esta página y su fecha. Los cambios importantes se anunciarán en el juego."
+      }
+    },
+    "contact": "Escríbenos"
   },
   "Features": {
     "changeRequest": {
@@ -387,7 +473,8 @@
     "showMore": "Mostrar más",
     "searchPlaceholder": "Escribe un nombre o código de idioma",
     "noMatches": "No hay idiomas que coincidan con tu búsqueda.",
-    "noLanguages": "No hay idiomas"
+    "noLanguages": "No hay idiomas",
+    "gameLogs": "Registros de juego"
   },
   "PublicDataPage": {
     "eyebrow": "Atlas público",
@@ -434,6 +521,42 @@
     "empty": "No quedan idiomas inactivos por revisar.",
     "showing": "Mostrando {shown} de {total} idiomas",
     "showMore": "Mostrar más"
+  },
+  "GameLogsPage": {
+    "title": "Registros de juego",
+    "intro": "Cada partida iniciada, intento, victoria y derrota, con el jugador y la petición que la envió. Los días están en UTC y se guardan 90 días.",
+    "day": "Día (UTC)",
+    "search": "Buscar",
+    "searchPlaceholder": "IP, jugador, correo, partida, visitante o idioma",
+    "refresh": "Actualizar",
+    "events": {
+      "all": "Todos",
+      "start": "Inicio",
+      "guess": "Intento",
+      "win": "Victoria",
+      "lose": "Derrota"
+    },
+    "types": {
+      "daily": "Diario",
+      "random": "Aleatorio"
+    },
+    "showing": "Mostrando {shown} de {loaded} cargados ({total} ese día)",
+    "attempt": "intento {attempt}",
+    "resumed": "retomada",
+    "anonymous": "Sin sesión",
+    "unknown": "Desconocido",
+    "sections": {
+      "game": "Partida",
+      "player": "Jugador",
+      "request": "Petición",
+      "device": "Dispositivo"
+    },
+    "filterGame": "Ver solo esta partida",
+    "openMap": "Abrir en el mapa",
+    "empty": "No se registraron eventos ese día.",
+    "noMatches": "Ningún evento cargado coincide con estos filtros.",
+    "loadError": "No se pudieron cargar los registros.",
+    "showMore": "Ver más"
   },
   "LangData": {
     "loading": "Actualizando características",

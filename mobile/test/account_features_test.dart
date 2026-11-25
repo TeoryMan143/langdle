@@ -9,6 +9,7 @@ import 'package:langdle_app/modules/auth/auth_controller.dart';
 import 'package:langdle_app/modules/auth/auth_models.dart';
 import 'package:langdle_app/modules/auth/auth_repository.dart';
 import 'package:langdle_app/modules/auth/auth_routes.dart';
+import 'package:langdle_app/modules/game_logs/game_log_repository.dart';
 import 'package:langdle_app/modules/lang_data/lang_repository.dart';
 import 'package:langdle_app/modules/lang_permissions/permission_controller.dart';
 import 'package:langdle_app/modules/lang_permissions/permission_repository.dart';
@@ -96,6 +97,120 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() => SharedPreferences.setMockInitialValues({}));
+
+  group('game logs', () {
+    _FakeApi logApi() => _FakeApi({
+      'GET /api/guess/daily': (_) => _languages[2],
+      'GET /api/lang/random': (_) => _languages[2],
+      'GET /api/lang/names': (_) => _languages,
+      'GET /api/guess/de': (_) => {
+        'correct': <String>[],
+        'partial': <String>[],
+        'incorrect': ['tones'],
+      },
+      'POST /api/logs/game': (_) => {'id': '1-0'},
+    });
+
+    GameController game(_FakeApi api, GameType type) => GameController(
+      type: type,
+      langs: LangRepository(api.client),
+      guesses: GuessRepository(api.client),
+      saves: DailySaveStore(),
+      auth: AuthController(
+        api: api.client,
+        repository: AuthRepository(api.client),
+        store: _MemoryStore(),
+      ),
+      logs: GameLogRepository(api.client),
+    );
+
+    List<Map<String, dynamic>> logs(_FakeApi api) => [
+      for (final request in api.called('POST', '/api/logs/game'))
+        jsonDecode(request.body) as Map<String, dynamic>,
+    ];
+
+    test('a game reports its start, every guess and its end', () async {
+      final api = logApi();
+      final controller = game(api, GameType.random);
+      for (var i = 0; i < 5; i++) {
+        await _settle();
+      }
+
+      controller.select(const Language(id: 'de', name: 'Deutsch'));
+      await controller.guess();
+      controller.select(const Language(id: 'es', name: 'Español'));
+      await controller.guess();
+      await _settle();
+
+      final events = logs(api);
+      expect(events.map((e) => [e['event'], e['guessLang'], e['attempt']]), [
+        ['start', null, 0],
+        ['guess', 'de', 1],
+        ['guess', 'es', 2],
+        ['win', null, 2],
+      ]);
+      expect(events.map((e) => e['gameId']).toSet(), hasLength(1));
+      expect(events.first, containsPair('type', 'random'));
+      expect(events.first, containsPair('targetLang', 'es'));
+      expect(events.first['visitorId'], isA<String>());
+      expect(events.first['client'], containsPair('platform', isA<String>()));
+      controller.dispose();
+    });
+
+    test(
+      'a resumed daily game keeps its id; a finished one logs nothing',
+      () async {
+        Future<void> saveDay(DailySave save) async {
+          SharedPreferences.setMockInitialValues({
+            'day-save': jsonEncode(save.toJson()),
+          });
+        }
+
+        const miss = LanguageGuess(
+          language: Language(id: 'de', name: 'Deutsch'),
+          matching: LanguageMatching(correct: [], partial: [], incorrect: []),
+        );
+
+        await saveDay(
+          DailySave(
+            date: utcDateString(),
+            targetId: 'es',
+            guesses: const [miss],
+            won: false,
+            gameId: 'saved-game',
+          ),
+        );
+        var api = logApi();
+        var controller = game(api, GameType.daily);
+        for (var i = 0; i < 5; i++) {
+          await _settle();
+        }
+
+        expect(logs(api).single, containsPair('gameId', 'saved-game'));
+        expect(logs(api).single, containsPair('resumed', true));
+        expect(logs(api).single, containsPair('attempt', 1));
+        controller.dispose();
+
+        await saveDay(
+          DailySave(
+            date: utcDateString(),
+            targetId: 'es',
+            guesses: const [],
+            won: true,
+            gameId: 'saved-game',
+          ),
+        );
+        api = logApi();
+        controller = game(api, GameType.daily);
+        for (var i = 0; i < 5; i++) {
+          await _settle();
+        }
+
+        expect(logs(api), isEmpty);
+        controller.dispose();
+      },
+    );
+  });
 
   group('game history', () {
     test('GameRecord reads the API row and writes the request body', () {

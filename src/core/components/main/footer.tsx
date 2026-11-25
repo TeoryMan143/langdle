@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { dongle } from '@/core/lib/fonts';
 import { cn } from '@/core/lib/utils';
+import { Link } from '@/i18n/navigation';
 import GitHub from '../icons/github';
 import XLogo from '../icons/x-logo';
 import { buttonVariants } from '../ui/button';
@@ -54,11 +55,19 @@ function Footer() {
   return (
     <footer className='border-t-2 border-border bg-secondary-background'>
       <div className='mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 md:px-6'>
-        <p
-          className={`${dongle.className} relative top-1 text-4xl leading-none`}
-        >
-          LANGDLE
-        </p>
+        <div className='flex items-center gap-4'>
+          <p
+            className={`${dongle.className} relative top-1 text-4xl leading-none`}
+          >
+            LANGDLE
+          </p>
+          <Link
+            href='/privacy'
+            className='text-sm text-foreground/80 underline-offset-4 hover:text-foreground hover:underline'
+          >
+            {t('privacy')}
+          </Link>
+        </div>
         <TooltipProvider>
           <div className='flex items-center gap-3'>
             <span className='text-sm text-foreground/80'>{t('madeBy')}</span>

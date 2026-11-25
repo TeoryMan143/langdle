@@ -9,6 +9,7 @@ import 'core/i18n/translations.dart';
 import 'core/theme/app_theme.dart';
 import 'modules/auth/auth_controller.dart';
 import 'modules/auth/auth_repository.dart';
+import 'modules/game_logs/game_log_repository.dart';
 import 'modules/lang_data/lang_repository.dart';
 import 'modules/lang_guess/guess_repository.dart';
 import 'modules/lang_permissions/permission_repository.dart';
@@ -73,6 +74,7 @@ class _LangdleAppState extends State<LangdleApp> {
         Provider(create: (_) => MetaRepository(api)),
         Provider(create: (_) => ProfileRepository(api)),
         Provider(create: (_) => DailySaveStore()),
+        Provider(create: (_) => GameLogRepository(api, locale: widget.locale)),
       ],
       child: Consumer<LocaleController>(
         builder: (context, locale, _) => MaterialApp.router(

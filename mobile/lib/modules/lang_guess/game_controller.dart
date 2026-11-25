@@ -6,6 +6,8 @@ import '../../core/i18n/translations.dart';
 import '../../core/models/language.dart';
 import '../../core/search/search.dart';
 import '../auth/auth_controller.dart';
+import '../game_logs/game_log_models.dart';
+import '../game_logs/game_log_repository.dart';
 import '../lang_data/lang_repository.dart';
 import 'guess_models.dart';
 import 'guess_repository.dart';
@@ -25,6 +27,7 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
     required this._saves,
     required this._auth,
     this._locale,
+    this._logs,
   }) : _guessRepo = guesses {
     WidgetsBinding.instance.addObserver(this);
     start();
@@ -41,6 +44,9 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
   /// Adds the exonyms translated in its locale to the search, as on the web.
   final LocaleController? _locale;
 
+  /// Reports the game's events (`POST /logs/game`); none without it.
+  final GameLogRepository? _logs;
+
   GameStatus _status = GameStatus.loading;
   Object? _error;
   Language? _target;
@@ -50,6 +56,7 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
   String? _hint;
   bool _submitting = false;
   String? _startedOn;
+  String _gameId = '';
   Timer? _hintTimer;
   bool _disposed = false;
 
@@ -89,9 +96,19 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
       _search = LanguageSearch(pool, locale: _locale);
       _startedOn = utcDateString();
       _status = GameStatus.playing;
+      _gameId = randomId();
 
       if (type == GameType.daily) {
         await _restoreDaily(target);
+      }
+
+      // Coming back to a finished daily game is not playing it.
+      if (!finished) {
+        _log(
+          GameLogEvent.start,
+          attempt: _guesses.length,
+          resumed: _guesses.isNotEmpty,
+        );
       }
     } catch (e) {
       _error = e;
@@ -111,6 +128,7 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
     }
 
     _guesses = save.guesses;
+    _gameId = save.gameId ?? _gameId;
     _status = save.won
         ? GameStatus.won
         : _guesses.length >= maxAttempts
@@ -149,14 +167,20 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
     _submitting = true;
     _notify();
 
+    // The misses so far, plus this guess.
+    final attempt = _guesses.length + 1;
+
     try {
       final result = selected.id == target.id
           ? Guessed(target)
           : await _guessRepo.check(selected.id, target.id);
 
+      _log(GameLogEvent.guess, guessLang: selected.id, attempt: attempt);
+
       switch (result) {
         case Guessed():
           _status = GameStatus.won;
+          _log(GameLogEvent.win, attempt: attempt);
         case Missed(:final matching):
           _guesses = [
             ..._guesses,
@@ -164,6 +188,7 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
           ];
           if (_guesses.length >= maxAttempts) {
             _status = GameStatus.lost;
+            _log(GameLogEvent.lose, attempt: attempt);
           }
       }
 
@@ -198,6 +223,34 @@ class GameController extends ChangeNotifier with WidgetsBindingObserver {
         targetId: target.id,
         guesses: _guesses,
         won: _status == GameStatus.won,
+        gameId: _gameId,
+      ),
+    );
+  }
+
+  /// Fire and forget: the repository swallows its own failures.
+  void _log(
+    GameLogEvent event, {
+    String? guessLang,
+    int? attempt,
+    bool? resumed,
+  }) {
+    final target = _target;
+    final logs = _logs;
+
+    if (target == null || logs == null) return;
+
+    unawaited(
+      logs.log(
+        GameLog(
+          event: event,
+          gameId: _gameId,
+          type: type,
+          targetLang: target.id,
+          guessLang: guessLang,
+          attempt: attempt,
+          resumed: resumed,
+        ),
       ),
     );
   }
