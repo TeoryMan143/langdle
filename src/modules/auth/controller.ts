@@ -9,6 +9,7 @@ import {
   SESSION_COOKIE,
   sessionCookieOptions,
 } from '@/core/lib/session-config';
+import { deleteUserGameLogs } from '@/modules/game-logs/service';
 import { authMiddleware } from './middleware';
 import { googleSignUpSchema } from './schemas/google-data';
 import { oauthTokenSchema } from './schemas/oauth-token';
@@ -227,7 +228,15 @@ authRouter.get('/me', authMiddleware, c => c.json(c.get('user')));
 /** Deletes the signed in account and everything it owns. */
 authRouter.delete('/me', authMiddleware, async c => {
   try {
-    await deleteUser(c.get('user').id);
+    const userId = c.get('user').id;
+    await deleteUser(userId);
+
+    // The account is gone either way: a log that could not be erased now
+    // still expires with its day.
+    if ((await deleteUserGameLogs(userId)) === null) {
+      console.error(`Game logs of deleted user ${userId} not fully erased`);
+    }
+
     return c.json({ success: true });
   } catch (e) {
     console.error(e);

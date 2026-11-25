@@ -23,7 +23,8 @@
     "madeBy": "Made by",
     "portfolio": "Portfolio",
     "github": "GitHub",
-    "x": "X (Twitter)"
+    "x": "X (Twitter)",
+    "privacy": "Privacy"
   },
   "InstallApp": {
     "menu": "Android app",
@@ -116,6 +117,91 @@
       }
     },
     "footer": "Read the fingerprint, narrow the target, and keep guessing until the pattern clicks."
+  },
+  "PrivacyPage": {
+    "eyebrow": "Your data",
+    "title": "Privacy policy",
+    "description": "What Langdle collects when you play or create an account, why, who processes it, how long it is kept and how to have it deleted.",
+    "updated": "Last updated: {date}",
+    "intro": "Langdle is a free language guessing game. This page explains, plainly, what we collect when you use the website or the mobile app, why we collect it and what you can do about it.",
+    "sections": {
+      "who": {
+        "title": "Who is responsible",
+        "p1": "Langdle is an independent project made and run by TeoryMan, who is responsible for your data. For anything about your privacy, write to {email}."
+      },
+      "account": {
+        "title": "When you create an account",
+        "p1": "An account is optional: you can play without one. If you create one, we store:",
+        "i1": "your nickname, email address and country;",
+        "i2": "your password, only as a one-way hash we cannot read back;",
+        "i3": "your Google or Apple account id, if you sign in with them;",
+        "i4": "your native and fluent languages, if you add them;",
+        "i5": "your finished games (date, mode, language, number of guesses, result);",
+        "i6": "the corrections and languages you suggest, the flag images you upload, and the languages you may edit.",
+        "p2": "Your nickname, country and native and fluent languages are shown on your public profile."
+      },
+      "logs": {
+        "title": "When you play, signed in or not",
+        "p1": "Every time you start a game, make a guess, win or lose, we record a game log with:",
+        "i1": "what happened: the mode, the target language, the language you tried and the attempt number;",
+        "i2": "a random id stored on your device, to tell apart the games of different players without an account;",
+        "i3": "your IP address, your browser or app (user agent), its languages and the page you came from;",
+        "i4": "your approximate location as our host derives it from your IP: country, region, city, coordinates and time zone;",
+        "i5": "your device: platform, screen and window size, time zone and the interface language;",
+        "i6": "if you are signed in, your account id, nickname, email, country and whether you are an administrator.",
+        "p2": "Only Langdle administrators can see these logs. We use them to understand how the game is played, to find and fix problems and to detect abuse."
+      },
+      "storage": {
+        "title": "Cookies and device storage",
+        "p1": "Langdle uses no advertising or third-party tracking cookies. It stores only what it needs to work:",
+        "i1": "a session cookie that keeps you signed in, for up to 30 days after you last use it;",
+        "i2": "a cookie with the language you chose for the interface;",
+        "i3": "two short-lived cookies while you sign in with Google, deleted when it finishes;",
+        "i4": "in your browser or app storage: the progress of today's game, the random device id described above and whether you dismissed the app install prompt.",
+        "p2": "You can clear them at any time from your browser or app settings; you will be signed out and today's progress will be lost."
+      },
+      "purposes": {
+        "title": "Why we use your data",
+        "i1": "To provide the game and your account, as you asked us to (performance of a contract).",
+        "i2": "To keep game logs, improve the game and keep it secure, which is our legitimate interest; the logs are kept short and are never used for advertising.",
+        "i3": "To email you about the corrections and languages you suggest.",
+        "i4": "To comply with the law when we must."
+      },
+      "sharing": {
+        "title": "Who processes it",
+        "p1": "We never sell your data or share it for advertising. It is processed for us by these providers, only to run Langdle:",
+        "i1": "Vercel, which hosts the website and the API and locates IP addresses;",
+        "i2": "Neon, which hosts the database of accounts and games;",
+        "i3": "a managed Redis database, which holds the languages, the session cache and the game logs;",
+        "i4": "Cloudflare R2, which stores the flag images;",
+        "i5": "Resend, which sends our emails;",
+        "i6": "Google and Apple, only if you choose to sign in with them.",
+        "p2": "These providers may process data outside your country, including in the United States, under their own safeguards for international transfers."
+      },
+      "retention": {
+        "title": "How long we keep it",
+        "i1": "Game logs: 90 days after the day they were recorded, then they are deleted automatically.",
+        "i2": "Sessions: until you sign out or 30 days after you last use them.",
+        "i3": "Your account and everything tied to it: until you delete your account."
+      },
+      "rights": {
+        "title": "Your rights",
+        "p1": "Depending on where you live (for example under the GDPR or Brazil's LGPD), you may ask to access, correct, export or delete your data, and object to or restrict how we use it.",
+        "i1": "You can edit your profile from your account page at any time.",
+        "i2": "Deleting your account from your account page deletes your account, your game history, your edit permissions, your requests and every game log recorded while you were signed in.",
+        "i3": "Logs recorded while you were signed out are not tied to an account. To have them deleted, write to us with the approximate time and your IP address.",
+        "p2": "For any request, write to {email}; we answer within 30 days. You may also complain to your data protection authority."
+      },
+      "children": {
+        "title": "Children",
+        "p1": "Langdle is not directed at children under 13, and they should not create an account. If you believe a child has, write to us and we will delete it."
+      },
+      "changes": {
+        "title": "Changes to this policy",
+        "p1": "If what we collect or how we use it changes, we will update this page and its date. Significant changes will be announced in the game."
+      }
+    },
+    "contact": "Write to us"
   },
   "Features": {
     "changeRequest": {
@@ -387,7 +473,8 @@
     "showMore": "Show more",
     "searchPlaceholder": "Type a language name or code",
     "noMatches": "No languages match your search right now.",
-    "noLanguages": "No languages"
+    "noLanguages": "No languages",
+    "gameLogs": "Game logs"
   },
   "PublicDataPage": {
     "eyebrow": "Public atlas",
@@ -433,6 +520,42 @@
     "activated": "{name} is now playable",
     "empty": "No inactive languages left to review.",
     "showing": "Showing {shown} of {total} languages",
+    "showMore": "Show more"
+  },
+  "GameLogsPage": {
+    "title": "Game logs",
+    "intro": "Every game started, guess, win and loss, with the player and the request that sent it. Days are in UTC and kept for 90 days.",
+    "day": "Day (UTC)",
+    "search": "Search",
+    "searchPlaceholder": "IP, player, email, game, visitor or language",
+    "refresh": "Refresh",
+    "events": {
+      "all": "All",
+      "start": "Start",
+      "guess": "Guess",
+      "win": "Win",
+      "lose": "Loss"
+    },
+    "types": {
+      "daily": "Daily",
+      "random": "Random"
+    },
+    "showing": "Showing {shown} of {loaded} loaded ({total} that day)",
+    "attempt": "attempt {attempt}",
+    "resumed": "resumed",
+    "anonymous": "Signed out",
+    "unknown": "Unknown",
+    "sections": {
+      "game": "Game",
+      "player": "Player",
+      "request": "Request",
+      "device": "Device"
+    },
+    "filterGame": "Show this game only",
+    "openMap": "Open on the map",
+    "empty": "No events were logged that day.",
+    "noMatches": "No loaded events match these filters.",
+    "loadError": "The logs could not be loaded.",
     "showMore": "Show more"
   },
   "LangData": {

@@ -84,9 +84,12 @@
         },
         "x": {
           "type": "string"
+        },
+        "privacy": {
+          "type": "string"
         }
       },
-      "required": ["madeBy", "portfolio", "github", "x"]
+      "required": ["madeBy", "portfolio", "github", "x", "privacy"]
     },
     "InstallApp": {
       "type": "object",
@@ -402,6 +405,310 @@
         "hints",
         "features",
         "footer"
+      ]
+    },
+    "PrivacyPage": {
+      "type": "object",
+      "properties": {
+        "eyebrow": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "updated": {
+          "type": "string"
+        },
+        "intro": {
+          "type": "string"
+        },
+        "sections": {
+          "type": "object",
+          "properties": {
+            "who": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "p1": {
+                  "type": "string"
+                }
+              },
+              "required": ["title", "p1"]
+            },
+            "account": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "p1": {
+                  "type": "string"
+                },
+                "i1": {
+                  "type": "string"
+                },
+                "i2": {
+                  "type": "string"
+                },
+                "i3": {
+                  "type": "string"
+                },
+                "i4": {
+                  "type": "string"
+                },
+                "i5": {
+                  "type": "string"
+                },
+                "i6": {
+                  "type": "string"
+                },
+                "p2": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title",
+                "p1",
+                "i1",
+                "i2",
+                "i3",
+                "i4",
+                "i5",
+                "i6",
+                "p2"
+              ]
+            },
+            "logs": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "p1": {
+                  "type": "string"
+                },
+                "i1": {
+                  "type": "string"
+                },
+                "i2": {
+                  "type": "string"
+                },
+                "i3": {
+                  "type": "string"
+                },
+                "i4": {
+                  "type": "string"
+                },
+                "i5": {
+                  "type": "string"
+                },
+                "i6": {
+                  "type": "string"
+                },
+                "p2": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title",
+                "p1",
+                "i1",
+                "i2",
+                "i3",
+                "i4",
+                "i5",
+                "i6",
+                "p2"
+              ]
+            },
+            "storage": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "p1": {
+                  "type": "string"
+                },
+                "i1": {
+                  "type": "string"
+                },
+                "i2": {
+                  "type": "string"
+                },
+                "i3": {
+                  "type": "string"
+                },
+                "i4": {
+                  "type": "string"
+                },
+                "p2": {
+                  "type": "string"
+                }
+              },
+              "required": ["title", "p1", "i1", "i2", "i3", "i4", "p2"]
+            },
+            "purposes": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "i1": {
+                  "type": "string"
+                },
+                "i2": {
+                  "type": "string"
+                },
+                "i3": {
+                  "type": "string"
+                },
+                "i4": {
+                  "type": "string"
+                }
+              },
+              "required": ["title", "i1", "i2", "i3", "i4"]
+            },
+            "sharing": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "p1": {
+                  "type": "string"
+                },
+                "i1": {
+                  "type": "string"
+                },
+                "i2": {
+                  "type": "string"
+                },
+                "i3": {
+                  "type": "string"
+                },
+                "i4": {
+                  "type": "string"
+                },
+                "i5": {
+                  "type": "string"
+                },
+                "i6": {
+                  "type": "string"
+                },
+                "p2": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title",
+                "p1",
+                "i1",
+                "i2",
+                "i3",
+                "i4",
+                "i5",
+                "i6",
+                "p2"
+              ]
+            },
+            "retention": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "i1": {
+                  "type": "string"
+                },
+                "i2": {
+                  "type": "string"
+                },
+                "i3": {
+                  "type": "string"
+                }
+              },
+              "required": ["title", "i1", "i2", "i3"]
+            },
+            "rights": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "p1": {
+                  "type": "string"
+                },
+                "i1": {
+                  "type": "string"
+                },
+                "i2": {
+                  "type": "string"
+                },
+                "i3": {
+                  "type": "string"
+                },
+                "p2": {
+                  "type": "string"
+                }
+              },
+              "required": ["title", "p1", "i1", "i2", "i3", "p2"]
+            },
+            "children": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "p1": {
+                  "type": "string"
+                }
+              },
+              "required": ["title", "p1"]
+            },
+            "changes": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "p1": {
+                  "type": "string"
+                }
+              },
+              "required": ["title", "p1"]
+            }
+          },
+          "required": [
+            "who",
+            "account",
+            "logs",
+            "storage",
+            "purposes",
+            "sharing",
+            "retention",
+            "rights",
+            "children",
+            "changes"
+          ]
+        },
+        "contact": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "eyebrow",
+        "title",
+        "description",
+        "updated",
+        "intro",
+        "sections",
+        "contact"
       ]
     },
     "Features": {
@@ -1470,6 +1777,9 @@
         },
         "noLanguages": {
           "type": "string"
+        },
+        "gameLogs": {
+          "type": "string"
         }
       },
       "required": [
@@ -1481,7 +1791,8 @@
         "searchPlaceholder",
         "noMatches",
         "noLanguages",
-        "reviewQueue"
+        "reviewQueue",
+        "gameLogs"
       ]
     },
     "PublicDataPage": {
@@ -1657,6 +1968,135 @@
         "activated",
         "empty",
         "showing",
+        "showMore"
+      ]
+    },
+    "GameLogsPage": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "intro": {
+          "type": "string"
+        },
+        "day": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        },
+        "searchPlaceholder": {
+          "type": "string"
+        },
+        "refresh": {
+          "type": "string"
+        },
+        "events": {
+          "type": "object",
+          "properties": {
+            "all": {
+              "type": "string"
+            },
+            "start": {
+              "type": "string"
+            },
+            "guess": {
+              "type": "string"
+            },
+            "win": {
+              "type": "string"
+            },
+            "lose": {
+              "type": "string"
+            }
+          },
+          "required": ["all", "start", "guess", "win", "lose"]
+        },
+        "types": {
+          "type": "object",
+          "properties": {
+            "daily": {
+              "type": "string"
+            },
+            "random": {
+              "type": "string"
+            }
+          },
+          "required": ["daily", "random"]
+        },
+        "showing": {
+          "type": "string"
+        },
+        "attempt": {
+          "type": "string"
+        },
+        "resumed": {
+          "type": "string"
+        },
+        "anonymous": {
+          "type": "string"
+        },
+        "unknown": {
+          "type": "string"
+        },
+        "sections": {
+          "type": "object",
+          "properties": {
+            "game": {
+              "type": "string"
+            },
+            "player": {
+              "type": "string"
+            },
+            "request": {
+              "type": "string"
+            },
+            "device": {
+              "type": "string"
+            }
+          },
+          "required": ["game", "player", "request", "device"]
+        },
+        "filterGame": {
+          "type": "string"
+        },
+        "openMap": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "string"
+        },
+        "noMatches": {
+          "type": "string"
+        },
+        "loadError": {
+          "type": "string"
+        },
+        "showMore": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "intro",
+        "day",
+        "search",
+        "searchPlaceholder",
+        "refresh",
+        "events",
+        "types",
+        "showing",
+        "attempt",
+        "resumed",
+        "anonymous",
+        "unknown",
+        "sections",
+        "filterGame",
+        "openMap",
+        "empty",
+        "noMatches",
+        "loadError",
         "showMore"
       ]
     },
@@ -11725,12 +12165,14 @@
     "Footer",
     "InstallApp",
     "HowToPlayPage",
+    "PrivacyPage",
     "Features",
     "AuthPage",
     "AddPermissionPage",
     "ListPage",
     "PublicDataPage",
     "ReviewPage",
+    "GameLogsPage",
     "LangData",
     "AccountPage",
     "ChangeRequests",

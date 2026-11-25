@@ -98,7 +98,11 @@ export async function setLangStatus(langId: string, status: boolean) {
 ```
 
 `auth: true` attaches the session cookie; the helper already returns
-`notSignedIn` when there is none, so do not read cookies again.
+`notSignedIn` when there is none, so do not read cookies again. `auth:
+'optional'` attaches it when there is one and calls anonymously otherwise.
+`forwardClient: true` hands the browser's IP and headers to the API (see the
+spine's *Game logs*); it reads the request headers, so use it only in actions
+the browser calls, never in a render that should stay static.
 
 The session cookie has exactly one definition: `core/lib/session-config.ts`
 (name, lifetime, `sessionCookieOptions`). Every writer goes through it — the

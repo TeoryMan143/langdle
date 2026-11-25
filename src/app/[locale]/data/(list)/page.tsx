@@ -67,6 +67,14 @@ async function DataPage() {
             {t('reviewQueue')}
           </Link>
         )}
+        {user.admin && (
+          <Link
+            className={buttonVariants({ variant: 'neutral' })}
+            href='/data/logs'
+          >
+            {t('gameLogs')}
+          </Link>
+        )}
       </div>
 
       <div className='flex justify-center'>

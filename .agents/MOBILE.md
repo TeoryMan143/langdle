@@ -49,8 +49,8 @@ mobile/
                      its generated accent table (search_fold.g.dart)
     modules/<name>/  one feature, named after the web module in snake_case
                      (auth, user_profile, lang_guess, lang_data,
-                     lang_permissions, lang_atlas, meta, how_to_play;
-                     lang_requests has no screens yet)
+                     lang_permissions, lang_atlas, meta, how_to_play,
+                     game_logs; lang_requests has no screens yet)
   assets/i18n, assets/flags   generated: copied from the web, never edited here
   tool/sync_shared.dart       the script that copies them
   tool/build_search_fold.mjs  generates core/search/search_fold.g.dart (Node)
@@ -228,6 +228,18 @@ in `ios/Flutter/Debug.xcconfig` and `Release.xcconfig` (an Associated Domains
 entitlement, also a paid team capability). That host must serve
 `public/.well-known/` with the real Team ID and release SHA-256 in place of
 their placeholders, or the OS will not verify the links.
+
+## Game logs
+
+`GameController` reports its events through `GameLogRepository`
+(`POST /logs/game`, the web's `game-logs` module): `start` when a game loads
+that is not over (a resumed daily one with `resumed` and its attempts), every
+`guess` and the `win` or `lose`. The `gameId` lives in the daily save, so a
+resumed game keeps it. The repository adds the device details (platform,
+locale, time zone, screen) and a `visitor-id` kept in `shared_preferences`;
+the API reads the IP and the user agent from the request. It never throws: a
+log that fails is dropped. Change the events together with the web's
+`use-game.tsx`.
 
 ## Language lists and search
 

@@ -1,9 +1,11 @@
+import { headers as requestHeaders } from 'next/headers';
 import type {
   ActionResult,
   ApiErrorBody,
   ApiRequestOptions,
 } from '@/core/types';
 import { actionError, actionSuccess } from './action';
+import { forwardClientHeaders } from './client-info';
 import { getSessionToken } from './session';
 import { getErrorMessage } from './utils';
 
@@ -75,6 +77,7 @@ export async function apiRequest<T, E = unknown>(
     searchParams,
     cache,
     token,
+    forwardClient = false,
   } = options;
 
   try {
@@ -83,14 +86,22 @@ export async function apiRequest<T, E = unknown>(
     if (auth) {
       const sessionToken = token ?? (await getSessionToken());
 
-      if (!sessionToken) {
+      if (sessionToken) {
+        headers.Authorization = `Bearer ${sessionToken}`;
+      } else if (auth !== 'optional') {
         return actionError({
           key: 'notSignedIn',
           message: 'Must be signed in',
         });
       }
+    }
 
-      headers.Authorization = `Bearer ${sessionToken}`;
+    if (forwardClient) {
+      const incoming = await requestHeaders();
+      Object.assign(
+        headers,
+        forwardClientHeaders(name => incoming.get(name)),
+      );
     }
 
     // Multipart bodies set their own Content-Type, with the boundary.

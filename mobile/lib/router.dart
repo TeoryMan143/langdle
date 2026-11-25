@@ -11,6 +11,7 @@ import 'modules/auth/screens/account_screen.dart';
 import 'modules/auth/screens/oauth_signup_screen.dart';
 import 'modules/auth/screens/signin_screen.dart';
 import 'modules/auth/screens/signup_screen.dart';
+import 'modules/game_logs/game_log_repository.dart';
 import 'modules/how_to_play/screens/how_to_play_screen.dart';
 import 'modules/lang_atlas/atlas_controller.dart';
 import 'modules/lang_atlas/screens/atlas_screen.dart';
@@ -149,6 +150,7 @@ Widget _game(GameType type) => ChangeNotifierProvider(
     saves: context.read<DailySaveStore>(),
     auth: context.read<AuthController>(),
     locale: context.read<LocaleController>(),
+    logs: context.read<GameLogRepository>(),
   ),
   child: const GameScreen(),
 );

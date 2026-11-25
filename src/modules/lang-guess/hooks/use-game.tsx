@@ -13,8 +13,9 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import { useLocalStorage } from 'usehooks-ts';
-import { getUTCDateString } from '@/core/lib/utils';
+import { getUTCDateString, randomId } from '@/core/lib/utils';
 import { Language } from '@/core/types';
+import { useGameLog } from '@/modules/game-logs/hooks/use-game-log';
 import { useLangSearch } from '@/modules/lang-data/hooks/use-lang-search';
 import type { LangSearchResult, LanguageName } from '@/modules/lang-data/types';
 import { addGameHistory, checkGuess } from '../actions';
@@ -24,10 +25,13 @@ import { LanguageGuess } from '../types';
  * Progress of today's daily game. `targetId` ties it to the language it was
  * played against: the cron that rolls the daily language does not fire at
  * 00:00 UTC sharp, so a save dated today can belong to yesterday's language.
+ * `gameId` keeps a resumed game's logs together (saves from before it have
+ * none and get a new one).
  */
 type SavedGuesses = {
   date: string;
   targetId: string | null;
+  gameId?: string;
   guesses: LanguageGuess[];
   dailyLang: Language | null;
 };
@@ -90,24 +94,48 @@ export const GameProvider = ({
   const [hasGuessed, setHasGuessed] = useState(false);
 
   const hasRetrievedSave = useRef(false);
+  const gameId = useRef('');
+  const logEvent = useGameLog(type, targetLang.id);
 
   useEffect(() => {
-    if (type !== 'daily' || hasRetrievedSave.current) {
+    if (hasRetrievedSave.current) {
       return;
     }
 
     hasRetrievedSave.current = true;
 
-    if (
+    if (type !== 'daily') {
+      gameId.current = randomId();
+      logEvent('start', { gameId: gameId.current, attempt: 0 });
+      return;
+    }
+
+    const resumes =
       localGuesses.date === getUTCDateString() &&
-      localGuesses.targetId === targetLang.id
-    ) {
+      localGuesses.targetId === targetLang.id;
+
+    gameId.current = (resumes && localGuesses.gameId) || randomId();
+
+    if (resumes) {
       setGuesses(localGuesses.guesses);
       setHasGuessed(localGuesses.dailyLang !== null);
     } else {
       setLocalGuesses(EMPTY_SAVE);
     }
-  }, [localGuesses, setLocalGuesses, targetLang.id, type]);
+
+    const attempts = resumes ? localGuesses.guesses.length : 0;
+    const finished =
+      resumes && (localGuesses.dailyLang !== null || attempts >= MAX_ATTEMPTS);
+
+    // Coming back to a finished daily game is not playing it.
+    if (!finished) {
+      logEvent('start', {
+        gameId: gameId.current,
+        attempt: attempts,
+        resumed: attempts > 0,
+      });
+    }
+  }, [localGuesses, logEvent, setLocalGuesses, targetLang.id, type]);
 
   useEffect(() => {
     if (type === 'daily') {
@@ -115,6 +143,7 @@ export const GameProvider = ({
         setLocalGuesses({
           date: getUTCDateString(),
           targetId: targetLang.id,
+          gameId: gameId.current,
           guesses,
           dailyLang: null,
         });
@@ -153,14 +182,20 @@ export const GameProvider = ({
       return;
     }
 
+    const attempt = guesses.length + 1;
+    const logDetails = { gameId: gameId.current, attempt };
+
     if (selectedLang.id === targetLang.id) {
       setLocalGuesses({
         date: getUTCDateString(),
         targetId: targetLang.id,
+        gameId: gameId.current,
         guesses,
         dailyLang: targetLang,
       });
       setHasGuessed(true);
+      logEvent('guess', { ...logDetails, guessLang: selectedLang.id });
+      logEvent('win', logDetails);
       await addGameHistory({
         guessed: true,
         guesses: guesses.length + 1,
@@ -178,18 +213,23 @@ export const GameProvider = ({
 
     const matching = res.result;
 
+    logEvent('guess', { ...logDetails, guessLang: selectedLang.id });
+
     if ('guessed' in matching) {
       setLocalGuesses({
         date: getUTCDateString(),
         targetId: targetLang.id,
+        gameId: gameId.current,
         guesses,
         dailyLang: matching.guessed,
       });
       setHasGuessed(true);
+      logEvent('win', logDetails);
       return;
     }
 
     if (guesses.length === MAX_ATTEMPTS - 1) {
+      logEvent('lose', logDetails);
       await addGameHistory({
         guessed: false,
         guesses: guesses.length + 1,
